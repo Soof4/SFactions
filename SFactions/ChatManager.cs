@@ -1,17 +1,9 @@
-﻿using IL.Microsoft.Xna.Framework;
-using IL.Terraria;
-using On.Terraria.GameContent.UI.ResourceSets;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TerrariaApi.Server;
-using TShockAPI;
+﻿using TShockAPI;
 using TShockAPI.Hooks;
 
 namespace SFactions {
     public class ChatManager {
+        
         public static void OnPlayerChat(PlayerChatEventArgs args) {
             args.Handled = true;
 
@@ -21,15 +13,19 @@ namespace SFactions {
             }
 
             string username = args.Player.Name;
-            int fPrefixIndex = SFactionsMain.db.players[username];
+            string message = $"{username}: {args.RawText}";
+            
+            if (SFactionsMain.db.players.ContainsKey(username)) {
+                message = $"[{SFactionsMain.db.factions[SFactionsMain.db.players[username]]}] {username}: {args.RawText}";
+            }
 
-            TSPlayer.All.SendMessage($"{SFactionsMain.Config.factionPrefixes[fPrefixIndex]}{username}: {args.RawText}",
+            TSPlayer.All.SendMessage(message,
                 new Microsoft.Xna.Framework.Color(
                 args.Player.Group.R,
                 args.Player.Group.G,
                 args.Player.Group.B));
 
-            TSPlayer.Server.SendConsoleMessage($"{SFactionsMain.Config.factionPrefixes[fPrefixIndex]}{username}: {args.RawText}",
+            TSPlayer.Server.SendConsoleMessage(message,
                 args.Player.Group.R,
                 args.Player.Group.G,
                 args.Player.Group.B);

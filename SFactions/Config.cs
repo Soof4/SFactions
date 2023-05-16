@@ -1,19 +1,17 @@
-﻿using IL.Terraria.Chat.Commands;
-using Newtonsoft.Json;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Newtonsoft.Json;
 
 namespace SFactions {
     public class Config {
-        public string[] factionPrefixes = {"", "[Red] ", "[Green] ", "[Blue] ", "[Yellow] ", "[Pink] "};
+        public int maxNameLength = 20;
         public IDictionary<string, bool> subcommandsPerms = new Dictionary<string, bool>();
         public void Write() {
-            subcommandsPerms.Add("help", true);
-            subcommandsPerms.Add("change", true);
+            subcommandsPerms.TryAdd("help", true);
+            subcommandsPerms.TryAdd("create", true);
+            subcommandsPerms.TryAdd("join", true);
+            subcommandsPerms.TryAdd("leave", true);
+            subcommandsPerms.TryAdd("rename", true);
+            subcommandsPerms.TryAdd("lead", true);
+
             File.WriteAllText(SFactionsMain.configPath, JsonConvert.SerializeObject(this, Formatting.Indented));
         }
         public static Config Read() {

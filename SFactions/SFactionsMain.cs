@@ -1,5 +1,4 @@
-﻿using System.IO;
-using Terraria;
+﻿using Terraria;
 using TerrariaApi.Server;
 using TShockAPI;
 using TShockAPI.Hooks;
@@ -8,7 +7,7 @@ namespace SFactions {
     [ApiVersion(2, 1)]
     public class SFactionsMain : TerrariaPlugin {
         public override string Name => "SFactions";
-        public override Version Version => new Version(0, 1, 0);
+        public override Version Version => new Version(0, 9, 0);
         public override string Author => "Soofa";
         public override string Description => "An experimental factions plugin.";
         public SFactionsMain(Main game) : base(game) {
@@ -20,12 +19,12 @@ namespace SFactions {
         public override void Initialize() {
             PlayerHooks.PlayerChat += ChatManager.OnPlayerChat;
             GeneralHooks.ReloadEvent += OnReload;
-            ServerApi.Hooks.NetGreetPlayer.Register(this, OnNetGreetPlayer);
-            ServerApi.Hooks.NetGetData.Register(this, PvPManager.OnNetGetData);
+            //ServerApi.Hooks.NetGreetPlayer.Register(this, OnNetGreetPlayer);
+            //ServerApi.Hooks.NetGetData.Register(this, PvPManager.OnNetGetData);
 
             TShockAPI.Commands.ChatCommands.Add(new TShockAPI.Command("sfactions.faction", Commands.FactionCmd, "faction", "f") {
                 AllowServer = false,
-                HelpText = "Usage: /faction change red|green|blue|yellow|pink"
+                HelpText = "To see the detailed help message do '/faction help'"
             });
 
             if (File.Exists(dbPath)) {
@@ -43,6 +42,7 @@ namespace SFactions {
             }
         }
 
+        /*
         private void OnNetGreetPlayer(GreetPlayerEventArgs args) {
             TSPlayer player = TShock.Players[args.Who];
             if (!db.players.ContainsKey(player.Name)) {
@@ -52,6 +52,7 @@ namespace SFactions {
             }
             player.SetTeam(db.players[player.Name]);
         }
+        */
 
         private void OnReload(ReloadEventArgs e) {
             if (File.Exists(dbPath)) {
@@ -68,6 +69,16 @@ namespace SFactions {
                 Config.Write();
             }
             e.Player.SendSuccessMessage("SFactions has been reloaded.");
+        }
+
+        protected override void Dispose(bool disposing) {
+            if(disposing) {
+                PlayerHooks.PlayerChat -= ChatManager.OnPlayerChat;
+                GeneralHooks.ReloadEvent -= OnReload;
+                //ServerApi.Hooks.NetGreetPlayer.Deregister(this, OnNetGreetPlayer);
+                ServerApi.Hooks.NetGetData.Deregister(this, PvPManager.OnNetGetData);
+            }
+            base.Dispose(disposing);
         }
     }
 }
