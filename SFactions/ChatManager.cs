@@ -1,23 +1,26 @@
 ﻿using TShockAPI;
+using TShockAPI.Configuration;
 using TShockAPI.Hooks;
 
 namespace SFactions {
     public class ChatManager {
         
         public static void OnPlayerChat(PlayerChatEventArgs args) {
-            args.Handled = true;
 
-            if (args.RawText.StartsWith("/") || args.RawText.StartsWith(".")) {
+            // Handle commands
+            if (args.RawText.StartsWith(TShock.Config.Settings.CommandSpecifier) || args.RawText.StartsWith(TShock.Config.Settings.CommandSilentSpecifier)) {
                 TShockAPI.Commands.HandleCommand(args.Player, args.RawText);
                 return;
             }
 
-            string username = args.Player.Name;
-            string message = $"{username}: {args.RawText}";
-            
-            if (SFactionsMain.db.players.ContainsKey(username)) {
-                message = $"[{SFactionsMain.db.factions[SFactionsMain.db.players[username]]}] {username}: {args.RawText}";
-            }
+            // Format the message
+            string message = string.Format(SFactions.Config.ChatFormat, "", 
+                args.Player.Group.Prefix, 
+                args.Player.Name,
+                args.Player.Group.Suffix,
+                args.RawText,
+                SFactions.onlineMembers.ContainsKey(args.Player.Name) ? $"[{SFactions.onlineMembers[args.Player.Name].Name}]" : "");
+                
 
             TSPlayer.All.SendMessage(message,
                 new Microsoft.Xna.Framework.Color(
@@ -29,6 +32,8 @@ namespace SFactions {
                 args.Player.Group.R,
                 args.Player.Group.G,
                 args.Player.Group.B);
+
+            args.Handled = true;
         }
     }
 }

@@ -2,23 +2,22 @@
 
 namespace SFactions {
     public class Config {
-        public int maxNameLength = 20;
-        public IDictionary<string, bool> subcommandsPerms = new Dictionary<string, bool>();
+        public int MinNameLength = 2;
+        public int MaxNameLength = 20;
+        public string ChatFormat = "{5}{1}{2}{3}: {4}";
+        private string ChatFormatHelp = "{5} = Faction name, {1} = Prefix of player's group, {2} = Player's name, {3} = Suffix of player's group, {4} = Message";
+        
         public void Write() {
-            subcommandsPerms.TryAdd("help", true);
-            subcommandsPerms.TryAdd("create", true);
-            subcommandsPerms.TryAdd("join", true);
-            subcommandsPerms.TryAdd("leave", true);
-            subcommandsPerms.TryAdd("rename", true);
-            subcommandsPerms.TryAdd("lead", true);
-
-            File.WriteAllText(SFactionsMain.configPath, JsonConvert.SerializeObject(this, Formatting.Indented));
+            File.WriteAllText(SFactions.configPath, JsonConvert.SerializeObject(this, Formatting.Indented));
         }
         public static Config Read() {
-            if (!File.Exists(SFactionsMain.configPath)) {
-                return new Config();
+            if (File.Exists(SFactions.configPath)) {
+                return JsonConvert.DeserializeObject<Config>(File.ReadAllText(SFactions.configPath));
+                
             }
-            return JsonConvert.DeserializeObject<Config>(File.ReadAllText(SFactionsMain.configPath));
+            Config newConfig = new();
+            newConfig.Write();
+            return newConfig;
         }
     }
 }
