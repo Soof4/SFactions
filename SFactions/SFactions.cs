@@ -12,7 +12,7 @@ namespace SFactions
     [ApiVersion(2, 1)]
     public class SFactions : TerrariaPlugin {
         public override string Name => "SFactions";
-        public override Version Version => new Version(0, 10, 6);
+        public override Version Version => new Version(1, 0, 0);
         public override string Author => "Soofa";
         public override string Description => "An experimental factions plugin.";
         public SFactions(Main game) : base(game) {
