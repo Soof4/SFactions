@@ -12,4 +12,10 @@
     <PackageReference Include="TShock" Version="5.1.3" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Reference Include="Abilities">
+      <HintPath>..\Dependencies\Abilities.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
 </Project>

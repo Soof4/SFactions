@@ -19,7 +19,7 @@ namespace SFactions {
                 args.Player.Name,
                 args.Player.Group.Suffix,
                 args.RawText,
-                SFactions.onlineMembers.ContainsKey(args.Player.Name) ? $"[{SFactions.onlineMembers[args.Player.Name].Name}]" : "");
+                SFactions.onlineMembers.ContainsKey((byte)args.Player.Index) ? $"[{SFactions.onlineFactions[SFactions.onlineMembers[(byte)args.Player.Index]].Name}] " : "");
                 
 
             TSPlayer.All.SendMessage(message,

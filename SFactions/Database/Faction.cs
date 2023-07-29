@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Abilities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,15 +11,15 @@ namespace SFactions.Database {
         public int Id { get; set; }
         public string Name { get; set; }
         public string? Leader { get; set; }
+        public AbilityType Ability { get; set; }
+        public string? Region { get; set; }
 
-        public Faction(int id, string name, string leader) {
+        public Faction(int id, string name, string leader, AbilityType ability, string region) {
             Id = id;
             Name = name;
             Leader = leader;
-        }
-
-        public bool IsLeader(string name) {
-            return Leader != null && Leader.Equals(name);
+            Ability = ability;
+            Region = region;
         }
     }
 }
