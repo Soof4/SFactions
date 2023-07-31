@@ -39,7 +39,7 @@ namespace SFactions
             }
 
             foreach (string memberName in memberNames) {
-                TShock.Regions.AddNewUser(faction.Name, memberName);
+                TShock.Regions.AddNewUser(faction.Region, memberName);
             }
         }
 
