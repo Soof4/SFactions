@@ -12,7 +12,7 @@ namespace SFactions
     [ApiVersion(2, 1)]
     public class SFactions : TerrariaPlugin {
         public override string Name => "SFactions";
-        public override Version Version => new Version(1, 0, 1);
+        public override Version Version => new Version(1, 0, 2);
         public override string Author => "Soofa";
         public override string Description => "An experimental factions plugin.";
         public SFactions(Main game) : base(game) {
@@ -79,7 +79,7 @@ namespace SFactions
         }
 
         private void OnPlayerUpdate(object? sender, GetDataHandlers.PlayerUpdateEventArgs args) {
-            if (args.Control.IsUsingItem && args.Player.SelectedItem.type == ItemID.WhoopieCushion && onlineMembers.ContainsKey(args.PlayerId)) {
+            if (args.Control.IsUsingItem && args.Player.SelectedItem.netID == ItemID.WhoopieCushion && onlineMembers.ContainsKey(args.PlayerId)) {
                 switch (onlineFactions[onlineMembers[args.PlayerId]].Ability) {
                     case AbilityType.DryadsRingOfHealing:
                         Abilities.Abilities.DryadsRingOfHealing(args.Player);
