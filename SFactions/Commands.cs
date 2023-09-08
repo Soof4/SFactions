@@ -3,6 +3,9 @@ using TShockAPI;
 using SFactions.Database;
 using System.Net.Http.Headers;
 using Abilities;
+using NuGet.Protocol.Plugins;
+using Terraria;
+using Terraria.Localization;
 
 namespace SFactions {
     public class Commands {
@@ -32,11 +35,136 @@ namespace SFactions {
                     AbilityCmd(args); return;
                 case "region":
                     RegionCmd(args); return;
+                    /*
+                case "points":
+                    PointsCmd(args); return;
+                case "quest":
+                    QuestCmd(args); return;
+                    */
                 default:
                     player.SendErrorMessage("Subcommand could not be found."); return;
             }
         }
+        /*
+        private static async void QuestCmd(CommandArgs args) {
+            TSPlayer plr = TShock.Players[args.Player.Index];
+            if (!SFactions.onlineMembers.ContainsKey((byte)plr.Index)) {
+                plr.SendErrorMessage("You're not in a faction.");
+                return;
+            }
+            Faction plrFaction = SFactions.onlineFactions[SFactions.onlineMembers[(byte)plr.Index]];
 
+            if (args.Parameters.Count < 2) {
+                plr.SendErrorMessage("No sub-command for \"quest\" command were given. (/faction quest check/deliver/new/base)");
+                return;
+            }
+
+            int[] quest;
+            try {
+                quest = SFactions.dbManager.GetQuest(plrFaction.Id);
+            }
+            catch (NullReferenceException) {
+                int itemId = SFactions.Config.Quests.Keys.ElementAt(WorldGen.genRand.Next(SFactions.Config.Quests.Keys.Count));
+                int amount = SFactions.Config.Quests[itemId];
+                SFactions.dbManager.InsertQuest(plrFaction.Id, itemId, amount);
+                quest = SFactions.dbManager.GetQuest(plrFaction.Id);
+            }
+
+            switch (args.Parameters[1]) {
+                case "check":
+                    plr.SendInfoMessage($"Collect and deliver {quest[1]} {TShock.Utils.GetItemById(quest[0]).Name} ([i:{quest[0]}]).");
+                    break;
+                case "deliver":
+                    if (plr.SelectedItem.netID == quest[0]) {
+                        int transferAmount = plr.SelectedItem.stack;
+
+                        if (transferAmount <= quest[1]) {
+                            plr.SelectedItem.stack = 0;
+                            quest[1] -= transferAmount;
+                        }
+                        else {
+                            plr.SelectedItem.stack -= quest[1];
+                            quest[1] = 0;
+                        }
+                        
+                        NetMessage.SendData((int)PacketTypes.PlayerSlot, -1, -1, NetworkText.FromLiteral(plr.SelectedItem.Name), plr.Index, plr.TPlayer.selectedItem);
+                        NetMessage.SendData((int)PacketTypes.PlayerSlot, plr.Index, -1, NetworkText.FromLiteral(plr.SelectedItem.Name), plr.Index, plr.TPlayer.selectedItem);
+                        
+                        SFactions.dbManager.SaveQuest(plrFaction.Id, quest[0], quest[1]);
+                        plr.SendSuccessMessage("Delivered the items.");
+
+                        if (quest[1] == 0) {    // quest has been completed
+                            int preLevel = PointManager.GetLevelByPoint(plrFaction.Point);
+
+                            plrFaction.Point++;
+                            SFactions.dbManager.SaveFaction(plrFaction);
+                            TSPlayer.All.SendMessage($"[i:903] {plrFaction.Name} completed a quest! (+1 Point)", 134, 255, 142);
+
+                            int postLevel = PointManager.GetLevelByPoint(plrFaction.Point);
+
+                            if (preLevel < postLevel) {    // send an announcement if leveled up
+                                TSPlayer.All.SendMessage($"[i:4601] {plrFaction.Name} leveled up! (Level: {postLevel})", 134, 255, 142);
+                            }
+
+                            // create and save a new quest
+                            int newItemId = SFactions.Config.Quests.Keys.ElementAt(WorldGen.genRand.Next(SFactions.Config.Quests.Keys.Count));
+                            int newAmount = SFactions.Config.Quests[newItemId];
+                            SFactions.dbManager.SaveQuest(plrFaction.Id, newItemId, newAmount);
+                        }
+                    }
+                    else {
+                        plr.SendErrorMessage("The item you're holding doesn't match with the quest item.");
+                    }
+                    break;
+                case "new":
+                    if (!plr.Name.Equals(plrFaction.Leader)) {
+                        plr.SendErrorMessage("Only leaders can request a new quest.");
+                        break;
+                    }
+
+                    if (!PointManager.QuestChangeTimes.ContainsKey(plrFaction.Id)) {
+                        PointManager.QuestChangeTimes.Add(plrFaction.Id, DateTime.UtcNow);
+                    }
+                    else if ((DateTime.UtcNow - PointManager.QuestChangeTimes[plrFaction.Id]).TotalHours < 12) {
+                        plr.SendErrorMessage("You need to wait 12 hours to change the quest again.");
+                    }
+
+                    int itemId = SFactions.Config.Quests.Keys.ElementAt(WorldGen.genRand.Next(SFactions.Config.Quests.Keys.Count));
+                    int amount = SFactions.Config.Quests[itemId];
+                    SFactions.dbManager.SaveQuest(plrFaction.Id, itemId, amount);
+                    quest = SFactions.dbManager.GetQuest(plrFaction.Id);
+                    plr.SendInfoMessage($"Collect and deliver {quest[1]} {TShock.Utils.GetItemById(quest[0]).Name} ([i:{quest[0]}]).");
+
+                    break;
+                case "base":
+                    if (await PointManager.CheckForFactionBase(plr)) {
+                        if (plrFaction.baseQuestComplete) {
+                            plr.SendErrorMessage("Your faction has already completed the base building quest.");
+                            break;
+                        }
+                        plrFaction.baseQuestComplete = true;
+                        plrFaction.Point += 3;
+                        SFactions.dbManager.SaveFaction(plrFaction);
+                        TSPlayer.All.SendMessage($"[i:903] {plrFaction.Name} completed the base quest! (+3 Points)", 134, 255, 142);
+                    }
+                    break;
+                default:
+                    plr.SendErrorMessage("Invalid sub-command for \"quest\" command were given. (/faction quest check/deliver/new/base)");
+                    break;
+            }
+        }
+        
+        
+        private static void PointsCmd(CommandArgs args) {
+            TSPlayer plr = args.Player;
+            if (!SFactions.onlineMembers.ContainsKey((byte)plr.Index)) {
+                plr.SendErrorMessage("You're not in a faction.");
+                return;
+            }
+            Faction plrFaction = SFactions.onlineFactions[SFactions.onlineMembers[(byte)plr.Index]];
+            plr.SendInfoMessage($"Your faction has {plrFaction.Point} points. (Level: {PointManager.GetLevelByPoint(plrFaction.Point)})");
+        }
+        */
         private static void RegionCmd(CommandArgs args) {
             TSPlayer plr = args.Player;
             if (!SFactions.onlineMembers.ContainsKey((byte)plr.Index)) {
@@ -102,24 +230,32 @@ namespace SFactions {
             }
 
             if (args.Parameters.Count < 2) {
-                plr.SendErrorMessage("Please specify an ability. (healing, vampire, sand, speed, witch)");
+                plr.SendErrorMessage("Please specify an ability. (healing, vampire, sand, adrenaline, witch, marthymr, randomtp, eol, twilight)");
                 return;
             }
 
             AbilityType newType;
-            switch (args.Parameters[1]) {
+            switch (args.Parameters[1].ToLower()) {
                 case "healing":
                     newType = AbilityType.DryadsRingOfHealing; break;
                 case "vampire":
                     newType = AbilityType.RingOfDracula; break;
                 case "sand":
                     newType = AbilityType.SandFrames; break;
-                case "speed":
-                    newType = AbilityType.FlashBoy; break;
+                case "adrenaline":
+                    newType = AbilityType.Adrenaline; break;
                 case "witch":
                     newType = AbilityType.Witch; break;
+                case "marthymr":
+                    newType = AbilityType.Marthymr; break;
+                case "randomtp":
+                    newType = AbilityType.RandomTeleport; break;
+                case "eol":
+                    newType = AbilityType.EmpressOfLight; break;
+                case "twilight":
+                    newType = AbilityType.Twilight; break;
                 default:
-                    plr.SendErrorMessage("Invalid ability type. Valid types are healing, vampire, sand, speed, witch"); return;
+                    plr.SendErrorMessage("Invalid ability type. Valid types are healing, vampire, sand, adrenaline, witch, marthymr, randomtp, eol, twilight"); return;
             }
 
             SFactions.onlineFactions[SFactions.onlineMembers[(byte)args.Player.Index]].Ability = newType;
@@ -185,6 +321,26 @@ namespace SFactions {
             }
             RegionManager.AddMember(plr);
             plr.SendSuccessMessage($"You've joined {newFaction.Name}.");
+            /*
+            int memberCount = SFactions.dbManager.GetAllMembers(newFaction.Id).Count;
+
+            if (memberCount > newFaction.highestMemberCount) {
+                int preLevel = PointManager.GetLevelByPoint(newFaction.Point);
+
+                newFaction.highestMemberCount = memberCount;
+                if (memberCount % 5 == 0) {
+                    newFaction.Point++;
+                    TSPlayer.All.SendMessage($"[i:903] {newFaction.Name} has reached {memberCount}! (+1 Point)", 134, 255, 142);
+                }
+
+                int postLevel = PointManager.GetLevelByPoint(newFaction.Point);
+
+                if (preLevel < postLevel) {    // send an announcement if leveled up
+                    TSPlayer.All.SendMessage($"[i:4601] {newFaction.Name} has leveled up! (Level: {postLevel})", 134, 255, 142);
+                }
+
+            }
+            */
         }
 
         private static void CreateCmd(CommandArgs args) {
@@ -293,6 +449,10 @@ namespace SFactions {
                 + "\nlead: Make yourself the leader of your faction if there isn't someone else already."
                 + "\nability: Changes faction's ability. (usage: /faction ability <ability name>)"
                 + "\nregion: Claims a protected region as faction region. (usage: /region <set/del>) (You need to be inside a protected region.)"
+                /*
+                + "\npoints: Shows how many points your faction has."
+                + "\nquest: Quest commands. (/faction quest check/deliver/new/base)"
+                */
                 );
         }
     }

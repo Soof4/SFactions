@@ -21,22 +21,49 @@ namespace SFactions.Database
                 new SqlColumn("Leader", MySqlDbType.TinyText),
                 new SqlColumn("AbilityType", MySqlDbType.Int32),
                 new SqlColumn("Region", MySqlDbType.TinyText)
+                /*,
+                new SqlColumn("Point", MySqlDbType.Int32),
+                new SqlColumn("baseQuestComplete", MySqlDbType.Int32),
+                new SqlColumn("highestMemberCount", MySqlDbType.Int32)
+                */
                 ));
 
             sqlCreator.EnsureTableStructure(new SqlTable("Members",
                 new SqlColumn("Member", MySqlDbType.TinyText) { Primary = true, Unique = true},
                 new SqlColumn("FactionId", MySqlDbType.Int32)
                 ));
+
+            /*
+            sqlCreator.EnsureTableStructure(new SqlTable("Quests",
+                new SqlColumn("FactionId", MySqlDbType.Int32) { Primary = true, Unique = true},
+                new SqlColumn("ItemId", MySqlDbType.Int32),
+                new SqlColumn("Amount", MySqlDbType.Int32)
+                ));
+            */
         }
 
         #region Faction Management
         public bool InsertFaction(string leaderName, string factionName) {
-            return _db.Query("INSERT INTO Factions (Name, Leader, AbilityType) VALUES (@0, @1, @2)", factionName, leaderName, AbilityType.DryadsRingOfHealing) != 0;
+            /*
+            return _db.Query("INSERT INTO Factions (Name, Leader, AbilityType, Point, baseQuestComplete, highestMemberCount) " +
+                "VALUES (@0, @1, @2, @3, @4, @5)", 
+                factionName, leaderName, AbilityType.DryadsRingOfHealing, 0, 0, 1) != 0;
+            */
+            return _db.Query("INSERT INTO Factions (Name, Leader, AbilityType) " +
+                "VALUES (@0, @1, @2)",
+                factionName, leaderName, AbilityType.DryadsRingOfHealing) != 0;
         }
 
 
         public bool SaveFaction(Faction faction) {
-            return _db.Query("UPDATE Factions SET Name = @0, Leader = @1, AbilityType = @2, Region = @3 WHERE Id = @4", faction.Name, faction.Leader, (int)faction.Ability, faction.Region, faction.Id) != 0;
+            /*
+            return _db.Query("UPDATE Factions SET Name = @1, Leader = @2, AbilityType = @3, Region = @4, " +
+                "Point = @5, baseQuestComplete = @6, highestMemberCount = @7 WHERE Id = @0",
+                faction.Id, faction.Name, faction.Leader, (int)faction.Ability, faction.Region,
+                faction.Point, Utils.BoolToInt(faction.baseQuestComplete), faction.highestMemberCount) != 0;
+            */
+            return _db.Query("UPDATE Factions SET Name = @1, Leader = @2, AbilityType = @3, Region = @4 WHERE Id = @0",
+                faction.Id, faction.Name, faction.Leader, (int)faction.Ability, faction.Region) != 0;
         }
 
 
@@ -48,6 +75,7 @@ namespace SFactions.Database
             return false;
         }
 
+
         /// <exception cref="NullReferenceException"></exception>
         public Faction GetFaction(string factionName) {
             using var reader = _db.QueryReader("SELECT * FROM Factions WHERE Name = @0", factionName);
@@ -57,7 +85,12 @@ namespace SFactions.Database
                     reader.Get<string>("Name"),
                     reader.Get<string>("Leader"),
                     (AbilityType)reader.Get<int>("AbilityType"),
-                    reader.Get<string>("Region"));
+                    reader.Get<string>("Region")
+                    /*,
+                    reader.Get<int>("Point"),
+                    Utils.IntToBool(reader.Get<int>("baseQuestComplete")),
+                    reader.Get<int>("highestMemberCount")*/
+                    );
             }
             throw new NullReferenceException();
         }
@@ -75,6 +108,10 @@ namespace SFactions.Database
                     reader2.Get<string>("Leader"),
                     (AbilityType)reader2.Get<int>("AbilityType"),
                     reader2.Get<string>("Region")
+                    /*,
+                    reader2.Get<int>("Point"),
+                    Utils.IntToBool(reader2.Get<int>("baseQuestComplete")),
+                    reader2.Get<int>("highestMemberCount")*/
                     );
                 }
             }
@@ -101,5 +138,37 @@ namespace SFactions.Database
             return memberNames;
         }
         #endregion
+
+        /*
+        #region Quest Management
+        public bool InsertQuest(int factionId, int itemId, int amount) {
+            return _db.Query("INSERT INTO Quests (FactionId, ItemId, Amount) VALUES (@0, @1, @2)", factionId, itemId, amount) != 0;
+        }
+
+
+        public bool SaveQuest(int factionId, int itemId, int amount) {
+            return _db.Query("UPDATE Quests SET ItemId = @0, Amount = @1 WHERE FactionId = @2", itemId, amount, factionId) != 0;
+        }
+
+
+        public bool DeleteQuest(int factionId) {
+            return _db.Query("DELETE FROM Quests WHERE FactionId = @0", factionId) != 0;
+        }
+
+
+        /// <exception cref="NullReferenceException"></exception>
+        /// <returns>quest[0] = ItemId<br>
+        /// </br>quest[1] = Amount</returns>
+        public int[] GetQuest(int factionId) {
+            using var reader = _db.QueryReader("SELECT * FROM Quests WHERE FactionId = @0", factionId);
+            while (reader.Read()) {
+                int[] result = { reader.Get<int>("ItemId"), reader.Get<int>("Amount") };
+                return result;
+            }
+            throw new NullReferenceException();
+        }
+
+        #endregion
+        */
     }
 }
