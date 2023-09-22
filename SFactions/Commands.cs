@@ -230,7 +230,7 @@ namespace SFactions {
             }
 
             if (args.Parameters.Count < 2) {
-                plr.SendErrorMessage("Please specify an ability. (healing, vampire, sand, adrenaline, witch, marthymr, randomtp, eol, twilight)");
+                plr.SendErrorMessage("Please specify an ability. (healing, vampire, sand, adrenaline, witch, marthymr, randomtp, eol, twilight, harvest)");
                 return;
             }
 
@@ -254,8 +254,10 @@ namespace SFactions {
                     newType = AbilityType.EmpressOfLight; break;
                 case "twilight":
                     newType = AbilityType.Twilight; break;
+                case "harvest":
+                    newType = AbilityType.Harvest; break;
                 default:
-                    plr.SendErrorMessage("Invalid ability type. Valid types are healing, vampire, sand, adrenaline, witch, marthymr, randomtp, eol, twilight"); return;
+                    plr.SendErrorMessage("Invalid ability type. Valid types are healing, vampire, sand, adrenaline, witch, marthymr, randomtp, eol, twilight, harvest"); return;
             }
 
             SFactions.onlineFactions[SFactions.onlineMembers[(byte)args.Player.Index]].Ability = newType;

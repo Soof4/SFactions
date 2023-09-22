@@ -12,7 +12,7 @@ namespace SFactions
     [ApiVersion(2, 1)]
     public class SFactions : TerrariaPlugin {
         public override string Name => "SFactions";
-        public override Version Version => new Version(1, 1, 0);
+        public override Version Version => new Version(1, 1, 1);
         public override string Author => "Soofa";
         public override string Description => "An experimental factions plugin.";
         public SFactions(Main game) : base(game) {
@@ -118,6 +118,9 @@ namespace SFactions
                         break;
                     case AbilityType.Twilight:
                         Abilities.Abilities.Twilight(args.Player, 90, level);
+                        break;
+                    case AbilityType.Harvest:
+                        Abilities.Abilities.Harvest(args.Player, 90, level);
                         break;
                     default: return;
                         
