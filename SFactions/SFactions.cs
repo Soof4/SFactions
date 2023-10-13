@@ -12,7 +12,7 @@ namespace SFactions
     [ApiVersion(2, 1)]
     public class SFactions : TerrariaPlugin {
         public override string Name => "SFactions";
-        public override Version Version => new Version(1, 1, 1);
+        public override Version Version => new Version(1, 1, 2);
         public override string Author => "Soofa";
         public override string Description => "An experimental factions plugin.";
         public SFactions(Main game) : base(game) {
@@ -46,7 +46,7 @@ namespace SFactions
             if (args.MsgID == PacketTypes.PlayerDeathV2 && onlineMembers.ContainsKey((byte)args.Msg.whoAmI)) {
                 Faction plrFaction = onlineFactions[onlineMembers[(byte)args.Msg.whoAmI]];
                 if (plrFaction.Ability == AbilityType.Marthymr) {
-                    Abilities.Abilities.Marthymr(TShock.Players[args.Msg.whoAmI], 5, PointManager.GetAbilityLevelByBossProgression());
+                    Abilities.Abilities.Marthymr(TShock.Players[args.Msg.whoAmI], 90, PointManager.GetAbilityLevelByBossProgression());
                 }
             }
         }
