@@ -1,0 +1,31 @@
+name: Update Abilities DLL
+
+on:
+  schedule:
+    - cron: "0 0 * * *"  # Run once a day, adjust the schedule as needed
+
+jobs:
+  update-dll:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Download Abilities DLL
+        run: |
+          RELEASE_NAME=$(curl -s "https://api.github.com/repos/Soof4/Abilities/releases/latest" | jq -r .tag_name)
+          wget -q "https://github.com/Soof4/Abilities/releases/download/$RELEASE_NAME/Abilities.dll"
+        shell: bash
+
+      - name: Push DLL to Dependencies
+        run: |
+          cp Abilities.dll Dependencies/
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+          git add Dependencies/Abilities.dll
+          git commit -m "Update Abilities DLL"
+          git push
+        shell: bash
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
