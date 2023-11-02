@@ -10,7 +10,7 @@ jobs:
 
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Download Abilities DLL
         run: |
@@ -21,12 +21,13 @@ jobs:
       - name: Push DLL to Dependencies
         run: |
           git pull origin main
+          git fetch origin
           cp Abilities.dll Dependencies/
           git config user.name "Github Actions"
           git config user.email "actions@github.com"
           git add .
           git commit -m "Update Abilities DLL"
-          git push origin --force
+          git push origin
         shell: bash
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
