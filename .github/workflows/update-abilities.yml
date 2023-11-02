@@ -2,7 +2,7 @@ name: Update Abilities DLL
 
 on:
   schedule:
-    - cron: "0 0 * * *"
+    - cron: "16 9 * * *"
 
 jobs:
   update-dll:
