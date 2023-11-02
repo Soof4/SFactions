@@ -23,8 +23,10 @@ jobs:
           git pull origin main
           cp Abilities.dll Dependencies/
           git config user.name "Github Actions"
-          git config user.email "emr3.cbc@gmail.com"
-          git add Dependencies/Abilities.dll
+          git config user.email "actions@github.com"
+          git add .
           git commit -m "Update Abilities DLL"
           git push origin HEAD:main -f
         shell: bash
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
