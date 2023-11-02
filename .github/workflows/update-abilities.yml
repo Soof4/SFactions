@@ -18,11 +18,15 @@ jobs:
           wget -q "https://github.com/Soof4/Abilities/releases/download/$RELEASE_NAME/Abilities.dll"
         shell: bash
 
-      - name: Push DLL to Dependencies
+      - name: Fetch Repository
         run: |
           git fetch origin
           git checkout main
           git pull origin main
+        shell: bash
+
+      - name: Push DLL to Dependencies
+        run: |
           cp Abilities.dll Dependencies/
           git config user.name "Github Actions"
           git config user.email "actions@github.com"
