@@ -27,5 +27,3 @@ jobs:
           git commit -m "Update Abilities DLL"
           git push
         shell: bash
-        env:
-          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
