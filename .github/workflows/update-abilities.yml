@@ -26,5 +26,5 @@ jobs:
           git config user.email "emr3.cbc@gmail.com"
           git add Dependencies/Abilities.dll
           git commit -m "Update Abilities DLL"
-          git push origin HEAD:main
+          git push origin HEAD:main -f
         shell: bash
