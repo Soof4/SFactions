@@ -20,6 +20,7 @@ jobs:
 
       - name: Push DLL to Dependencies
         run: |
+          git pull origin main
           cp Abilities.dll Dependencies/
           git config --global user.name "Github Actions"
           git config --global user.email "emr3.cbc@gmail.com"
