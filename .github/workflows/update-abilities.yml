@@ -2,7 +2,7 @@ name: Update Abilities DLL
 
 on:
   schedule:
-    - cron: "0 0 * * *"  # Run once a day, adjust the schedule as needed
+    - cron: "0 0 * * *"
 
 jobs:
   update-dll:
@@ -14,16 +14,16 @@ jobs:
 
       - name: Download Abilities DLL
         run: |
-          RELEASE_NAME=$(curl -s "https://api.github.com/repos/Soof4/Abilities/releases/latest" | jq -r .tag_name)
+          RELEASE_NAME=$(curl -s "https://api.github.com/repos/Soof4/Abilities/releases/latest" | grep -oP '"tag_name": "\K(.*)(?=")')
           wget -q "https://github.com/Soof4/Abilities/releases/download/$RELEASE_NAME/Abilities.dll"
         shell: bash
 
       - name: Push DLL to Dependencies
         run: |
           cp Abilities.dll Dependencies/
-          git config --global user.name "Github Actions"
-          git config --global user.email "emr3.cbc@gmail.com"
+          git config user.name "Github Actions"
+          git config user.email "emr3.cbc@gmail.com"
           git add Dependencies/Abilities.dll
           git commit -m "Update Abilities DLL"
-          git push
+          git push origin HEAD:main
         shell: bash
