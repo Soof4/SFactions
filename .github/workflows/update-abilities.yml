@@ -27,7 +27,7 @@ jobs:
 
       - name: Push DLL to Dependencies
         run: |
-          cp Abilities.dll Dependencies/
+          cp Abilities.dll Dependencies/Abilities.dll
           git config user.name "Github Actions"
           git config user.email "actions@github.com"
           git add .
