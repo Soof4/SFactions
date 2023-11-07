@@ -30,7 +30,7 @@ jobs:
           cp Abilities.dll Dependencies/Abilities.dll
           git config user.name "Github Actions"
           git config user.email "actions@github.com"
-          git add .
+          git add Dependencies/Abilities.dll
           git commit -m "Update Abilities DLL"
           git push origin main
         shell: bash
