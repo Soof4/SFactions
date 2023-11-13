@@ -22,12 +22,13 @@ jobs:
       - name: Download Abilities DLL
         run: |
           RELEASE_NAME=$(curl -s "https://api.github.com/repos/Soof4/Abilities/releases/latest" | grep -oP '"tag_name": "\K(.*)(?=")')
-          wget -q --output-document=/Dependencies/Abilities.dll "https://github.com/Soof4/Abilities/releases/download/$RELEASE_NAME/Abilities.dll"
+          rm Dependencies/Abilities.dll
+          wget -q --output-document=Dependencies/Abilities.dll "https://github.com/Soof4/Abilities/releases/download/$RELEASE_NAME/Abilities.dll"
         shell: bash
 
       - name: Push DLL to Dependencies
         run: |
-          cp Abilities.dll /Dependencies/Abilities.dll
+          cp Abilities.dll Dependencies/Abilities.dll
           git config user.name "Github Actions"
           git config user.email "actions@github.com"
           git add Dependencies/Abilities.dll
