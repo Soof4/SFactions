@@ -21,8 +21,8 @@ jobs:
 
       - name: Download Abilities DLL
         run: |
+          cd Dependencies
           RELEASE_NAME=$(curl -s "https://api.github.com/repos/Soof4/Abilities/releases/latest" | grep -oP '"tag_name": "\K(.*)(?=")')
-          rm Dependencies/Abilities.dll
           wget -q --output-document=Dependencies/Abilities.dll "https://github.com/Soof4/Abilities/releases/download/$RELEASE_NAME/Abilities.dll"
         shell: bash
 
