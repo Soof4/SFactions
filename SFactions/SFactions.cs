@@ -7,22 +7,20 @@ using TShockAPI.Hooks;
 using Abilities;
 using Terraria.ID;
 
-namespace SFactions
-{
+namespace SFactions {
     [ApiVersion(2, 1)]
     public class SFactions : TerrariaPlugin {
         public override string Name => "SFactions";
-        public override Version Version => new Version(1, 1, 2);
+        public override Version Version => new Version(1, 1, 3);
         public override string Author => "Soofa";
-        public override string Description => "An experimental factions plugin.";
-        public SFactions(Main game) : base(game) {
-        }
-        public static string configPath = Path.Combine(TShock.SavePath + "/SFactionsConfig.json");
-        public static DatabaseManager dbManager = new(new SqliteConnection("Data Source=" + Path.Combine(TShock.SavePath, "SFactions.sqlite")));
+        public override string Description => "Sausage Factions? Smexy Factions? Sup Factions?";
+        public SFactions(Main game) : base(game) {}
+        public static string ConfigPath = Path.Combine(TShock.SavePath + "/SFactionsConfig.json");
+        public static DatabaseManager DbManager = new(new SqliteConnection("Data Source=" + Path.Combine(TShock.SavePath, "SFactions.sqlite")));
         public static Config Config = new();
-        
-        public static Dictionary<byte, int> onlineMembers = new();    // player index: faction id
-        public static Dictionary<int, Faction> onlineFactions = new();    // faction id: faction
+        public static Dictionary<byte, int> OnlineMembers = new();    // player index: faction id
+        public static Dictionary<int, Faction> OnlineFactions = new();    // faction id: faction
+
         public override void Initialize() {
             GeneralHooks.ReloadEvent += OnReload;
             GetDataHandlers.PlayerUpdate += OnPlayerUpdate;
@@ -43,8 +41,8 @@ namespace SFactions
         }
 
         private void OnNetGetData(GetDataEventArgs args) {
-            if (args.MsgID == PacketTypes.PlayerDeathV2 && onlineMembers.ContainsKey((byte)args.Msg.whoAmI)) {
-                Faction plrFaction = onlineFactions[onlineMembers[(byte)args.Msg.whoAmI]];
+            if (args.MsgID == PacketTypes.PlayerDeathV2 && OnlineMembers.ContainsKey((byte)args.Msg.whoAmI)) {
+                Faction plrFaction = OnlineFactions[OnlineMembers[(byte)args.Msg.whoAmI]];
                 if (plrFaction.Ability == AbilityType.Marthymr) {
                     Abilities.Abilities.Marthymr(TShock.Players[args.Msg.whoAmI], 90, PointManager.GetAbilityLevelByBossProgression());
                 }
@@ -53,17 +51,17 @@ namespace SFactions
 
         private void OnNetGreetPlayer(GreetPlayerEventArgs args) {
             try {
-                Faction plrFaction = dbManager.GetPlayerFaction(TShock.Players[args.Who].Name);
-                onlineMembers.Add((byte)args.Who, plrFaction.Id);
-                int factionId = onlineMembers[(byte)args.Who];
+                Faction plrFaction = DbManager.GetPlayerFaction(TShock.Players[args.Who].Name);
+                OnlineMembers.Add((byte)args.Who, plrFaction.Id);
+                int factionId = OnlineMembers[(byte)args.Who];
 
                 // Add the faction to onlineFactions
-                foreach (int id in onlineFactions.Keys) {
+                foreach (int id in OnlineFactions.Keys) {
                     if (id == factionId) {
                         return;
                     }
                 }
-                onlineFactions.Add(factionId, plrFaction);
+                OnlineFactions.Add(factionId, plrFaction);
             }
             catch (NullReferenceException) {
                 return;
@@ -71,17 +69,17 @@ namespace SFactions
         }
 
         private void OnServerLeave(LeaveEventArgs args) {
-            if (onlineMembers.ContainsKey((byte)args.Who)) {
-                int factionId = onlineMembers[(byte)args.Who];
-                onlineMembers.Remove((byte)args.Who);
+            if (OnlineMembers.ContainsKey((byte)args.Who)) {
+                int factionId = OnlineMembers[(byte)args.Who];
+                OnlineMembers.Remove((byte)args.Who);
 
                 // Remove the faction from onlineFactions if nobody else is online
-                foreach (int id in onlineMembers.Values) { 
+                foreach (int id in OnlineMembers.Values) { 
                     if (id == factionId) {
                         return;
                     }
                 }
-                onlineFactions.Remove(factionId);
+                OnlineFactions.Remove(factionId);
             }
         }
         
@@ -91,8 +89,8 @@ namespace SFactions
         }
 
         private void OnPlayerUpdate(object? sender, GetDataHandlers.PlayerUpdateEventArgs args) {
-            if (args.Control.IsUsingItem && args.Player.SelectedItem.netID == ItemID.WhoopieCushion && onlineMembers.ContainsKey(args.PlayerId)) {
-                Faction plrFaction = onlineFactions[onlineMembers[args.PlayerId]];
+            if (args.Control.IsUsingItem && args.Player.SelectedItem.netID == ItemID.WhoopieCushion && OnlineMembers.ContainsKey(args.PlayerId)) {
+                Faction plrFaction = OnlineFactions[OnlineMembers[args.PlayerId]];
                 int level = PointManager.GetAbilityLevelByBossProgression();
                 switch (plrFaction.Ability) {
                     case AbilityType.DryadsRingOfHealing:

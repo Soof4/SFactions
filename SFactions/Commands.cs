@@ -1,14 +1,11 @@
-﻿using IL.Terraria.GameContent;
-using TShockAPI;
+﻿using TShockAPI;
 using SFactions.Database;
-using System.Net.Http.Headers;
 using Abilities;
-using NuGet.Protocol.Plugins;
-using Terraria;
-using Terraria.Localization;
+using TShockAPI.Configuration;
 
 namespace SFactions {
     public class Commands {
+        private static Dictionary<string, Faction> Invitations = new();
         public static void FactionCmd(CommandArgs args) {
             TSPlayer player = args.Player;
             if(args.Parameters.Count < 1) {
@@ -35,146 +32,162 @@ namespace SFactions {
                     AbilityCmd(args); return;
                 case "region":
                     RegionCmd(args); return;
-                    /*
-                case "points":
-                    PointsCmd(args); return;
-                case "quest":
-                    QuestCmd(args); return;
-                    */
+                case "invitetype":
+                    InviteTypeCmd(args); return;
+                case "invite":
+                    InviteCmd(args); return;
+                case "accept":
+                    AcceptCmd(args); return;
+                case "info":
+                    InfoCmd(args); return;
                 default:
                     player.SendErrorMessage("Subcommand could not be found."); return;
             }
         }
-        /*
-        private static async void QuestCmd(CommandArgs args) {
-            TSPlayer plr = TShock.Players[args.Player.Index];
-            if (!SFactions.onlineMembers.ContainsKey((byte)plr.Index)) {
+
+        private static void AcceptCmd(CommandArgs args) {
+            TSPlayer plr = args.Player;
+            if (SFactions.OnlineMembers.ContainsKey((byte)plr.Index)) {
+                plr.SendErrorMessage("You need to leave your current faction to join another.");
+                return;
+            }
+            
+            if (!Invitations.TryGetValue(plr.Name, out Faction? newFaction) || newFaction == null) {
+                plr.SendErrorMessage("Coudln't find a pending invitation.");
+                return;
+            }
+
+            // Add player to the faction
+            SFactions.OnlineMembers.Add((byte)plr.Index, newFaction.Id);
+            SFactions.DbManager.InsertMember(plr.Name, newFaction.Id);
+
+            if (!SFactions.OnlineFactions.ContainsKey(newFaction.Id)) {
+                SFactions.OnlineFactions.Add(newFaction.Id, newFaction);
+            }
+
+            RegionManager.AddMember(plr);
+            plr.SendSuccessMessage($"You've joined {newFaction.Name}.");
+
+        }
+
+        private static void InfoCmd(CommandArgs args) {
+            TSPlayer plr = args.Player;
+            if (args.Parameters.Count < 2) {
+                plr.SendErrorMessage("Please specify a faction name.");
+                return;
+            }
+
+            string factionName = string.Join(' ', args.Parameters.GetRange(1, args.Parameters.Count - 1));
+
+            if (!SFactions.DbManager.DoesFactionExist(factionName)) {
+                plr.SendErrorMessage($"There is no faction called {factionName}.");
+                return;
+            }
+            
+            Faction faction = SFactions.DbManager.GetFaction(factionName);
+            plr.SendInfoMessage($"Faction ID: {faction.Id}\n" +
+                                $"Faction Name: {faction.Name}\n" +
+                                $"Faction Leader: {faction.Leader}\n" +
+                                $"Faction Ability: {faction.Ability}\n" +
+                                $"Has a Region: {faction.Region != null}\n" +
+                                $"Invite Type: {faction.InviteType}"
+                                );
+        }
+
+        private static void InviteCmd(CommandArgs args) {
+            TSPlayer plr = args.Player;
+            if (!SFactions.OnlineMembers.ContainsKey((byte)plr.Index)) {
                 plr.SendErrorMessage("You're not in a faction.");
                 return;
             }
-            Faction plrFaction = SFactions.onlineFactions[SFactions.onlineMembers[(byte)plr.Index]];
-
-            if (args.Parameters.Count < 2) {
-                plr.SendErrorMessage("No sub-command for \"quest\" command were given. (/faction quest check/deliver/new/base)");
+            Faction plrFaction = SFactions.OnlineFactions[SFactions.OnlineMembers[(byte)plr.Index]];
+            
+            if (plrFaction.InviteType == InviteType.OnlyLeaderCanInvite && !plr.Name.Equals(plrFaction.Leader)) {
+                plr.SendErrorMessage("Only leader can invite new people.");
                 return;
             }
 
-            int[] quest;
-            try {
-                quest = SFactions.dbManager.GetQuest(plrFaction.Id);
-            }
-            catch (NullReferenceException) {
-                int itemId = SFactions.Config.Quests.Keys.ElementAt(WorldGen.genRand.Next(SFactions.Config.Quests.Keys.Count));
-                int amount = SFactions.Config.Quests[itemId];
-                SFactions.dbManager.InsertQuest(plrFaction.Id, itemId, amount);
-                quest = SFactions.dbManager.GetQuest(plrFaction.Id);
-            }
-
-            switch (args.Parameters[1]) {
-                case "check":
-                    plr.SendInfoMessage($"Collect and deliver {quest[1]} {TShock.Utils.GetItemById(quest[0]).Name} ([i:{quest[0]}]).");
-                    break;
-                case "deliver":
-                    if (plr.SelectedItem.netID == quest[0]) {
-                        int transferAmount = plr.SelectedItem.stack;
-
-                        if (transferAmount <= quest[1]) {
-                            plr.SelectedItem.stack = 0;
-                            quest[1] -= transferAmount;
-                        }
-                        else {
-                            plr.SelectedItem.stack -= quest[1];
-                            quest[1] = 0;
-                        }
-                        
-                        NetMessage.SendData((int)PacketTypes.PlayerSlot, -1, -1, NetworkText.FromLiteral(plr.SelectedItem.Name), plr.Index, plr.TPlayer.selectedItem);
-                        NetMessage.SendData((int)PacketTypes.PlayerSlot, plr.Index, -1, NetworkText.FromLiteral(plr.SelectedItem.Name), plr.Index, plr.TPlayer.selectedItem);
-                        
-                        SFactions.dbManager.SaveQuest(plrFaction.Id, quest[0], quest[1]);
-                        plr.SendSuccessMessage("Delivered the items.");
-
-                        if (quest[1] == 0) {    // quest has been completed
-                            int preLevel = PointManager.GetLevelByPoint(plrFaction.Point);
-
-                            plrFaction.Point++;
-                            SFactions.dbManager.SaveFaction(plrFaction);
-                            TSPlayer.All.SendMessage($"[i:903] {plrFaction.Name} completed a quest! (+1 Point)", 134, 255, 142);
-
-                            int postLevel = PointManager.GetLevelByPoint(plrFaction.Point);
-
-                            if (preLevel < postLevel) {    // send an announcement if leveled up
-                                TSPlayer.All.SendMessage($"[i:4601] {plrFaction.Name} leveled up! (Level: {postLevel})", 134, 255, 142);
-                            }
-
-                            // create and save a new quest
-                            int newItemId = SFactions.Config.Quests.Keys.ElementAt(WorldGen.genRand.Next(SFactions.Config.Quests.Keys.Count));
-                            int newAmount = SFactions.Config.Quests[newItemId];
-                            SFactions.dbManager.SaveQuest(plrFaction.Id, newItemId, newAmount);
-                        }
-                    }
-                    else {
-                        plr.SendErrorMessage("The item you're holding doesn't match with the quest item.");
-                    }
-                    break;
-                case "new":
-                    if (!plr.Name.Equals(plrFaction.Leader)) {
-                        plr.SendErrorMessage("Only leaders can request a new quest.");
+            string targetPlrName = string.Join(" ", args.Parameters.GetRange(1, args.Parameters.Count - 1));
+            
+            TSPlayer? targetPLr = null;
+            foreach(TSPlayer p in TShock.Players) {
+                if (p != null && p.Active) {
+                    if (p.Name.Equals(targetPlrName)) {
+                        targetPLr = p;
                         break;
                     }
-
-                    if (!PointManager.QuestChangeTimes.ContainsKey(plrFaction.Id)) {
-                        PointManager.QuestChangeTimes.Add(plrFaction.Id, DateTime.UtcNow);
+                    else if (p.Name.StartsWith(targetPlrName)) {
+                        targetPLr = p;
                     }
-                    else if ((DateTime.UtcNow - PointManager.QuestChangeTimes[plrFaction.Id]).TotalHours < 12) {
-                        plr.SendErrorMessage("You need to wait 12 hours to change the quest again.");
-                    }
-
-                    int itemId = SFactions.Config.Quests.Keys.ElementAt(WorldGen.genRand.Next(SFactions.Config.Quests.Keys.Count));
-                    int amount = SFactions.Config.Quests[itemId];
-                    SFactions.dbManager.SaveQuest(plrFaction.Id, itemId, amount);
-                    quest = SFactions.dbManager.GetQuest(plrFaction.Id);
-                    plr.SendInfoMessage($"Collect and deliver {quest[1]} {TShock.Utils.GetItemById(quest[0]).Name} ([i:{quest[0]}]).");
-
-                    break;
-                case "base":
-                    if (await PointManager.CheckForFactionBase(plr)) {
-                        if (plrFaction.baseQuestComplete) {
-                            plr.SendErrorMessage("Your faction has already completed the base building quest.");
-                            break;
-                        }
-                        plrFaction.baseQuestComplete = true;
-                        plrFaction.Point += 3;
-                        SFactions.dbManager.SaveFaction(plrFaction);
-                        TSPlayer.All.SendMessage($"[i:903] {plrFaction.Name} completed the base quest! (+3 Points)", 134, 255, 142);
-                    }
-                    break;
-                default:
-                    plr.SendErrorMessage("Invalid sub-command for \"quest\" command were given. (/faction quest check/deliver/new/base)");
-                    break;
+                }
             }
+
+            if (targetPLr == null) {
+                plr.SendErrorMessage("Couldn't the the player.");
+                return;
+            }
+
+            if (!Invitations.TryAdd(targetPLr.Name, plrFaction)) {
+                if (Invitations[targetPLr.Name].Name.Equals(plrFaction.Name)) {
+                    plr.SendErrorMessage("This player already has a pending invitation from your faction.");
+                    return;
+                }
+                Invitations[targetPLr.Name] = plrFaction;
+            }
+
+            targetPLr.SendInfoMessage($"{plr.Name} has invited you to {plrFaction.Name}. Type \"/faction accept\" to join. Do nothing if you don't want to join.");
+            plr.SendSuccessMessage($"You've successfully invited {targetPLr.Name} to your faction.");
         }
         
-        
-        private static void PointsCmd(CommandArgs args) {
+        private static void InviteTypeCmd(CommandArgs args) {
             TSPlayer plr = args.Player;
-            if (!SFactions.onlineMembers.ContainsKey((byte)plr.Index)) {
+            if (!SFactions.OnlineMembers.ContainsKey((byte)plr.Index)) {
                 plr.SendErrorMessage("You're not in a faction.");
                 return;
             }
-            Faction plrFaction = SFactions.onlineFactions[SFactions.onlineMembers[(byte)plr.Index]];
-            plr.SendInfoMessage($"Your faction has {plrFaction.Point} points. (Level: {PointManager.GetLevelByPoint(plrFaction.Point)})");
-        }
-        */
-        private static void RegionCmd(CommandArgs args) {
-            TSPlayer plr = args.Player;
-            if (!SFactions.onlineMembers.ContainsKey((byte)plr.Index)) {
-                plr.SendErrorMessage("You're not in a faction.");
+            Faction plrFaction = SFactions.OnlineFactions[SFactions.OnlineMembers[(byte)plr.Index]];
+
+            if (args.Parameters.Count < 2) {    // if no args were gşven for the sub-cmd
+                string inviteType = "open.";
+                switch (plrFaction.InviteType) {
+                    case InviteType.EveryoneCanInvite: 
+                        inviteType = "invite only. (Any member can invite)";
+                        break;
+                    case InviteType.OnlyLeaderCanInvite:
+                        inviteType = "invite only. (Only the leader can invite)";
+                        break;
+                }
+
+                plr.SendInfoMessage($"Your faction is {inviteType}");
                 return;
             }
-            Faction plrFaction = SFactions.onlineFactions[SFactions.onlineMembers[(byte)plr.Index]];
 
             if (!plr.Name.Equals(plrFaction.Leader)) {
-                plr.SendErrorMessage("Only leaders can set or delete the faction region.");
+                plr.SendErrorMessage("Only leader can change invite type of the faction.");
+                return;
+            }
+
+            // if any args were given for sub-cmd
+            if (!int.TryParse(args.Parameters[1], out int newType) || newType < 1 || newType > 3) {
+                plr.SendErrorMessage("Wrong command usage. (/faction invitetype [1/2/3])\n1: Open, 2: Members can invite, 3: Only leader can invite\neg.: /faction invitetype 2");
+                return;
+            }
+
+            plrFaction.InviteType = (InviteType)(newType - 1);
+            SFactions.DbManager.SaveFaction(plrFaction);
+            plr.SendSuccessMessage($"You've successfully changed you faction's invite type to {plrFaction.InviteType}");
+        }
+
+        private static void RegionCmd(CommandArgs args) {
+            TSPlayer plr = args.Player;
+            if (!SFactions.OnlineMembers.ContainsKey((byte)plr.Index)) {
+                plr.SendErrorMessage("You're not in a faction.");
+                return;
+            }
+            Faction plrFaction = SFactions.OnlineFactions[SFactions.OnlineMembers[(byte)plr.Index]];
+
+            if (!plr.Name.Equals(plrFaction.Leader)) {
+                plr.SendErrorMessage("Only leader can set or delete the faction region.");
                 return;
             }
 
@@ -202,7 +215,7 @@ namespace SFactions {
                     }
 
                     RegionManager.SetRegion(plr);
-                    RegionManager.AddAllMembers(SFactions.onlineFactions[SFactions.onlineMembers[(byte)plr.Index]]);
+                    RegionManager.AddAllMembers(SFactions.OnlineFactions[SFactions.OnlineMembers[(byte)plr.Index]]);
                     plr.SendSuccessMessage("Successfully set region.");
                     return;
                 case "del":
@@ -218,11 +231,11 @@ namespace SFactions {
 
         private static void AbilityCmd(CommandArgs args) {
             TSPlayer plr = args.Player;
-            if (!SFactions.onlineMembers.ContainsKey((byte)plr.Index)) {
+            if (!SFactions.OnlineMembers.ContainsKey((byte)plr.Index)) {
                 plr.SendErrorMessage("You're not in a faction.");
                 return;
             }
-            Faction plrFaction = SFactions.onlineFactions[SFactions.onlineMembers[(byte)plr.Index]];
+            Faction plrFaction = SFactions.OnlineFactions[SFactions.OnlineMembers[(byte)plr.Index]];
 
             if (!plr.Name.Equals(plrFaction.Leader)) {
                 plr.SendErrorMessage("Only leaders can change the faction ability.");
@@ -260,37 +273,37 @@ namespace SFactions {
                     plr.SendErrorMessage("Invalid ability type. Valid types are healing, vampire, sand, adrenaline, witch, marthymr, randomtp, eol, twilight, harvest"); return;
             }
 
-            SFactions.onlineFactions[SFactions.onlineMembers[(byte)args.Player.Index]].Ability = newType;
-            SFactions.dbManager.SaveFaction(SFactions.onlineFactions[SFactions.onlineMembers[(byte)args.Player.Index]]);
+            SFactions.OnlineFactions[SFactions.OnlineMembers[(byte)args.Player.Index]].Ability = newType;
+            SFactions.DbManager.SaveFaction(SFactions.OnlineFactions[SFactions.OnlineMembers[(byte)args.Player.Index]]);
             plr.SendSuccessMessage($"Your faction's ability is now \"{args.Parameters[1]}\".");
         }
 
         private static void LeaveCmd(CommandArgs args) {
-            if (!SFactions.onlineMembers.ContainsKey((byte)args.Player.Index)) {
+            if (!SFactions.OnlineMembers.ContainsKey((byte)args.Player.Index)) {
                 args.Player.SendErrorMessage("You're not in a faction.");
                 return;
             }
 
-            Faction plrFaction = SFactions.onlineFactions[SFactions.onlineMembers[(byte)args.Player.Index]];
+            Faction plrFaction = SFactions.OnlineFactions[SFactions.OnlineMembers[(byte)args.Player.Index]];
             RegionManager.DelMember(args.Player);
-            SFactions.onlineMembers.Remove((byte)args.Player.Index);
-            SFactions.dbManager.DeleteMember(args.Player.Name);
+            SFactions.OnlineMembers.Remove((byte)args.Player.Index);
+            SFactions.DbManager.DeleteMember(args.Player.Name);
 
             args.Player.SendSuccessMessage("You've left your faction.");
 
             if (args.Player.Name.Equals(plrFaction.Leader)) {
                 plrFaction.Leader = null;
-                SFactions.dbManager.SaveFaction(plrFaction);
-                SFactions.onlineFactions[plrFaction.Id].Leader = null;
+                SFactions.DbManager.SaveFaction(plrFaction);
+                SFactions.OnlineFactions[plrFaction.Id].Leader = null;
                 
 
                 // check if anyone else is in the same faction and online
-                foreach (int id in SFactions.onlineMembers.Values) {
+                foreach (int id in SFactions.OnlineMembers.Values) {
                     if (id == plrFaction.Id) {
                         return;
                     }
                 }
-                SFactions.onlineFactions.Remove(plrFaction.Id);  // if no other member is online, remove the faction from onlineFactions.
+                SFactions.OnlineFactions.Remove(plrFaction.Id);  // if no other member is online, remove the faction from onlineFactions.
             }
         }
 
@@ -298,8 +311,8 @@ namespace SFactions {
             TSPlayer plr = args.Player;
             string factionName;
 
-            if (SFactions.onlineMembers.ContainsKey((byte)plr.Index)) {
-                plr.SendErrorMessage("You need to leave your current faction first to join another one.");
+            if (SFactions.OnlineMembers.ContainsKey((byte)plr.Index)) {
+                plr.SendErrorMessage("You need to leave your current faction to join another one.");
                 return;
             }
 
@@ -307,42 +320,29 @@ namespace SFactions {
                 plr.SendErrorMessage("You need to specify a the faction name.");
                 return;
             }
+
             factionName = string.Join(' ', args.Parameters.GetRange(1, args.Parameters.Count - 1));
 
-            if (!SFactions.dbManager.DoesFactionExist(factionName)) {
+            if (!SFactions.DbManager.DoesFactionExist(factionName)) {
                 plr.SendErrorMessage($"There is no faction called {factionName}.");
                 return;
             }
             
-            Faction newFaction = SFactions.dbManager.GetFaction(factionName);
-            SFactions.onlineMembers.Add((byte)plr.Index, newFaction.Id);
-            SFactions.dbManager.InsertMember(plr.Name, newFaction.Id);
+            Faction newFaction = SFactions.DbManager.GetFaction(factionName);
 
-            if (!SFactions.onlineFactions.ContainsKey(newFaction.Id)) {
-                SFactions.onlineFactions.Add(newFaction.Id, newFaction);
+            if (newFaction.InviteType != InviteType.Open) {
+                plr.SendErrorMessage($"{newFaction.Name} is an invite only faction.");
+                return;
+            }
+
+            SFactions.OnlineMembers.Add((byte)plr.Index, newFaction.Id);
+            SFactions.DbManager.InsertMember(plr.Name, newFaction.Id);
+
+            if (!SFactions.OnlineFactions.ContainsKey(newFaction.Id)) {
+                SFactions.OnlineFactions.Add(newFaction.Id, newFaction);
             }
             RegionManager.AddMember(plr);
             plr.SendSuccessMessage($"You've joined {newFaction.Name}.");
-            /*
-            int memberCount = SFactions.dbManager.GetAllMembers(newFaction.Id).Count;
-
-            if (memberCount > newFaction.highestMemberCount) {
-                int preLevel = PointManager.GetLevelByPoint(newFaction.Point);
-
-                newFaction.highestMemberCount = memberCount;
-                if (memberCount % 5 == 0) {
-                    newFaction.Point++;
-                    TSPlayer.All.SendMessage($"[i:903] {newFaction.Name} has reached {memberCount}! (+1 Point)", 134, 255, 142);
-                }
-
-                int postLevel = PointManager.GetLevelByPoint(newFaction.Point);
-
-                if (preLevel < postLevel) {    // send an announcement if leveled up
-                    TSPlayer.All.SendMessage($"[i:4601] {newFaction.Name} has leveled up! (Level: {postLevel})", 134, 255, 142);
-                }
-
-            }
-            */
         }
 
         private static void CreateCmd(CommandArgs args) {
@@ -363,33 +363,33 @@ namespace SFactions {
                 return;
             }
 
-            if (SFactions.onlineMembers.ContainsKey((byte)args.Player.Index)) {
+            if (SFactions.OnlineMembers.ContainsKey((byte)args.Player.Index)) {
                 plr.SendErrorMessage("You need to leave your current faction first to create new.\n" +
                     "If you want to leave your current faction do '/faction leave'");
                 return;
             }
 
-            if (SFactions.dbManager.DoesFactionExist(factionName)) {
+            if (SFactions.DbManager.DoesFactionExist(factionName)) {
                 plr.SendErrorMessage("A faction with this name already exists.");
                 return;
             }
 
-            SFactions.dbManager.InsertFaction(plr.Name, factionName);
-            Faction newFaction = SFactions.dbManager.GetFaction(factionName);
-            SFactions.dbManager.InsertMember(plr.Name, newFaction.Id);
-            SFactions.onlineMembers.Add((byte)plr.Index, newFaction.Id);
-            SFactions.onlineFactions.Add(newFaction.Id, newFaction);
+            SFactions.DbManager.InsertFaction(plr.Name, factionName);
+            Faction newFaction = SFactions.DbManager.GetFaction(factionName);
+            SFactions.DbManager.InsertMember(plr.Name, newFaction.Id);
+            SFactions.OnlineMembers.Add((byte)plr.Index, newFaction.Id);
+            SFactions.OnlineFactions.Add(newFaction.Id, newFaction);
             args.Player.SendSuccessMessage($"You've created {factionName}");
             
         }
 
         private static void RenameCmd(CommandArgs args) {
             TSPlayer plr = args.Player;
-            if (!SFactions.onlineMembers.ContainsKey((byte)plr.Index)) {
+            if (!SFactions.OnlineMembers.ContainsKey((byte)plr.Index)) {
                 plr.SendErrorMessage("You're not in a faction.");
                 return;
             }
-            Faction plrFaction = SFactions.onlineFactions[SFactions.onlineMembers[(byte)plr.Index]];
+            Faction plrFaction = SFactions.OnlineFactions[SFactions.OnlineMembers[(byte)plr.Index]];
 
             if (!plr.Name.Equals(plrFaction.Leader)) {
                 plr.SendErrorMessage("Only leaders can change the faction name.");
@@ -402,7 +402,7 @@ namespace SFactions {
             }
             string factionName = string.Join(' ', args.Parameters.GetRange(1, args.Parameters.Count - 1));
 
-            if (SFactions.dbManager.DoesFactionExist(factionName)) {
+            if (SFactions.DbManager.DoesFactionExist(factionName)) {
                 plr.SendErrorMessage("A faction with this name already exists.");
                 return;
             }
@@ -417,23 +417,23 @@ namespace SFactions {
             }
 
             plrFaction.Name = factionName;
-            SFactions.onlineFactions[plrFaction.Id].Name = plrFaction.Name;
-            SFactions.dbManager.SaveFaction(plrFaction);
+            SFactions.OnlineFactions[plrFaction.Id].Name = plrFaction.Name;
+            SFactions.DbManager.SaveFaction(plrFaction);
             plr.SendSuccessMessage($"Successfully changed faction name to \"{factionName}\"");
         }
 
         private static void LeadCmd(CommandArgs args) {
             TSPlayer plr = args.Player;
-            if(!SFactions.onlineMembers.ContainsKey((byte)plr.Index)) {
+            if(!SFactions.OnlineMembers.ContainsKey((byte)plr.Index)) {
                 plr.SendErrorMessage("You're not in a faction.");
                 return;
             }
-            Faction plrFaction = SFactions.onlineFactions[SFactions.onlineMembers[(byte)plr.Index]];
+            Faction plrFaction = SFactions.OnlineFactions[SFactions.OnlineMembers[(byte)plr.Index]];
 
             if (plrFaction.Leader == null) {
                 plrFaction.Leader = plr.Name;
-                SFactions.dbManager.SaveFaction(plrFaction);
-                SFactions.onlineFactions[plrFaction.Id].Leader = plrFaction.Leader;
+                SFactions.DbManager.SaveFaction(plrFaction);
+                SFactions.OnlineFactions[plrFaction.Id].Leader = plrFaction.Leader;
                 plr.SendSuccessMessage("You're the leader of your faction now.");
             }
             else {
@@ -451,10 +451,6 @@ namespace SFactions {
                 + "\nlead: Make yourself the leader of your faction if there isn't someone else already."
                 + "\nability: Changes faction's ability. (usage: /faction ability <ability name>)"
                 + "\nregion: Claims a protected region as faction region. (usage: /region <set/del>) (You need to be inside a protected region.)"
-                /*
-                + "\npoints: Shows how many points your faction has."
-                + "\nquest: Quest commands. (/faction quest check/deliver/new/base)"
-                */
                 );
         }
     }
