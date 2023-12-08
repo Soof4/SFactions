@@ -11,7 +11,7 @@ namespace SFactions {
     [ApiVersion(2, 1)]
     public class SFactions : TerrariaPlugin {
         public override string Name => "SFactions";
-        public override Version Version => new Version(1, 1, 3);
+        public override Version Version => new Version(1, 1, 4);
         public override string Author => "Soofa";
         public override string Description => "Sausage Factions? Smexy Factions? Sup Factions?";
         public SFactions(Main game) : base(game) {}
@@ -89,7 +89,7 @@ namespace SFactions {
         }
 
         private void OnPlayerUpdate(object? sender, GetDataHandlers.PlayerUpdateEventArgs args) {
-            if (args.Control.IsUsingItem && args.Player.SelectedItem.netID == ItemID.WhoopieCushion && OnlineMembers.ContainsKey(args.PlayerId)) {
+            if (args.Player.SelectedItem.netID == ItemID.WhoopieCushion && args.Control.IsUsingItem && OnlineMembers.ContainsKey(args.PlayerId)) {
                 Faction plrFaction = OnlineFactions[OnlineMembers[args.PlayerId]];
                 int level = PointManager.GetAbilityLevelByBossProgression();
                 switch (plrFaction.Ability) {
@@ -119,6 +119,9 @@ namespace SFactions {
                         break;
                     case AbilityType.Harvest:
                         Abilities.Abilities.Harvest(args.Player, 90, level);
+                        break;
+                    case AbilityType.IceGolem:
+                        Abilities.Abilities.IceGolem(args.Player, 90, level);
                         break;
                     default: return;
                         

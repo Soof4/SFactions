@@ -108,7 +108,7 @@ namespace SFactions {
             }
 
             string targetPlrName = string.Join(" ", args.Parameters.GetRange(1, args.Parameters.Count - 1));
-            
+
             TSPlayer? targetPLr = null;
             foreach(TSPlayer p in TShock.Players) {
                 if (p != null && p.Active) {
@@ -243,7 +243,7 @@ namespace SFactions {
             }
 
             if (args.Parameters.Count < 2) {
-                plr.SendErrorMessage("Please specify an ability. (healing, vampire, sand, adrenaline, witch, marthymr, randomtp, eol, twilight, harvest)");
+                plr.SendErrorMessage("Please specify an ability. (healing, vampire, sand, adrenaline, witch, marthymr, randomtp, eol, twilight, harvest, icegolem)");
                 return;
             }
 
@@ -269,8 +269,10 @@ namespace SFactions {
                     newType = AbilityType.Twilight; break;
                 case "harvest":
                     newType = AbilityType.Harvest; break;
+                case "icegolem":
+                    newType = AbilityType.IceGolem; break;
                 default:
-                    plr.SendErrorMessage("Invalid ability type. Valid types are healing, vampire, sand, adrenaline, witch, marthymr, randomtp, eol, twilight, harvest"); return;
+                    plr.SendErrorMessage("Invalid ability type. Valid types are healing, vampire, sand, adrenaline, witch, marthymr, randomtp, eol, twilight, harvest, icegolem"); return;
             }
 
             SFactions.OnlineFactions[SFactions.OnlineMembers[(byte)args.Player.Index]].Ability = newType;
@@ -451,6 +453,10 @@ namespace SFactions {
                 + "\nlead: Make yourself the leader of your faction if there isn't someone else already."
                 + "\nability: Changes faction's ability. (usage: /faction ability <ability name>)"
                 + "\nregion: Claims a protected region as faction region. (usage: /region <set/del>) (You need to be inside a protected region.)"
+                + "\ninvitetype: Shows your faction's invite type but if you're the leader you can change the invite type such as \"/f invitetype 3\""
+                + "\ninvite: Invites the target player to your faction"
+                + "\naccept: Accepts the last faction invitation"
+                + "\ninfo: Shows the information of target faction"
                 );
         }
     }
