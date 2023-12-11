@@ -243,7 +243,7 @@ namespace SFactions {
             }
 
             if (args.Parameters.Count < 2) {
-                plr.SendErrorMessage("Please specify an ability. (healing, vampire, sand, adrenaline, witch, marthymr, randomtp, eol, twilight, harvest, icegolem)");
+                plr.SendErrorMessage("Please specify an ability. (healing, vampire, sand, adrenaline, witch, marthymr, randomtp, eol, twilight, harvest, icegolem, magicdice)");
                 return;
             }
 
@@ -271,8 +271,10 @@ namespace SFactions {
                     newType = AbilityType.Harvest; break;
                 case "icegolem":
                     newType = AbilityType.IceGolem; break;
+                case "magicdice":
+                    newType = AbilityType.MagicDice; break;
                 default:
-                    plr.SendErrorMessage("Invalid ability type. Valid types are healing, vampire, sand, adrenaline, witch, marthymr, randomtp, eol, twilight, harvest, icegolem"); return;
+                    plr.SendErrorMessage("Invalid ability type. Valid types are healing, vampire, sand, adrenaline, witch, marthymr, randomtp, eol, twilight, harvest, icegolem, magicdice"); return;
             }
 
             SFactions.OnlineFactions[SFactions.OnlineMembers[(byte)args.Player.Index]].Ability = newType;

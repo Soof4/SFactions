@@ -11,7 +11,7 @@ namespace SFactions {
     [ApiVersion(2, 1)]
     public class SFactions : TerrariaPlugin {
         public override string Name => "SFactions";
-        public override Version Version => new Version(1, 1, 4);
+        public override Version Version => new Version(1, 1, 5);
         public override string Author => "Soofa";
         public override string Description => "Sausage Factions? Smexy Factions? Sup Factions?";
         public SFactions(Main game) : base(game) {}
@@ -30,7 +30,7 @@ namespace SFactions {
             ServerApi.Hooks.NetGreetPlayer.Register(this, OnNetGreetPlayer);
             ServerApi.Hooks.NetSendData.Register(this, AbilityExtentions.RespawnCooldownBuffAdder);
             ServerApi.Hooks.ServerLeave.Register(this, OnServerLeave);
-            
+            ServerApi.Hooks.NpcKilled.Register(this, OnNpcKill);
 
             TShockAPI.Commands.ChatCommands.Add(new("sfactions.faction", Commands.FactionCmd, "faction", "f") {
                 AllowServer = false,
@@ -123,19 +123,31 @@ namespace SFactions {
                     case AbilityType.IceGolem:
                         Abilities.Abilities.IceGolem(args.Player, 90, level);
                         break;
+                    case AbilityType.MagicDice:
+                        Abilities.Abilities.MagicDice(args.Player, 60, level);
+                        break;
                     default: return;
                         
                 }
             }
         }
 
+        private void OnNpcKill(NpcKilledEventArgs eventArgs) {
+            AbilityExtentions.ExplosiveEffectEffect(eventArgs.npc.position, eventArgs.npc.lifeMax / 5);
+        }
+        
+        
         protected override void Dispose(bool disposing) {
             if(disposing) {
-                PlayerHooks.PlayerChat -= ChatManager.OnPlayerChat;
-                GeneralHooks.ReloadEvent -= OnReload;
-                ServerApi.Hooks.NetGreetPlayer.Deregister(this, OnNetGreetPlayer);
-                ServerApi.Hooks.ServerLeave.Deregister(this, OnServerLeave);
-                GetDataHandlers.PlayerUpdate -= OnPlayerUpdate;
+		    GeneralHooks.ReloadEvent -= OnReload;
+		    GetDataHandlers.PlayerUpdate -= OnPlayerUpdate;
+		    PlayerHooks.PlayerChat -= ChatManager.OnPlayerChat;
+
+		    ServerApi.Hooks.NetGetData.Deregister(this, OnNetGetData);
+		    ServerApi.Hooks.NetGreetPlayer.Deregister(this, OnNetGreetPlayer);
+		    ServerApi.Hooks.NetSendData.Deregister(this, AbilityExtentions.RespawnCooldownBuffAdder);
+		    ServerApi.Hooks.ServerLeave.Deregister(this, OnServerLeave);
+		    ServerApi.Hooks.NpcKilled.Deregister(this, OnNpcKill);
             }
             base.Dispose(disposing);
         }
