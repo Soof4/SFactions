@@ -38,7 +38,7 @@ namespace SFactions.Database {
 
         public bool SaveFaction(Faction faction) {
             return _db.Query("UPDATE Factions SET Name = @1, Leader = @2, AbilityType = @3, Region = @4, InviteType = @5 WHERE Id = @0",
-                faction.Id, faction.Name, faction.Leader, (int)faction.Ability, faction.Region, faction.InviteType) != 0;
+                faction.Id, faction.Name, faction.Leader, (int)faction.AbilityType, faction.Region, faction.InviteType) != 0;
         }
 
         /// <summary>

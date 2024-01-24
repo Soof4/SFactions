@@ -243,18 +243,18 @@ namespace SFactions {
             }
 
             if (args.Parameters.Count < 2) {
-                plr.SendErrorMessage("Please specify an ability. (healing, vampire, sand, adrenaline, witch, marthymr, randomtp, eol, twilight, harvest, icegolem, magicdice)");
+                plr.SendErrorMessage("Please specify an ability. (dryadsringofhealing, ringofdracula, setsblessing, adrenaline, witch, marthymr, randomtp, fairyoflight, twilight, harvest, icegolem, magicdice)");
                 return;
             }
 
             AbilityType newType;
             switch (args.Parameters[1].ToLower()) {
-                case "healing":
+                case "dryadsringofhealing":
                     newType = AbilityType.DryadsRingOfHealing; break;
-                case "vampire":
+                case "ringofdracula":
                     newType = AbilityType.RingOfDracula; break;
-                case "sand":
-                    newType = AbilityType.SandFrames; break;
+                case "setsblessing":
+                    newType = AbilityType.SetsBlessing; break;
                 case "adrenaline":
                     newType = AbilityType.Adrenaline; break;
                 case "witch":
@@ -263,8 +263,8 @@ namespace SFactions {
                     newType = AbilityType.Marthymr; break;
                 case "randomtp":
                     newType = AbilityType.RandomTeleport; break;
-                case "eol":
-                    newType = AbilityType.EmpressOfLight; break;
+                case "fairyoflight":
+                    newType = AbilityType.FairyOfLight; break;
                 case "twilight":
                     newType = AbilityType.Twilight; break;
                 case "harvest":
@@ -274,11 +274,13 @@ namespace SFactions {
                 case "magicdice":
                     newType = AbilityType.MagicDice; break;
                 default:
-                    plr.SendErrorMessage("Invalid ability type. Valid types are healing, vampire, sand, adrenaline, witch, marthymr, randomtp, eol, twilight, harvest, icegolem, magicdice"); return;
+                    plr.SendErrorMessage("Invalid ability type. Valid types are dryadsringofhealing, ringofdracula, setsblessing, adrenaline, witch, marthymr, randomtp, fairyoflight, twilight, harvest, icegolem, magicdice"); return;
             }
 
-            SFactions.OnlineFactions[SFactions.OnlineMembers[(byte)args.Player.Index]].Ability = newType;
-            SFactions.DbManager.SaveFaction(SFactions.OnlineFactions[SFactions.OnlineMembers[(byte)args.Player.Index]]);
+            plrFaction.AbilityType = newType;
+            SFactions.OnlineFactions[plrFaction.Id] = new Faction(plrFaction.Id, plrFaction.Name, plrFaction.Leader, plrFaction.AbilityType, plrFaction.Region, plrFaction.InviteType);
+            SFactions.DbManager.SaveFaction(SFactions.OnlineFactions[plrFaction.Id]);
+
             plr.SendSuccessMessage($"Your faction's ability is now \"{args.Parameters[1]}\".");
         }
 

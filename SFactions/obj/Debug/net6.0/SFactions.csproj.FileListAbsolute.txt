@@ -1,0 +1,15 @@
+/home/soofa/GitProjects/SFactions/SFactions/obj/Debug/net6.0/SFactions.csproj.AssemblyReference.cache
+/home/soofa/GitProjects/SFactions/SFactions/obj/Debug/net6.0/SFactions.GeneratedMSBuildEditorConfig.editorconfig
+/home/soofa/GitProjects/SFactions/SFactions/obj/Debug/net6.0/SFactions.AssemblyInfoInputs.cache
+/home/soofa/GitProjects/SFactions/SFactions/obj/Debug/net6.0/SFactions.AssemblyInfo.cs
+/home/soofa/GitProjects/SFactions/SFactions/obj/Debug/net6.0/SFactions.csproj.CoreCompileInputs.cache
+/home/soofa/GitProjects/SFactions/SFactions/bin/Debug/net6.0/HttpServer.dll
+/home/soofa/GitProjects/SFactions/SFactions/bin/Debug/net6.0/SFactions.deps.json
+/home/soofa/GitProjects/SFactions/SFactions/bin/Debug/net6.0/SFactions.dll
+/home/soofa/GitProjects/SFactions/SFactions/bin/Debug/net6.0/ref/SFactions.dll
+/home/soofa/GitProjects/SFactions/SFactions/bin/Debug/net6.0/SFactions.pdb
+/home/soofa/GitProjects/SFactions/SFactions/bin/Debug/net6.0/Abilities.dll
+/home/soofa/GitProjects/SFactions/SFactions/obj/Debug/net6.0/SFactions.csproj.CopyComplete
+/home/soofa/GitProjects/SFactions/SFactions/obj/Debug/net6.0/SFactions.dll
+/home/soofa/GitProjects/SFactions/SFactions/obj/Debug/net6.0/ref/SFactions.dll
+/home/soofa/GitProjects/SFactions/SFactions/obj/Debug/net6.0/SFactions.pdb
