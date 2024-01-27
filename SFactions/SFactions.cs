@@ -13,7 +13,7 @@ namespace SFactions
     public class SFactions : TerrariaPlugin
     {
         public override string Name => "SFactions";
-        public override Version Version => new Version(1, 2, 0);
+        public override Version Version => new Version(1, 2, 1);
         public override string Author => "Soofa";
         public override string Description => "Sausage Factions? Smexy Factions? Sup Factions?";
         public SFactions(Main game) : base(game) { }
@@ -44,6 +44,7 @@ namespace SFactions
             ServerApi.Hooks.NetSendData.Register(this, Abilities.Extensions.RespawnCooldownBuffAdder);
             ServerApi.Hooks.ServerLeave.Register(this, OnServerLeave);
             ServerApi.Hooks.NpcKilled.Register(this, OnNpcKill);
+            ServerApi.Hooks.NpcLootDrop.Register(this, OnDropLoot);
 
             TShockAPI.Commands.ChatCommands.Add(new("sfactions.faction", Commands.FactionCmd, "faction", "f")
             {
@@ -118,9 +119,12 @@ namespace SFactions
 
         private void OnNpcKill(NpcKilledEventArgs eventArgs)
         {
-            Abilities.Extensions.ExplosiveEffectEffect(eventArgs.npc.position, eventArgs.npc.lifeMax / 5);
+            if (eventArgs.npc.rarity == 10) Abilities.Extensions.ExplosiveEffectEffect(eventArgs.npc.position, eventArgs.npc.lifeMax / 5);
         }
-
+        private void OnDropLoot(NpcLootDropEventArgs eventArgs)
+        {
+            if (Main.npc[eventArgs.NpcArrayIndex].rarity == 11) eventArgs.Handled = true;
+        }
 
         protected override void Dispose(bool disposing)
         {
