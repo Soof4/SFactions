@@ -243,7 +243,10 @@ namespace SFactions {
             }
 
             if (args.Parameters.Count < 2) {
-                plr.SendErrorMessage("Please specify an ability. (dryadsringofhealing, ringofdracula, setsblessing, adrenaline, witch, marthymr, randomtp, fairyoflight, twilight, harvest, icegolem, magicdice)");
+                plr.SendErrorMessage("Please specify an ability:\n" +
+                    "dryadsringofhealing, ringofdracula, setsblessing, adrenaline, witch\n" +
+                    "marthymr, randomtp, fairyoflight, twilight, harvest\n" +
+                    "icegolem, magicdice, thebound, alchemist");
                 return;
             }
 
@@ -273,12 +276,20 @@ namespace SFactions {
                     newType = AbilityType.IceGolem; break;
                 case "magicdice":
                     newType = AbilityType.MagicDice; break;
+                case "thebound":
+                    newType = AbilityType.TheBound; break;
+                case "alchemist":
+                    newType = AbilityType.Alchemist; break;
                 default:
-                    plr.SendErrorMessage("Invalid ability type. Valid types are dryadsringofhealing, ringofdracula, setsblessing, adrenaline, witch, marthymr, randomtp, fairyoflight, twilight, harvest, icegolem, magicdice"); return;
+                    plr.SendErrorMessage("Invalid ability type. Valid types are:\n" +
+                        "dryadsringofhealing, ringofdracula, setsblessing, adrenaline, witch,\n" +
+                        "marthymr, randomtp, fairyoflight, twilight, harvest,\n" +
+                        "icegolem, magicdice, thebound, alchemist"); return;
             }
 
             plrFaction.AbilityType = newType;
-            SFactions.OnlineFactions[plrFaction.Id] = new Faction(plrFaction.Id, plrFaction.Name, plrFaction.Leader, plrFaction.AbilityType, plrFaction.Region, plrFaction.InviteType);
+            SFactions.OnlineFactions[plrFaction.Id] = new Faction(plrFaction.Id, plrFaction.Name, plrFaction.Leader, 
+                plrFaction.AbilityType, plrFaction.Region, DateTime.UtcNow, plrFaction.InviteType);
             SFactions.DbManager.SaveFaction(SFactions.OnlineFactions[plrFaction.Id]);
 
             plr.SendSuccessMessage($"Your faction's ability is now \"{args.Parameters[1]}\".");
@@ -291,6 +302,11 @@ namespace SFactions {
             }
 
             Faction plrFaction = SFactions.OnlineFactions[SFactions.OnlineMembers[(byte)args.Player.Index]];
+
+            if (plrFaction.AbilityType == AbilityType.TheBound) {
+                TheBound.Pairs.Remove(args.Player);
+            }
+
             RegionManager.DelMember(args.Player);
             SFactions.OnlineMembers.Remove((byte)args.Player.Index);
             SFactions.DbManager.DeleteMember(args.Player.Name);

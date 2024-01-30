@@ -19,6 +19,7 @@ namespace SFactions.Database {
                 new SqlColumn("Leader", MySqlDbType.TinyText),
                 new SqlColumn("AbilityType", MySqlDbType.Int32),
                 new SqlColumn("Region", MySqlDbType.TinyText),
+                new SqlColumn("LastAbilityChangeTime", MySqlDbType.TinyText),
                 new SqlColumn("InviteType", MySqlDbType.Int32)
                 ));
 
@@ -30,15 +31,15 @@ namespace SFactions.Database {
 
         #region Faction Management
         public bool InsertFaction(string leaderName, string factionName) {
-            return _db.Query("INSERT INTO Factions (Name, Leader, AbilityType, InviteType) " +
-                "VALUES (@0, @1, @2, @3)",
-                factionName, leaderName, AbilityType.DryadsRingOfHealing, InviteType.Open) != 0;
+            return _db.Query("INSERT INTO Factions (Name, Leader, AbilityType, InviteType, LastAbilityChangeTime) " +
+                "VALUES (@0, @1, @2, @3, @4)",
+                factionName, leaderName, AbilityType.DryadsRingOfHealing, InviteType.Open, DateTime.UtcNow.ToString()) != 0;
         }
 
 
         public bool SaveFaction(Faction faction) {
-            return _db.Query("UPDATE Factions SET Name = @1, Leader = @2, AbilityType = @3, Region = @4, InviteType = @5 WHERE Id = @0",
-                faction.Id, faction.Name, faction.Leader, (int)faction.AbilityType, faction.Region, faction.InviteType) != 0;
+            return _db.Query("UPDATE Factions SET Name = @1, Leader = @2, AbilityType = @3, Region = @4, InviteType = @5, LastAbilityChangeTime = @6 WHERE Id = @0",
+                faction.Id, faction.Name, faction.Leader, (int)faction.AbilityType, faction.Region, faction.InviteType, faction.LastAbilityChangeTime) != 0;
         }
 
         /// <summary>
@@ -65,6 +66,7 @@ namespace SFactions.Database {
                     reader.Get<string>("Leader"),
                     (AbilityType)reader.Get<int>("AbilityType"),
                     reader.Get<string>("Region"),
+                    DateTime.Parse(reader.Get<string>("LastAbilityChangeTime")),
                     (InviteType)reader.Get<int>("InviteType")
                     );
             }
@@ -86,6 +88,7 @@ namespace SFactions.Database {
                     reader2.Get<string>("Leader"),
                     (AbilityType)reader2.Get<int>("AbilityType"),
                     reader2.Get<string>("Region"),
+                    DateTime.Parse(reader2.Get<string>("LastAbilityChangeTime")),
                     (InviteType)reader2.Get<int>("InviteType")
                     );
                 }

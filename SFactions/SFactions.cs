@@ -13,7 +13,7 @@ namespace SFactions
     public class SFactions : TerrariaPlugin
     {
         public override string Name => "SFactions";
-        public override Version Version => new Version(1, 2, 1);
+        public override Version Version => new Version(1, 2, 3);
         public override string Author => "Soofa";
         public override string Description => "Sausage Factions? Smexy Factions? Sup Factions?";
         public SFactions(Main game) : base(game) { }
@@ -108,7 +108,7 @@ namespace SFactions
             if (args.Player.SelectedItem.netID == ItemID.Harp && args.Control.IsUsingItem && OnlineMembers.ContainsKey(args.PlayerId))
             {
                 Faction plrFaction = OnlineFactions[OnlineMembers[args.PlayerId]];
-                int level = PointManager.GetAbilityLevelByBossProgression();
+                int level = PointManager.GetAbilityLevel(plrFaction);
                 int cooldown = PointManager.GetAbilityCooldownByAbilityLevel(level, 100);
                 if (plrFaction.AbilityType == AbilityType.MagicDice) {
                     cooldown = 70 - RandomGen.Next(16);

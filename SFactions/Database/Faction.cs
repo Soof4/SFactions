@@ -14,35 +14,49 @@ namespace SFactions.Database
         public string? Region { get; set; }
         public InviteType InviteType { get; set; }
         public Ability Ability { get; set; }
+        public DateTime LastAbilityChangeTime { get; set; }
 
-        public Faction(int id, string name, string leader, AbilityType abilityType, string? region, InviteType inviteType = InviteType.Open)
+        public Faction(int id, string name, string leader, AbilityType abilityType, string? region,
+            DateTime? lastAbilityChangeTime, InviteType inviteType = InviteType.Open)
         {
             Id = id;
             Name = name;
             Leader = leader;
             AbilityType = abilityType;
             Region = region;
+
+            if (lastAbilityChangeTime == null)
+            {
+                LastAbilityChangeTime = DateTime.Now;
+            }
+            else
+            {
+                LastAbilityChangeTime = (DateTime)lastAbilityChangeTime;
+            }
+
             InviteType = inviteType;
-            Ability = InstantiateTheAbility(AbilityType);
+            Ability = InstantiateTheAbility(AbilityType, this);
         }
 
-        private static Ability InstantiateTheAbility(AbilityType abilityType)
+        private static Ability InstantiateTheAbility(AbilityType abilityType, Faction faction)
         {
             return abilityType switch
             {
-                AbilityType.DryadsRingOfHealing => new DryadsRingOfHealing(PointManager.GetAbilityLevelByBossProgression()),
-                AbilityType.RingOfDracula => new RingOfDracula(PointManager.GetAbilityLevelByBossProgression()),
-                AbilityType.SetsBlessing => new SetsBlessing(PointManager.GetAbilityLevelByBossProgression()),
-                AbilityType.Adrenaline => new Adrenaline(PointManager.GetAbilityLevelByBossProgression()),
-                AbilityType.Witch => new Witch(PointManager.GetAbilityLevelByBossProgression()),
-                AbilityType.Marthymr => new Marthymr(PointManager.GetAbilityLevelByBossProgression()),
-                AbilityType.RandomTeleport => new RandomTeleport(PointManager.GetAbilityLevelByBossProgression()),
-                AbilityType.FairyOfLight => new FairyOfLight(PointManager.GetAbilityLevelByBossProgression()),
-                AbilityType.Twilight => new Twilight(PointManager.GetAbilityLevelByBossProgression()),
-                AbilityType.Harvest => new Harvest(PointManager.GetAbilityLevelByBossProgression()),
-                AbilityType.IceGolem => new IceGolem(PointManager.GetAbilityLevelByBossProgression()),
-                AbilityType.MagicDice => new MagicDice(PointManager.GetAbilityLevelByBossProgression()),
-                _ => new DryadsRingOfHealing(PointManager.GetAbilityLevelByBossProgression()),
+                AbilityType.DryadsRingOfHealing => new DryadsRingOfHealing(PointManager.GetAbilityLevel(faction)),
+                AbilityType.RingOfDracula => new RingOfDracula(PointManager.GetAbilityLevel(faction)),
+                AbilityType.SetsBlessing => new SetsBlessing(PointManager.GetAbilityLevel(faction)),
+                AbilityType.Adrenaline => new Adrenaline(PointManager.GetAbilityLevel(faction)),
+                AbilityType.Witch => new Witch(PointManager.GetAbilityLevel(faction)),
+                AbilityType.Marthymr => new Marthymr(PointManager.GetAbilityLevel(faction)),
+                AbilityType.RandomTeleport => new RandomTeleport(PointManager.GetAbilityLevel(faction)),
+                AbilityType.FairyOfLight => new FairyOfLight(PointManager.GetAbilityLevel(faction)),
+                AbilityType.Twilight => new Twilight(PointManager.GetAbilityLevel(faction)),
+                AbilityType.Harvest => new Harvest(PointManager.GetAbilityLevel(faction)),
+                AbilityType.IceGolem => new IceGolem(PointManager.GetAbilityLevel(faction)),
+                AbilityType.MagicDice => new MagicDice(PointManager.GetAbilityLevel(faction)),
+                AbilityType.TheBound => new TheBound(PointManager.GetAbilityLevel(faction)),
+                AbilityType.Alchemist => new Alchemist(PointManager.GetAbilityLevel(faction)),
+                _ => new DryadsRingOfHealing(PointManager.GetAbilityLevel(faction)),
             };
         }
     }
