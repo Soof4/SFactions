@@ -13,7 +13,7 @@ namespace SFactions
     public class SFactions : TerrariaPlugin
     {
         public override string Name => "SFactions";
-        public override Version Version => new Version(1, 2, 3);
+        public override Version Version => new Version(1, 2, 4);
         public override string Author => "Soofa";
         public override string Description => "Sausage Factions? Smexy Factions? Sup Factions?";
         public SFactions(Main game) : base(game) { }
