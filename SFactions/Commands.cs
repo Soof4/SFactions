@@ -246,7 +246,7 @@ namespace SFactions {
                 plr.SendErrorMessage("Please specify an ability:\n" +
                     "dryadsringofhealing, ringofdracula, setsblessing, adrenaline, witch\n" +
                     "marthymr, randomtp, fairyoflight, twilight, harvest\n" +
-                    "icegolem, magicdice, thebound, alchemist");
+                    "icegolem, magicdice, thebound, alchemist, paranoia");
                 return;
             }
 
@@ -280,11 +280,13 @@ namespace SFactions {
                     newType = AbilityType.TheBound; break;
                 case "alchemist":
                     newType = AbilityType.Alchemist; break;
+                case "paranoia":
+                    newType = AbilityType.Paranoia; break;
                 default:
                     plr.SendErrorMessage("Invalid ability type. Valid types are:\n" +
                         "dryadsringofhealing, ringofdracula, setsblessing, adrenaline, witch,\n" +
                         "marthymr, randomtp, fairyoflight, twilight, harvest,\n" +
-                        "icegolem, magicdice, thebound, alchemist"); return;
+                        "icegolem, magicdice, thebound, alchemist, paranoia"); return;
             }
 
             plrFaction.AbilityType = newType;
