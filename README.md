@@ -53,3 +53,6 @@ eg: `/f accept`
 
 * `info` : Shows the faction's information. <br>
 eg: `/f info The Furnitures`
+
+## Other Informations
+* In order to cast abilities, players need to use Harp item.
