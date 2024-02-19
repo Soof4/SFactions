@@ -3,19 +3,24 @@ using SFactions.Database;
 using Abilities;
 using TShockAPI.Configuration;
 
-namespace SFactions {
-    public class Commands {
+namespace SFactions
+{
+    public class Commands
+    {
         private static Dictionary<string, Faction> Invitations = new();
-        public static void FactionCmd(CommandArgs args) {
+        public static void FactionCmd(CommandArgs args)
+        {
             TSPlayer player = args.Player;
-            if(args.Parameters.Count < 1) {
+            if (args.Parameters.Count < 1)
+            {
                 player.SendErrorMessage("You need to specify a subcommand. Do '/faction help' to see all subcommands.");
                 return;
             }
 
             string subcmd = args.Parameters[0];
-            
-            switch (subcmd) {
+
+            switch (subcmd)
+            {
                 case "help":
                     HelpCmd(args); return;
                 case "create":
@@ -45,14 +50,17 @@ namespace SFactions {
             }
         }
 
-        private static void AcceptCmd(CommandArgs args) {
+        private static void AcceptCmd(CommandArgs args)
+        {
             TSPlayer plr = args.Player;
-            if (SFactions.OnlineMembers.ContainsKey((byte)plr.Index)) {
+            if (SFactions.OnlineMembers.ContainsKey((byte)plr.Index))
+            {
                 plr.SendErrorMessage("You need to leave your current faction to join another.");
                 return;
             }
-            
-            if (!Invitations.TryGetValue(plr.Name, out Faction? newFaction) || newFaction == null) {
+
+            if (!Invitations.TryGetValue(plr.Name, out Faction? newFaction) || newFaction == null)
+            {
                 plr.SendErrorMessage("Coudln't find a pending invitation.");
                 return;
             }
@@ -61,7 +69,8 @@ namespace SFactions {
             SFactions.OnlineMembers.Add((byte)plr.Index, newFaction.Id);
             SFactions.DbManager.InsertMember(plr.Name, newFaction.Id);
 
-            if (!SFactions.OnlineFactions.ContainsKey(newFaction.Id)) {
+            if (!SFactions.OnlineFactions.ContainsKey(newFaction.Id))
+            {
                 SFactions.OnlineFactions.Add(newFaction.Id, newFaction);
             }
 
@@ -70,20 +79,23 @@ namespace SFactions {
 
         }
 
-        private static void InfoCmd(CommandArgs args) {
+        private static void InfoCmd(CommandArgs args)
+        {
             TSPlayer plr = args.Player;
-            if (args.Parameters.Count < 2) {
+            if (args.Parameters.Count < 2)
+            {
                 plr.SendErrorMessage("Please specify a faction name.");
                 return;
             }
 
             string factionName = string.Join(' ', args.Parameters.GetRange(1, args.Parameters.Count - 1));
 
-            if (!SFactions.DbManager.DoesFactionExist(factionName)) {
+            if (!SFactions.DbManager.DoesFactionExist(factionName))
+            {
                 plr.SendErrorMessage($"There is no faction called {factionName}.");
                 return;
             }
-            
+
             Faction faction = SFactions.DbManager.GetFaction(factionName);
             plr.SendInfoMessage($"Faction ID: {faction.Id}\n" +
                                 $"Faction Name: {faction.Name}\n" +
@@ -94,15 +106,18 @@ namespace SFactions {
                                 );
         }
 
-        private static void InviteCmd(CommandArgs args) {
+        private static void InviteCmd(CommandArgs args)
+        {
             TSPlayer plr = args.Player;
-            if (!SFactions.OnlineMembers.ContainsKey((byte)plr.Index)) {
+            if (!SFactions.OnlineMembers.ContainsKey((byte)plr.Index))
+            {
                 plr.SendErrorMessage("You're not in a faction.");
                 return;
             }
             Faction plrFaction = SFactions.OnlineFactions[SFactions.OnlineMembers[(byte)plr.Index]];
-            
-            if (plrFaction.InviteType == InviteType.OnlyLeaderCanInvite && !plr.Name.Equals(plrFaction.Leader)) {
+
+            if (plrFaction.InviteType == InviteType.OnlyLeaderCanInvite && !plr.Name.Equals(plrFaction.Leader))
+            {
                 plr.SendErrorMessage("Only leader can invite new people.");
                 return;
             }
@@ -110,25 +125,32 @@ namespace SFactions {
             string targetPlrName = string.Join(" ", args.Parameters.GetRange(1, args.Parameters.Count - 1));
 
             TSPlayer? targetPLr = null;
-            foreach(TSPlayer p in TShock.Players) {
-                if (p != null && p.Active) {
-                    if (p.Name.Equals(targetPlrName)) {
+            foreach (TSPlayer p in TShock.Players)
+            {
+                if (p != null && p.Active)
+                {
+                    if (p.Name.Equals(targetPlrName))
+                    {
                         targetPLr = p;
                         break;
                     }
-                    else if (p.Name.StartsWith(targetPlrName)) {
+                    else if (p.Name.StartsWith(targetPlrName))
+                    {
                         targetPLr = p;
                     }
                 }
             }
 
-            if (targetPLr == null) {
+            if (targetPLr == null)
+            {
                 plr.SendErrorMessage("Couldn't the the player.");
                 return;
             }
 
-            if (!Invitations.TryAdd(targetPLr.Name, plrFaction)) {
-                if (Invitations[targetPLr.Name].Name.Equals(plrFaction.Name)) {
+            if (!Invitations.TryAdd(targetPLr.Name, plrFaction))
+            {
+                if (Invitations[targetPLr.Name].Name.Equals(plrFaction.Name))
+                {
                     plr.SendErrorMessage("This player already has a pending invitation from your faction.");
                     return;
                 }
@@ -138,19 +160,23 @@ namespace SFactions {
             targetPLr.SendInfoMessage($"{plr.Name} has invited you to {plrFaction.Name}. Type \"/faction accept\" to join. Do nothing if you don't want to join.");
             plr.SendSuccessMessage($"You've successfully invited {targetPLr.Name} to your faction.");
         }
-        
-        private static void InviteTypeCmd(CommandArgs args) {
+
+        private static void InviteTypeCmd(CommandArgs args)
+        {
             TSPlayer plr = args.Player;
-            if (!SFactions.OnlineMembers.ContainsKey((byte)plr.Index)) {
+            if (!SFactions.OnlineMembers.ContainsKey((byte)plr.Index))
+            {
                 plr.SendErrorMessage("You're not in a faction.");
                 return;
             }
             Faction plrFaction = SFactions.OnlineFactions[SFactions.OnlineMembers[(byte)plr.Index]];
 
-            if (args.Parameters.Count < 2) {    // if no args were gşven for the sub-cmd
+            if (args.Parameters.Count < 2)
+            {    // if no args were gşven for the sub-cmd
                 string inviteType = "open.";
-                switch (plrFaction.InviteType) {
-                    case InviteType.EveryoneCanInvite: 
+                switch (plrFaction.InviteType)
+                {
+                    case InviteType.EveryoneCanInvite:
                         inviteType = "invite only. (Any member can invite)";
                         break;
                     case InviteType.OnlyLeaderCanInvite:
@@ -162,13 +188,15 @@ namespace SFactions {
                 return;
             }
 
-            if (!plr.Name.Equals(plrFaction.Leader)) {
+            if (!plr.Name.Equals(plrFaction.Leader))
+            {
                 plr.SendErrorMessage("Only leader can change invite type of the faction.");
                 return;
             }
 
             // if any args were given for sub-cmd
-            if (!int.TryParse(args.Parameters[1], out int newType) || newType < 1 || newType > 3) {
+            if (!int.TryParse(args.Parameters[1], out int newType) || newType < 1 || newType > 3)
+            {
                 plr.SendErrorMessage("Wrong command usage. (/faction invitetype [1/2/3])\n1: Open, 2: Members can invite, 3: Only leader can invite\neg.: /faction invitetype 2");
                 return;
             }
@@ -178,38 +206,46 @@ namespace SFactions {
             plr.SendSuccessMessage($"You've successfully changed you faction's invite type to {plrFaction.InviteType}");
         }
 
-        private static void RegionCmd(CommandArgs args) {
+        private static void RegionCmd(CommandArgs args)
+        {
             TSPlayer plr = args.Player;
-            if (!SFactions.OnlineMembers.ContainsKey((byte)plr.Index)) {
+            if (!SFactions.OnlineMembers.ContainsKey((byte)plr.Index))
+            {
                 plr.SendErrorMessage("You're not in a faction.");
                 return;
             }
             Faction plrFaction = SFactions.OnlineFactions[SFactions.OnlineMembers[(byte)plr.Index]];
 
-            if (!plr.Name.Equals(plrFaction.Leader)) {
+            if (!plr.Name.Equals(plrFaction.Leader))
+            {
                 plr.SendErrorMessage("Only leader can set or delete the faction region.");
                 return;
             }
 
-            if (args.Parameters.Count < 2) {
+            if (args.Parameters.Count < 2)
+            {
                 plr.SendErrorMessage("You did not specify \"set\" or \"del\"");
                 return;
             }
-            
 
-            switch (args.Parameters[1]) {
+
+            switch (args.Parameters[1])
+            {
                 case "set":
-                    if (plrFaction.Region != null) {
+                    if (plrFaction.Region != null)
+                    {
                         plr.SendErrorMessage("You need to delete the old region before setting new one. (Do \"/faction region del\" to delete old region.)");
                         return;
                     }
 
-                    if (plr.CurrentRegion == null) {
+                    if (plr.CurrentRegion == null)
+                    {
                         plr.SendErrorMessage("You're not in a protected region.");
                         return;
                     }
 
-                    if (!plr.CurrentRegion.Owner.Equals(plr.Name)) {
+                    if (!plr.CurrentRegion.Owner.Equals(plr.Name))
+                    {
                         plr.SendErrorMessage("You're not the owner of this region.");
                         return;
                     }
@@ -229,29 +265,35 @@ namespace SFactions {
             }
         }
 
-        private static void AbilityCmd(CommandArgs args) {
+        private static void AbilityCmd(CommandArgs args)
+        {
             TSPlayer plr = args.Player;
-            if (!SFactions.OnlineMembers.ContainsKey((byte)plr.Index)) {
+            if (!SFactions.OnlineMembers.ContainsKey((byte)plr.Index))
+            {
                 plr.SendErrorMessage("You're not in a faction.");
                 return;
             }
             Faction plrFaction = SFactions.OnlineFactions[SFactions.OnlineMembers[(byte)plr.Index]];
 
-            if (!plr.Name.Equals(plrFaction.Leader)) {
+            if (!plr.Name.Equals(plrFaction.Leader))
+            {
                 plr.SendErrorMessage("Only leaders can change the faction ability.");
                 return;
             }
 
-            if (args.Parameters.Count < 2) {
+            if (args.Parameters.Count < 2)
+            {
                 plr.SendErrorMessage("Please specify an ability:\n" +
                     "dryadsringofhealing, ringofdracula, setsblessing, adrenaline, witch\n" +
                     "marthymr, randomtp, fairyoflight, twilight, harvest\n" +
-                    "icegolem, magicdice, thebound, alchemist, paranoia");
+                    "icegolem, magicdice, thebound, alchemist, paranoia" +
+                    "hypercrit");
                 return;
             }
 
             AbilityType newType;
-            switch (args.Parameters[1].ToLower()) {
+            switch (args.Parameters[1].ToLower())
+            {
                 case "dryadsringofhealing":
                     newType = AbilityType.DryadsRingOfHealing; break;
                 case "ringofdracula":
@@ -282,30 +324,36 @@ namespace SFactions {
                     newType = AbilityType.Alchemist; break;
                 case "paranoia":
                     newType = AbilityType.Paranoia; break;
+                case "hypercrit":
+                    newType = AbilityType.HyperCrit; break;
                 default:
                     plr.SendErrorMessage("Invalid ability type. Valid types are:\n" +
                         "dryadsringofhealing, ringofdracula, setsblessing, adrenaline, witch,\n" +
                         "marthymr, randomtp, fairyoflight, twilight, harvest,\n" +
-                        "icegolem, magicdice, thebound, alchemist, paranoia"); return;
+                        "icegolem, magicdice, thebound, alchemist, paranoia,\n" +
+                        "hypercrit"); return;
             }
 
             plrFaction.AbilityType = newType;
-            SFactions.OnlineFactions[plrFaction.Id] = new Faction(plrFaction.Id, plrFaction.Name, plrFaction.Leader, 
+            SFactions.OnlineFactions[plrFaction.Id] = new Faction(plrFaction.Id, plrFaction.Name, plrFaction.Leader,
                 plrFaction.AbilityType, plrFaction.Region, DateTime.UtcNow, plrFaction.InviteType);
             SFactions.DbManager.SaveFaction(SFactions.OnlineFactions[plrFaction.Id]);
 
             plr.SendSuccessMessage($"Your faction's ability is now \"{args.Parameters[1]}\".");
         }
 
-        private static void LeaveCmd(CommandArgs args) {
-            if (!SFactions.OnlineMembers.ContainsKey((byte)args.Player.Index)) {
+        private static void LeaveCmd(CommandArgs args)
+        {
+            if (!SFactions.OnlineMembers.ContainsKey((byte)args.Player.Index))
+            {
                 args.Player.SendErrorMessage("You're not in a faction.");
                 return;
             }
 
             Faction plrFaction = SFactions.OnlineFactions[SFactions.OnlineMembers[(byte)args.Player.Index]];
 
-            if (plrFaction.AbilityType == AbilityType.TheBound) {
+            if (plrFaction.AbilityType == AbilityType.TheBound)
+            {
                 TheBound.Pairs.Remove(args.Player);
             }
 
@@ -315,15 +363,18 @@ namespace SFactions {
 
             args.Player.SendSuccessMessage("You've left your faction.");
 
-            if (args.Player.Name.Equals(plrFaction.Leader)) {
+            if (args.Player.Name.Equals(plrFaction.Leader))
+            {
                 plrFaction.Leader = null;
                 SFactions.DbManager.SaveFaction(plrFaction);
                 SFactions.OnlineFactions[plrFaction.Id].Leader = null;
-                
+
 
                 // check if anyone else is in the same faction and online
-                foreach (int id in SFactions.OnlineMembers.Values) {
-                    if (id == plrFaction.Id) {
+                foreach (int id in SFactions.OnlineMembers.Values)
+                {
+                    if (id == plrFaction.Id)
+                    {
                         return;
                     }
                 }
@@ -331,30 +382,35 @@ namespace SFactions {
             }
         }
 
-        private static void JoinCmd(CommandArgs args) {
+        private static void JoinCmd(CommandArgs args)
+        {
             TSPlayer plr = args.Player;
             string factionName;
 
-            if (SFactions.OnlineMembers.ContainsKey((byte)plr.Index)) {
+            if (SFactions.OnlineMembers.ContainsKey((byte)plr.Index))
+            {
                 plr.SendErrorMessage("You need to leave your current faction to join another one.");
                 return;
             }
 
-            if (args.Parameters.Count < 2) {
+            if (args.Parameters.Count < 2)
+            {
                 plr.SendErrorMessage("You need to specify a the faction name.");
                 return;
             }
 
             factionName = string.Join(' ', args.Parameters.GetRange(1, args.Parameters.Count - 1));
 
-            if (!SFactions.DbManager.DoesFactionExist(factionName)) {
+            if (!SFactions.DbManager.DoesFactionExist(factionName))
+            {
                 plr.SendErrorMessage($"There is no faction called {factionName}.");
                 return;
             }
-            
+
             Faction newFaction = SFactions.DbManager.GetFaction(factionName);
 
-            if (newFaction.InviteType != InviteType.Open) {
+            if (newFaction.InviteType != InviteType.Open)
+            {
                 plr.SendErrorMessage($"{newFaction.Name} is an invite only faction.");
                 return;
             }
@@ -362,38 +418,45 @@ namespace SFactions {
             SFactions.OnlineMembers.Add((byte)plr.Index, newFaction.Id);
             SFactions.DbManager.InsertMember(plr.Name, newFaction.Id);
 
-            if (!SFactions.OnlineFactions.ContainsKey(newFaction.Id)) {
+            if (!SFactions.OnlineFactions.ContainsKey(newFaction.Id))
+            {
                 SFactions.OnlineFactions.Add(newFaction.Id, newFaction);
             }
             RegionManager.AddMember(plr);
             plr.SendSuccessMessage($"You've joined {newFaction.Name}.");
         }
 
-        private static void CreateCmd(CommandArgs args) {
+        private static void CreateCmd(CommandArgs args)
+        {
             TSPlayer plr = args.Player;
-            if (args.Parameters.Count < 2) {
+            if (args.Parameters.Count < 2)
+            {
                 plr.SendErrorMessage("You need to specify a the faction name.");
                 return;
             }
             string factionName = string.Join(' ', args.Parameters.GetRange(1, args.Parameters.Count - 1));
 
-            if (factionName.Length < SFactions.Config.MinNameLength) {
+            if (factionName.Length < SFactions.Config.MinNameLength)
+            {
                 plr.SendErrorMessage($"Faction name needs to be at least {SFactions.Config.MinNameLength} characters long.");
                 return;
             }
 
-            if (factionName.Length > SFactions.Config.MaxNameLength) {
+            if (factionName.Length > SFactions.Config.MaxNameLength)
+            {
                 plr.SendErrorMessage($"Faction name needs to be at most {SFactions.Config.MaxNameLength} characters long.");
                 return;
             }
 
-            if (SFactions.OnlineMembers.ContainsKey((byte)args.Player.Index)) {
+            if (SFactions.OnlineMembers.ContainsKey((byte)args.Player.Index))
+            {
                 plr.SendErrorMessage("You need to leave your current faction first to create new.\n" +
                     "If you want to leave your current faction do '/faction leave'");
                 return;
             }
 
-            if (SFactions.DbManager.DoesFactionExist(factionName)) {
+            if (SFactions.DbManager.DoesFactionExist(factionName))
+            {
                 plr.SendErrorMessage("A faction with this name already exists.");
                 return;
             }
@@ -404,38 +467,45 @@ namespace SFactions {
             SFactions.OnlineMembers.Add((byte)plr.Index, newFaction.Id);
             SFactions.OnlineFactions.Add(newFaction.Id, newFaction);
             args.Player.SendSuccessMessage($"You've created {factionName}");
-            
+
         }
 
-        private static void RenameCmd(CommandArgs args) {
+        private static void RenameCmd(CommandArgs args)
+        {
             TSPlayer plr = args.Player;
-            if (!SFactions.OnlineMembers.ContainsKey((byte)plr.Index)) {
+            if (!SFactions.OnlineMembers.ContainsKey((byte)plr.Index))
+            {
                 plr.SendErrorMessage("You're not in a faction.");
                 return;
             }
             Faction plrFaction = SFactions.OnlineFactions[SFactions.OnlineMembers[(byte)plr.Index]];
 
-            if (!plr.Name.Equals(plrFaction.Leader)) {
+            if (!plr.Name.Equals(plrFaction.Leader))
+            {
                 plr.SendErrorMessage("Only leaders can change the faction name.");
                 return;
             }
 
-            if (args.Parameters.Count < 2) {
+            if (args.Parameters.Count < 2)
+            {
                 plr.SendErrorMessage("You need to specify a the faction name.");
                 return;
             }
             string factionName = string.Join(' ', args.Parameters.GetRange(1, args.Parameters.Count - 1));
 
-            if (SFactions.DbManager.DoesFactionExist(factionName)) {
+            if (SFactions.DbManager.DoesFactionExist(factionName))
+            {
                 plr.SendErrorMessage("A faction with this name already exists.");
                 return;
             }
 
-            if (factionName.Length < SFactions.Config.MinNameLength) {
+            if (factionName.Length < SFactions.Config.MinNameLength)
+            {
                 plr.SendErrorMessage($"Faction name needs to be at least {SFactions.Config.MinNameLength} characters long.");
                 return;
             }
-            if (factionName.Length > SFactions.Config.MaxNameLength) {
+            if (factionName.Length > SFactions.Config.MaxNameLength)
+            {
                 plr.SendErrorMessage($"Faction name needs to be at most {SFactions.Config.MaxNameLength} characters long.");
                 return;
             }
@@ -446,26 +516,31 @@ namespace SFactions {
             plr.SendSuccessMessage($"Successfully changed faction name to \"{factionName}\"");
         }
 
-        private static void LeadCmd(CommandArgs args) {
+        private static void LeadCmd(CommandArgs args)
+        {
             TSPlayer plr = args.Player;
-            if(!SFactions.OnlineMembers.ContainsKey((byte)plr.Index)) {
+            if (!SFactions.OnlineMembers.ContainsKey((byte)plr.Index))
+            {
                 plr.SendErrorMessage("You're not in a faction.");
                 return;
             }
             Faction plrFaction = SFactions.OnlineFactions[SFactions.OnlineMembers[(byte)plr.Index]];
 
-            if (plrFaction.Leader == null) {
+            if (plrFaction.Leader == null)
+            {
                 plrFaction.Leader = plr.Name;
                 SFactions.DbManager.SaveFaction(plrFaction);
                 SFactions.OnlineFactions[plrFaction.Id].Leader = plrFaction.Leader;
                 plr.SendSuccessMessage("You're the leader of your faction now.");
             }
-            else {
+            else
+            {
                 plr.SendErrorMessage($"{plrFaction.Leader} is your faction's leader already.");
             }
         }
-        
-        private static void HelpCmd(CommandArgs args) {
+
+        private static void HelpCmd(CommandArgs args)
+        {
             args.Player.SendInfoMessage("Subcommands:"
                 + "\nhelp: Shows this message."
                 + "\ncreate: Create a new faction (usage: /faction create <faction name>)"

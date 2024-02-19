@@ -57,6 +57,7 @@ namespace SFactions.Database
                 AbilityType.TheBound => new TheBound(PointManager.GetAbilityLevel(faction)),
                 AbilityType.Alchemist => new Alchemist(PointManager.GetAbilityLevel(faction)),
                 AbilityType.Paranoia => new Paranoia(PointManager.GetAbilityLevel(faction)),
+                AbilityType.HyperCrit => new HyperCrit(PointManager.GetAbilityLevel(faction)),
                 _ => new DryadsRingOfHealing(PointManager.GetAbilityLevel(faction))
             };
         }

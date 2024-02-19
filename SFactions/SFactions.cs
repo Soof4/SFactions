@@ -13,7 +13,7 @@ namespace SFactions
     public class SFactions : TerrariaPlugin
     {
         public override string Name => "SFactions";
-        public override Version Version => new Version(1, 2, 4);
+        public override Version Version => new Version(1, 2, 5);
         public override string Author => "Soofa";
         public override string Description => "Sausage Factions? Smexy Factions? Sup Factions?";
         public SFactions(Main game) : base(game) { }
@@ -45,6 +45,7 @@ namespace SFactions
             ServerApi.Hooks.ServerLeave.Register(this, OnServerLeave);
             ServerApi.Hooks.NpcKilled.Register(this, OnNpcKill);
             ServerApi.Hooks.NpcLootDrop.Register(this, OnDropLoot);
+            ServerApi.Hooks.NpcStrike.Register(this, OnNpcStrike);
 
             TShockAPI.Commands.ChatCommands.Add(new("sfactions.faction", Commands.FactionCmd, "faction", "f")
             {
@@ -110,7 +111,8 @@ namespace SFactions
                 Faction plrFaction = OnlineFactions[OnlineMembers[args.PlayerId]];
                 int level = PointManager.GetAbilityLevel(plrFaction);
                 int cooldown = PointManager.GetAbilityCooldownByAbilityLevel(level, 100);
-                if (plrFaction.AbilityType == AbilityType.MagicDice) {
+                if (plrFaction.AbilityType == AbilityType.MagicDice)
+                {
                     cooldown = 70 - RandomGen.Next(16);
                 }
                 plrFaction.Ability.Cast(args.Player, cooldown, level);
@@ -126,6 +128,15 @@ namespace SFactions
             if (Main.npc[eventArgs.NpcArrayIndex].rarity == 11) eventArgs.Handled = true;
         }
 
+        public void OnNpcStrike(NpcStrikeEventArgs args)
+        {
+            Faction plrFaction = OnlineFactions[OnlineMembers[(byte)args.Player.whoAmI]];
+            if (plrFaction.AbilityType == AbilityType.HyperCrit)
+            {
+                Hooks.OnNpcStrike_HyperCrit(args);
+            }
+        }
+
         protected override void Dispose(bool disposing)
         {
             if (disposing)
@@ -133,7 +144,7 @@ namespace SFactions
                 GeneralHooks.ReloadEvent -= OnReload;
                 GetDataHandlers.PlayerUpdate -= OnPlayerUpdate;
                 PlayerHooks.PlayerChat -= ChatManager.OnPlayerChat;
-;
+                ;
                 ServerApi.Hooks.NetGreetPlayer.Deregister(this, OnNetGreetPlayer);
                 ServerApi.Hooks.NetSendData.Deregister(this, Abilities.Extensions.RespawnCooldownBuffAdder);
                 ServerApi.Hooks.ServerLeave.Deregister(this, OnServerLeave);
