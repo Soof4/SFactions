@@ -61,7 +61,7 @@ namespace SFactions
 
             if (!Invitations.TryGetValue(plr.Name, out Faction? newFaction) || newFaction == null)
             {
-                plr.SendErrorMessage("Coudln't find a pending invitation.");
+                plr.SendErrorMessage("Couldn't find a pending invitation.");
                 return;
             }
 
@@ -143,7 +143,7 @@ namespace SFactions
 
             if (targetPLr == null)
             {
-                plr.SendErrorMessage("Couldn't the the player.");
+                plr.SendErrorMessage("Couldn't find the player.");
                 return;
             }
 
@@ -286,7 +286,7 @@ namespace SFactions
                 plr.SendErrorMessage("Please specify an ability:\n" +
                     "dryadsringofhealing, ringofdracula, setsblessing, adrenaline, witch\n" +
                     "marthymr, randomtp, fairyoflight, twilight, harvest\n" +
-                    "icegolem, magicdice, thebound, alchemist, paranoia" +
+                    "icegolem, magicdice, thebound, alchemist, paranoia\n" +
                     "hypercrit");
                 return;
             }

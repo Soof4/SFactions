@@ -13,9 +13,9 @@ namespace SFactions
     public class SFactions : TerrariaPlugin
     {
         public override string Name => "SFactions";
-        public override Version Version => new Version(1, 2, 5);
+        public override Version Version => new Version(1, 2, 6);
         public override string Author => "Soofa";
-        public override string Description => "Sausage Factions? Smexy Factions? Sup Factions?";
+        public override string Description => "Soofa's Factions";
         public SFactions(Main game) : base(game) { }
         public static string ConfigPath = Path.Combine(TShock.SavePath + "/SFactionsConfig.json");
         public static DatabaseManager DbManager = new(new SqliteConnection("Data Source=" + Path.Combine(TShock.SavePath, "SFactions.sqlite")));
@@ -129,10 +129,8 @@ namespace SFactions
         }
 
         public void OnNpcStrike(NpcStrikeEventArgs args)
-        {
-            Faction plrFaction = OnlineFactions[OnlineMembers[(byte)args.Player.whoAmI]];
-            if (plrFaction.AbilityType == AbilityType.HyperCrit)
-            {
+        {   
+            if (OnlineMembers.ContainsKey((byte)args.Player.whoAmI) && OnlineFactions[OnlineMembers[(byte)args.Player.whoAmI]].AbilityType == AbilityType.HyperCrit) {
                 Hooks.OnNpcStrike_HyperCrit(args);
             }
         }
