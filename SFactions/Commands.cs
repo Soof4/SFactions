@@ -5,9 +5,11 @@ using TShockAPI.Configuration;
 
 namespace SFactions
 {
-    public class Commands
+    public static class Commands
     {
         private static Dictionary<string, Faction> Invitations = new();
+
+
         public static void FactionCmd(CommandArgs args)
         {
             TSPlayer player = args.Player;
@@ -21,8 +23,6 @@ namespace SFactions
 
             switch (subcmd)
             {
-                case "help":
-                    HelpCmd(args); return;
                 case "create":
                     CreateCmd(args); return;
                 case "join":
@@ -46,7 +46,7 @@ namespace SFactions
                 case "info":
                     InfoCmd(args); return;
                 default:
-                    player.SendErrorMessage("Subcommand could not be found."); return;
+                    HelpCmd(args); return;
             }
         }
 

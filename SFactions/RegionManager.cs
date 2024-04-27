@@ -2,7 +2,7 @@
 using SFactions.Database;
 
 namespace SFactions {
-    public class RegionManager {
+    public static class RegionManager {
         public static void SetRegion(TSPlayer plr) {
             SFactions.OnlineFactions[SFactions.OnlineMembers[(byte)plr.Index]].Region = plr.CurrentRegion.Name;
             SFactions.DbManager.SaveFaction(SFactions.OnlineFactions[SFactions.OnlineMembers[(byte)plr.Index]]);

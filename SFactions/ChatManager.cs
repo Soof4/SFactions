@@ -3,7 +3,7 @@ using TShockAPI.Configuration;
 using TShockAPI.Hooks;
 
 namespace SFactions {
-    public class ChatManager {
+    public static class ChatManager {
         
         public static void OnPlayerChat(PlayerChatEventArgs args) {
 

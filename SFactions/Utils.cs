@@ -2,7 +2,7 @@
 using TShockAPI;
 
 namespace SFactions {
-    public class Utils {
+    public static class Utils {
         
     }
 }

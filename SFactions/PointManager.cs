@@ -3,7 +3,7 @@ using SFactions.Database;
 
 namespace SFactions
 {
-    public class PointManager
+    public static class PointManager
     {
         public static int GetAbilityLevel(Faction faction)
         {
