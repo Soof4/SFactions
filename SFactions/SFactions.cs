@@ -47,8 +47,6 @@ namespace SFactions
                 AllowServer = false,
                 HelpText = "To see the detailed help message do \"/faction help\""
             });
-
-            Config = Configuration.Reload();
         }
 
         protected override void Dispose(bool disposing)

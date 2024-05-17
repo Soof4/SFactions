@@ -5,7 +5,7 @@ namespace SFactions
 {
     public class Configuration
     {
-        public static string ConfigPath = Path.Combine(TShock.SavePath, "/SFactionsConfig.json");
+        public static string ConfigPath = Path.Combine(TShock.SavePath, "SFactionsConfig.json");
 
         public int MinNameLength = 2;
         public int MaxNameLength = 20;
