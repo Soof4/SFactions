@@ -15,7 +15,7 @@ namespace SFactions
         #region Plugin Info
         
         public override string Name => "SFactions";
-        public override Version Version => new Version(1, 2, 6);
+        public override Version Version => new Version(1, 2, 7);
         public override string Author => "Soofa";
         public override string Description => "Soofa's Factions";
         
