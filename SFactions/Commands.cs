@@ -100,7 +100,7 @@ namespace SFactions
             plr.SendInfoMessage($"Faction ID: {faction.Id}\n" +
                                 $"Faction Name: {faction.Name}\n" +
                                 $"Faction Leader: {faction.Leader}\n" +
-                                $"Faction Ability: {faction.Ability}\n" +
+                                $"Faction Ability: {faction.Ability.GetType().Name}\n" +
                                 $"Has a Region: {faction.Region != null}\n" +
                                 $"Invite Type: {faction.InviteType}"
                                 );
@@ -283,55 +283,23 @@ namespace SFactions
 
             if (args.Parameters.Count < 2)
             {
-                plr.SendErrorMessage("Please specify an ability:\n" +
-                    "dryadsringofhealing, ringofdracula, setsblessing, adrenaline, witch\n" +
-                    "marthymr, randomtp, fairyoflight, twilight, harvest\n" +
-                    "icegolem, magicdice, thebound, alchemist, paranoia\n" +
-                    "hypercrit");
+                plr.SendErrorMessage("Invalid ability type. Valid types are:\n" +
+                                     string.Join(", ", SFactions.Config.EnabledAbilities));
                 return;
             }
 
-            AbilityType newType;
-            switch (args.Parameters[1].ToLower())
+            if (!Utils.TryGetAbilityTypeFromString(args.Parameters[1].ToLower(), out AbilityType newType))
             {
-                case "dryadsringofhealing":
-                    newType = AbilityType.DryadsRingOfHealing; break;
-                case "ringofdracula":
-                    newType = AbilityType.RingOfDracula; break;
-                case "setsblessing":
-                    newType = AbilityType.SetsBlessing; break;
-                case "adrenaline":
-                    newType = AbilityType.Adrenaline; break;
-                case "witch":
-                    newType = AbilityType.Witch; break;
-                case "marthymr":
-                    newType = AbilityType.Marthymr; break;
-                case "randomtp":
-                    newType = AbilityType.RandomTeleport; break;
-                case "fairyoflight":
-                    newType = AbilityType.FairyOfLight; break;
-                case "twilight":
-                    newType = AbilityType.Twilight; break;
-                case "harvest":
-                    newType = AbilityType.Harvest; break;
-                case "icegolem":
-                    newType = AbilityType.IceGolem; break;
-                case "magicdice":
-                    newType = AbilityType.MagicDice; break;
-                case "thebound":
-                    newType = AbilityType.TheBound; break;
-                case "alchemist":
-                    newType = AbilityType.Alchemist; break;
-                case "paranoia":
-                    newType = AbilityType.Paranoia; break;
-                case "hypercrit":
-                    newType = AbilityType.HyperCrit; break;
-                default:
-                    plr.SendErrorMessage("Invalid ability type. Valid types are:\n" +
-                        "dryadsringofhealing, ringofdracula, setsblessing, adrenaline, witch,\n" +
-                        "marthymr, randomtp, fairyoflight, twilight, harvest,\n" +
-                        "icegolem, magicdice, thebound, alchemist, paranoia,\n" +
-                        "hypercrit"); return;
+                plr.SendErrorMessage("Invalid ability type. Valid types are:\n" +
+                                     string.Join(", ", SFactions.Config.EnabledAbilities));
+                return;
+            }
+
+            if (!SFactions.Config.EnabledAbilities.Contains(args.Parameters[1].ToLower()))
+            {
+                plr.SendErrorMessage("Invalid ability type. Valid types are:\n" +
+                                     string.Join(", ", SFactions.Config.EnabledAbilities));
+                return;
             }
 
             plrFaction.AbilityType = newType;
@@ -467,7 +435,6 @@ namespace SFactions
             SFactions.OnlineMembers.Add((byte)plr.Index, newFaction.Id);
             SFactions.OnlineFactions.Add(newFaction.Id, newFaction);
             args.Player.SendSuccessMessage($"You've created {factionName}");
-
         }
 
         private static void RenameCmd(CommandArgs args)
