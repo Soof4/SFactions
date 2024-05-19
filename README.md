@@ -56,3 +56,21 @@ eg: `/f info The Furnitures`
 
 ## Other Informations
 * In order to cast abilities, players need to use Harp item.
+* In order to cycle abilities that have sub-abilities, players need to use Copper Watch item.
+* Currently supported abilities are as follow, (you'll need to paste these into EnabledAbilities property in the config file, by default they'll come added already)
+  1. dryadsringofhealing
+  2. ringofdracula
+  3. setsblessing
+  4. adrenaline
+  5. witch
+  6. marthymr
+  7. randomtp
+  8. fairyoflight
+  9. twilight
+  10. harvest
+  11. icegolem
+  12. magicdice
+  13. thebound
+  14. alchemist
+  15. paranoia
+  16. hypercrit
