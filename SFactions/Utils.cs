@@ -42,6 +42,12 @@ namespace SFactions
                     result = AbilityType.Paranoia; break;
                 case "hypercrit":
                     result = AbilityType.HyperCrit; break;
+                case "pentagram":
+                    result = AbilityType.Pentagram; break;
+                case "silentorchestra":
+                    result = AbilityType.SilentOrchestra; break;
+                case "shockwave":
+                    result = AbilityType.Shockwave; break;
                 default:
                     result = AbilityType.DryadsRingOfHealing;
                     return false;

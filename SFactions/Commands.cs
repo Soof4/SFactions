@@ -304,7 +304,7 @@ namespace SFactions
 
             plrFaction.AbilityType = newType;
             SFactions.OnlineFactions[plrFaction.Id] = new Faction(plrFaction.Id, plrFaction.Name, plrFaction.Leader,
-                plrFaction.AbilityType, plrFaction.Region, DateTime.UtcNow, plrFaction.InviteType);
+                                                                  plrFaction.AbilityType, plrFaction.Region, DateTime.UtcNow, plrFaction.InviteType);
             SFactions.DbManager.SaveFaction(SFactions.OnlineFactions[plrFaction.Id]);
 
             plr.SendSuccessMessage($"Your faction's ability is now \"{args.Parameters[1]}\".");

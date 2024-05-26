@@ -58,6 +58,9 @@ namespace SFactions.Database
                 AbilityType.Alchemist => new Alchemist(PointManager.GetAbilityLevel(faction)),
                 AbilityType.Paranoia => new Paranoia(PointManager.GetAbilityLevel(faction)),
                 AbilityType.HyperCrit => new HyperCrit(PointManager.GetAbilityLevel(faction)),
+                AbilityType.Pentagram => new Pentagram(PointManager.GetAbilityLevel(faction)),
+                AbilityType.SilentOrchestra => new SilentOrchestra(PointManager.GetAbilityLevel(faction)),
+                AbilityType.Shockwave => new Shockwave(PointManager.GetAbilityLevel(faction)),
                 _ => new DryadsRingOfHealing(PointManager.GetAbilityLevel(faction))
             };
         }

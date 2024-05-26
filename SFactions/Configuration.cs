@@ -20,7 +20,8 @@ namespace SFactions
                                             "randomtp", "fairyoflight", "twilight",
                                             "harvest", "icegolem", "magicdice",
                                             "thebound", "alchemist", "paranoia",
-                                            "hypercrit"};
+                                            "hypercrit", "pentagram", "silentorchestra",
+                                            "shockwave"};
 
 #pragma warning restore CS0414
 

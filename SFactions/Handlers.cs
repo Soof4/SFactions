@@ -29,7 +29,7 @@ namespace SFactions
             GeneralHooks.ReloadEvent -= OnReload;
             GetDataHandlers.PlayerUpdate -= OnPlayerUpdate;
             PlayerHooks.PlayerChat -= ChatManager.OnPlayerChat;
-            
+
             ServerApi.Hooks.NetGreetPlayer.Deregister(deregistrator, OnNetGreetPlayer);
             ServerApi.Hooks.NetSendData.Deregister(deregistrator, Abilities.Extensions.RespawnCooldownBuffAdder);
             ServerApi.Hooks.ServerLeave.Deregister(deregistrator, OnServerLeave);
@@ -40,43 +40,30 @@ namespace SFactions
 
         private static void OnNetGreetPlayer(GreetPlayerEventArgs args)
         {
+            HyperCrit.HyperCritActive.Add((byte)args.Who, 0);
+
             try
             {
                 Faction plrFaction = SFactions.DbManager.GetPlayerFaction(TShock.Players[args.Who].Name);
                 SFactions.OnlineMembers.Add((byte)args.Who, plrFaction.Id);
 
                 // Add the faction to OnlineFactions
-                foreach (int id in SFactions.OnlineFactions.Keys)
-                {
-                    if (id == plrFaction.Id)
-                    {
-                        return;
-                    }
-                }
-                SFactions.OnlineFactions.Add(plrFaction.Id, plrFaction);
+                SFactions.OnlineFactions.TryAdd(plrFaction.Id, plrFaction);
             }
-            catch (NullReferenceException)
-            {
-                return;
-            }
+            catch (NullReferenceException) { }
         }
 
         private static void OnServerLeave(LeaveEventArgs args)
         {
+            HyperCrit.HyperCritActive.Remove((byte)args.Who);
+
             if (SFactions.OnlineMembers.ContainsKey((byte)args.Who))
             {
                 int factionId = SFactions.OnlineMembers[(byte)args.Who];
                 SFactions.OnlineMembers.Remove((byte)args.Who);
 
                 // Remove the faction from onlineFactions if nobody else is online
-                foreach (int id in SFactions.OnlineMembers.Values)
-                {
-                    if (id == factionId)
-                    {
-                        return;
-                    }
-                }
-                SFactions.OnlineFactions.Remove(factionId);
+                if (!SFactions.OnlineMembers.Values.Contains(factionId)) SFactions.OnlineFactions.Remove(factionId);
             }
         }
 
@@ -120,11 +107,16 @@ namespace SFactions
 
         public static void OnNpcStrike(NpcStrikeEventArgs args)
         {
-            if (SFactions.OnlineMembers.ContainsKey((byte)args.Player.whoAmI) &&
-                SFactions.OnlineFactions[SFactions.OnlineMembers[(byte)args.Player.whoAmI]].AbilityType == AbilityType.HyperCrit)
+            if (SFactions.OnlineMembers.ContainsKey((byte)args.Player.whoAmI))
             {
-                Hooks.OnNpcStrike_HyperCrit(args);
+                if (SFactions.OnlineFactions.ContainsKey(SFactions.OnlineMembers[(byte)args.Player.whoAmI]))
+                {
+                    if (SFactions.OnlineFactions[SFactions.OnlineMembers[(byte)args.Player.whoAmI]].AbilityType == AbilityType.HyperCrit) Hooks.OnNpcStrike_HyperCrit(args, true);
+                    else Hooks.OnNpcStrike_HyperCrit(args, false);
+                }
+                else Hooks.OnNpcStrike_HyperCrit(args, false);
             }
+            else Hooks.OnNpcStrike_HyperCrit(args, false);
         }
     }
 }
