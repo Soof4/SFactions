@@ -23,7 +23,9 @@ namespace SFactions.Database
                 new SqlColumn("AbilityType", MySqlDbType.Int32),
                 new SqlColumn("Region", MySqlDbType.TinyText),
                 new SqlColumn("LastAbilityChangeTime", MySqlDbType.TinyText),
-                new SqlColumn("InviteType", MySqlDbType.Int32)
+                new SqlColumn("InviteType", MySqlDbType.Int32),
+                new SqlColumn("BaseX", MySqlDbType.Int32),
+                new SqlColumn("BaseY", MySqlDbType.Int32)
                 ));
 
             sqlCreator.EnsureTableStructure(new SqlTable("Members",
@@ -44,8 +46,8 @@ namespace SFactions.Database
 
         public bool SaveFaction(Faction faction)
         {
-            return _db.Query("UPDATE Factions SET Name = @1, Leader = @2, AbilityType = @3, Region = @4, InviteType = @5, LastAbilityChangeTime = @6 WHERE Id = @0",
-                faction.Id, faction.Name, faction.Leader, (int)faction.AbilityType, faction.Region, faction.InviteType, faction.LastAbilityChangeTime) != 0;
+            return _db.Query("UPDATE Factions SET Name = @1, Leader = @2, AbilityType = @3, Region = @4, InviteType = @5, LastAbilityChangeTime = @6, BaseX = @7, BaseY = @8 WHERE Id = @0",
+                faction.Id, faction.Name, faction.Leader, (int)faction.AbilityType, faction.Region, faction.InviteType, faction.LastAbilityChangeTime, faction.BaseX, faction.BaseY) != 0;
         }
 
         /// <summary>
@@ -77,7 +79,9 @@ namespace SFactions.Database
                     (AbilityType)reader.Get<int>("AbilityType"),
                     reader.Get<string>("Region"),
                     DateTime.Parse(reader.Get<string>("LastAbilityChangeTime")),
-                    (InviteType)reader.Get<int>("InviteType")
+                    (InviteType)reader.Get<int>("InviteType"),
+                    reader.Get<int>("BaseX"),
+                    reader.Get<int>("BaseY")
                     );
             }
             throw new NullReferenceException();

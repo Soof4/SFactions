@@ -4,12 +4,18 @@ using SFactions.Database;
 namespace SFactions {
     public static class RegionManager {
         public static void SetRegion(TSPlayer plr) {
-            SFactions.OnlineFactions[SFactions.OnlineMembers[(byte)plr.Index]].Region = plr.CurrentRegion.Name;
+            Faction faction = SFactions.OnlineFactions[SFactions.OnlineMembers[(byte)plr.Index]];
+            faction.Region = plr.CurrentRegion.Name;
+            faction.BaseX = plr.TileX;
+            faction.BaseY = plr.TileY;
             SFactions.DbManager.SaveFaction(SFactions.OnlineFactions[SFactions.OnlineMembers[(byte)plr.Index]]);
         }
 
         public static void DelRegion(TSPlayer plr) {
-            SFactions.OnlineFactions[SFactions.OnlineMembers[(byte)plr.Index]].Region = null;
+            Faction faction = SFactions.OnlineFactions[SFactions.OnlineMembers[(byte)plr.Index]];
+            faction.Region = null;
+            faction.BaseX = null;
+            faction.BaseY = null;
             SFactions.DbManager.SaveFaction(SFactions.OnlineFactions[SFactions.OnlineMembers[(byte)plr.Index]]);
         }
 

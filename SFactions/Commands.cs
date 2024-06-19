@@ -45,6 +45,8 @@ namespace SFactions
                     AcceptCmd(args); return;
                 case "info":
                     InfoCmd(args); return;
+                case "base":
+                    BaseCmd(args); return;
                 default:
                     HelpCmd(args); return;
             }
@@ -486,6 +488,7 @@ namespace SFactions
         private static void LeadCmd(CommandArgs args)
         {
             TSPlayer plr = args.Player;
+
             if (!SFactions.OnlineMembers.ContainsKey((byte)plr.Index))
             {
                 plr.SendErrorMessage("You're not in a faction.");
@@ -504,6 +507,27 @@ namespace SFactions
             {
                 plr.SendErrorMessage($"{plrFaction.Leader} is your faction's leader already.");
             }
+        }
+
+        private static void BaseCmd(CommandArgs args)
+        {
+            TSPlayer plr = args.Player;
+
+            if (!SFactions.OnlineMembers.ContainsKey((byte)plr.Index))
+            {
+                plr.SendErrorMessage("You're not in a faction.");
+                return;
+            }
+
+            Faction plrFaction = SFactions.OnlineFactions[SFactions.OnlineMembers[(byte)plr.Index]];
+
+            if (plrFaction.BaseX == null || plrFaction.BaseY == null)
+            {
+                plr.SendErrorMessage("Your faction doesn't have a base!");
+                return;
+            }
+
+            plr.Teleport((float)(16 * plrFaction.BaseX), (float)(16 * plrFaction.BaseY));
         }
 
         private static void HelpCmd(CommandArgs args)
