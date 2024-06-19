@@ -6,20 +6,15 @@ namespace SFactions {
     public static class ChatManager {
         
         public static void OnPlayerChat(PlayerChatEventArgs args) {
-
-            // Handle commands
-            if (args.RawText.StartsWith(TShock.Config.Settings.CommandSpecifier) || args.RawText.StartsWith(TShock.Config.Settings.CommandSilentSpecifier)) {
-                TShockAPI.Commands.HandleCommand(args.Player, args.RawText);
-                return;
-            }
-
+        
             // Format the message
-            string message = string.Format(SFactions.Config.ChatFormat, "", 
-                args.Player.Group.Prefix, 
-                args.Player.Name,
-                args.Player.Group.Suffix,
-                args.RawText,
-                SFactions.OnlineMembers.ContainsKey((byte)args.Player.Index) ? $"[{SFactions.OnlineFactions[SFactions.OnlineMembers[(byte)args.Player.Index]].Name}] " : "");
+            string message = string.Format(SFactions.Config.ChatFormat, 
+                "",    // {0}
+                args.Player.Group.Prefix,    // {1}
+                args.Player.Name,    // {2}
+                args.Player.Group.Suffix,    // {3}
+                args.RawText,    // {4}
+                SFactions.OnlineMembers.ContainsKey((byte)args.Player.Index) ? SFactions.OnlineFactions[SFactions.OnlineMembers[(byte)args.Player.Index]].Name : "");    // {5}
                 
 
             TSPlayer.All.SendMessage(message,
