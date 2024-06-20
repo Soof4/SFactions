@@ -16,12 +16,10 @@ namespace SFactions {
                 args.RawText,    // {4}
                 SFactions.OnlineMembers.ContainsKey((byte)args.Player.Index) ? SFactions.OnlineFactions[SFactions.OnlineMembers[(byte)args.Player.Index]].Name : "");    // {5}
                 
-
             TSPlayer.All.SendMessage(message,
-                new Microsoft.Xna.Framework.Color(
                 args.Player.Group.R,
                 args.Player.Group.G,
-                args.Player.Group.B));
+                args.Player.Group.B);
 
             TSPlayer.Server.SendConsoleMessage(message,
                 args.Player.Group.R,
