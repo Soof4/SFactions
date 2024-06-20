@@ -80,8 +80,8 @@ namespace SFactions
                 if (args.Player.SelectedItem.netID == ItemID.Harp)
                 {
                     Faction plrFaction = SFactions.OnlineFactions[SFactions.OnlineMembers[args.PlayerId]];
-                    int level = PointManager.GetAbilityLevel(plrFaction);
-                    int cooldown = PointManager.GetAbilityCooldownByAbilityLevel(level, 100);
+                    int level = Utils.GetAbilityLevel(plrFaction);
+                    int cooldown = Utils.GetAbilityCooldownByAbilityLevel(level, 100);
                     if (plrFaction.AbilityType == AbilityType.MagicDice)
                     {
                         cooldown = 70 - SFactions.RandomGen.Next(16);
@@ -100,6 +100,7 @@ namespace SFactions
         {
             if (eventArgs.npc.rarity == 10) Abilities.Extensions.ExplosiveEffectEffect(eventArgs.npc.position, eventArgs.npc.lifeMax / 5);
         }
+        
         private static void OnDropLoot(NpcLootDropEventArgs eventArgs)
         {
             if (Main.npc[eventArgs.NpcArrayIndex].rarity == 11) eventArgs.Handled = true;
