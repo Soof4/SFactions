@@ -13,24 +13,39 @@ namespace SFactions
         {
             // Format the message
             string message = string.Format(SFactions.Config.ChatFormat,
-                "",    // {0}
-                args.Player.Group.Prefix,    // {1}
-                args.Player.Name,    // {2}
-                args.Player.Group.Suffix,    // {3}
-                args.RawText,    // {4}
-                SFactions.OnlineMembers.ContainsKey((byte)args.Player.Index) ? SFactions.OnlineFactions[SFactions.OnlineMembers[(byte)args.Player.Index]].Name : "");    // {5}
+                                           "",                                               // {0}
+                                           args.Player.Group.Prefix,                         // {1}
+                                           args.Player.Name,                                 // {2}
+                                           args.Player.Group.Suffix,                         // {3}
+                                           args.RawText,                                     // {4}
+                                           GetFactionNameWithParanthesis(args.Player.Index)  // {5}
+                                           );
 
             TSPlayer.All.SendMessage(message,
-                args.Player.Group.R,
-                args.Player.Group.G,
-                args.Player.Group.B);
+                                     args.Player.Group.R,
+                                     args.Player.Group.G,
+                                     args.Player.Group.B);
 
             TSPlayer.Server.SendConsoleMessage(message,
-                args.Player.Group.R,
-                args.Player.Group.G,
-                args.Player.Group.B);
+                                               args.Player.Group.R,
+                                               args.Player.Group.G,
+                                               args.Player.Group.B);
 
             args.Handled = true;
+        }
+
+        private static string GetFactionNameWithParanthesis(int playerIndex)
+        {
+            string result = "";
+
+            if (SFactions.OnlineMembers.ContainsKey((byte)playerIndex))
+            {
+                result = SFactions.Config.ChatFactionNameOpeningParenthesis;
+                result += SFactions.OnlineFactions[SFactions.OnlineMembers[(byte)playerIndex]].Name;
+                result += SFactions.Config.ChatFactionNameClosingParanthesis;
+            }
+            
+            return result;
         }
     }
 }
