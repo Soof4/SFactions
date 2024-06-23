@@ -2,6 +2,8 @@
 using SFactions.Database;
 using TShockAPI;
 using Terraria;
+using System.Text;
+using System.Text.RegularExpressions;
 
 namespace SFactions
 {

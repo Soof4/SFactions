@@ -15,7 +15,7 @@ namespace SFactions
         #region Plugin Info
         
         public override string Name => "SFactions";
-        public override Version Version => new Version(1, 2, 8);
+        public override Version Version => new Version(1, 3, 0);
         public override string Author => "Soofa";
         public override string Description => "Soofa's Factions";
         
@@ -24,8 +24,8 @@ namespace SFactions
         public SFactions(Main game) : base(game) { }
         public static DatabaseManager DbManager = new(new SqliteConnection("Data Source=" + Path.Combine(TShock.SavePath, "SFactions.sqlite")));
         public static Configuration Config = Configuration.Reload();
-
         public static Random RandomGen = new();
+        public static TerrariaPlugin? Instance;
 
         /// <summary>
         /// Key: Player index <br></br>
@@ -47,6 +47,8 @@ namespace SFactions
                 AllowServer = false,
                 HelpText = "To see the detailed help message do \"/faction help\""
             });
+
+            Instance = this;
         }
 
         protected override void Dispose(bool disposing)

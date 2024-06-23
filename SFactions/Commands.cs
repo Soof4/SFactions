@@ -2,14 +2,16 @@
 using SFactions.Database;
 using Abilities;
 using TShockAPI.Configuration;
+using TerrariaApi.Server;
+using Org.BouncyCastle.Tsp;
 
 namespace SFactions
 {
     public static class Commands
     {
         private static Dictionary<string, Faction> Invitations = new();
-
-
+        private static List<(Faction, Faction)> _warInvitations = new();
+        public static War? ActiveWar = null;
         public static void FactionCmd(CommandArgs args)
         {
             TSPlayer player = args.Player;
@@ -24,7 +26,7 @@ namespace SFactions
             switch (subcmd)
             {
                 case "create":
-                    CreateCmd(args); return;
+                    new CreateCommand().Execute(args); return;
                 case "join":
                     JoinCmd(args); return;
                 case "leave":
@@ -47,6 +49,8 @@ namespace SFactions
                     InfoCmd(args); return;
                 case "base":
                     BaseCmd(args); return;
+                case "war":
+                    WarCmd(args); return;
                 default:
                     HelpCmd(args); return;
             }
@@ -398,6 +402,9 @@ namespace SFactions
 
         private static void CreateCmd(CommandArgs args)
         {
+            
+            
+            /*
             TSPlayer plr = args.Player;
             if (args.Parameters.Count < 2)
             {
@@ -421,7 +428,7 @@ namespace SFactions
             if (SFactions.OnlineMembers.ContainsKey((byte)args.Player.Index))
             {
                 plr.SendErrorMessage("You need to leave your current faction first to create new.\n" +
-                    "If you want to leave your current faction do '/faction leave'");
+                                     "If you want to leave your current faction do '/faction leave'");
                 return;
             }
 
@@ -437,6 +444,7 @@ namespace SFactions
             SFactions.OnlineMembers.Add((byte)plr.Index, newFaction.Id);
             SFactions.OnlineFactions.Add(newFaction.Id, newFaction);
             args.Player.SendSuccessMessage($"You've created {factionName}");
+            */
         }
 
         private static void RenameCmd(CommandArgs args)
@@ -457,7 +465,7 @@ namespace SFactions
 
             if (args.Parameters.Count < 2)
             {
-                plr.SendErrorMessage("You need to specify a the faction name.");
+                plr.SendErrorMessage("You need to specify a faction name.");
                 return;
             }
             string factionName = string.Join(' ', args.Parameters.GetRange(1, args.Parameters.Count - 1));
@@ -530,6 +538,146 @@ namespace SFactions
             plr.Teleport((float)(16 * plrFaction.BaseX), (float)(16 * plrFaction.BaseY));
         }
 
+        private static void WarCmd(CommandArgs args)
+        {
+            TSPlayer plr = args.Player;
+
+            if (!SFactions.OnlineMembers.ContainsKey((byte)plr.Index))
+            {
+                plr.SendErrorMessage("You're not in a faction.");
+                return;
+            }
+
+            Faction plrFaction = SFactions.OnlineFactions[SFactions.OnlineMembers[(byte)plr.Index]];
+
+            if (!plr.Name.Equals(plrFaction.Leader))
+            {
+                plr.SendErrorMessage("Only leaders can start, accept or decline a war.");
+                return;
+            }
+
+            if (args.Parameters.Count < 2)
+            {
+                plr.SendErrorMessage("You need to specify a <invite/accept/decline>");
+                return;
+            }
+
+            switch (args.Parameters[1].ToLower())
+            {
+                case "invite":
+                    {
+                        string enemyFactionName = string.Join(' ', args.Parameters.GetRange(2, args.Parameters.Count - 2));
+
+                        Faction? enemyFaction = null;
+                        foreach (Faction f in SFactions.OnlineFactions.Values)
+                        {
+                            if (f.Name == enemyFactionName)
+                            {
+                                enemyFaction = f;
+                                break;
+                            }
+                            else if (f.Name.StartsWith(enemyFactionName))
+                            {
+                                enemyFaction = f;
+                            }
+                        }
+
+                        if (enemyFaction == null)
+                        {
+                            plr.SendErrorMessage("A faction with specified name couldn't be found online.");
+                            return;
+                        }
+
+                        TSPlayer? enemyLeader = null;
+                        foreach (var kvp in SFactions.OnlineMembers)
+                        {
+                            if (kvp.Value == enemyFaction.Id && TShock.Players[kvp.Key].Name == enemyFaction.Leader)
+                            {
+                                enemyLeader = TShock.Players[kvp.Key];
+                                break;
+                            }
+                        }
+
+                        if (enemyLeader == null)
+                        {
+                            plr.SendErrorMessage("Enemy faction's leader is not online.");
+                            return;
+                        }
+
+                        if (ActiveWar != null)
+                        {
+                            plr.SendErrorMessage("There is another war ongoing right now. Please wait till it ends.");
+                            return;
+                        }
+
+                        foreach (var inv in _warInvitations)
+                        {
+                            if (inv.Item2.Id == enemyFaction.Id)
+                            {
+                                plr.SendErrorMessage("There is already a pending invitation to this faction.");
+                                return;
+                            }
+                        }
+
+                        _warInvitations.Add((plrFaction, enemyFaction));
+                        enemyLeader.SendInfoMessage($"{plr.Name} has invited your faction to a war with {plrFaction.Name}.\n" +
+                                                    "Do [c/ffffff:/faction war accept] to accept, [c/ffffff:/faction war decline] to decline.");
+                        break;
+                    }
+                case "accept":
+                    {
+                        foreach (var inv in _warInvitations)
+                        {
+                            if (inv.Item2.Id == plrFaction.Id)
+                            {
+                                _warInvitations.Remove(inv);
+
+                                if (ActiveWar != null)
+                                {
+                                    plr.SendErrorMessage("There is another war ongoing right now. Please wait till it ends.");
+                                    return;
+                                }
+
+                                ActiveWar = new War(inv.Item1, inv.Item2);
+                                ActiveWar.Start();
+
+                                _warInvitations.Remove(inv);
+                                break;
+                            }
+                        }
+                        break;
+                    }
+                case "decline":
+                    {
+                        foreach (var inv in _warInvitations)
+                        {
+                            if (inv.Item2.Id == plrFaction.Id)
+                            {
+                                List<TSPlayer> plrs = TSPlayer.FindByNameOrID(inv.Item1.Leader);
+                                if (plrs.Count != 0)
+                                {
+                                    plrs[0].SendErrorMessage($"{plr.Name} declined your war invitation.");
+                                }
+
+                                plr.SendSuccessMessage($"You've declined the war invitation.");
+                                _warInvitations.Remove(inv);
+                            }
+                        }
+                        break;
+                    }
+                default:
+                    {
+                        plr.SendErrorMessage("Invalid sub-command.");
+                        return;
+                    }
+            }
+
+
+
+
+
+        }
+
         private static void HelpCmd(CommandArgs args)
         {
             args.Player.SendInfoMessage("Subcommands:"
@@ -542,9 +690,11 @@ namespace SFactions
                 + "\nability: Changes faction's ability. (usage: /faction ability <ability name>)"
                 + "\nregion: Claims a protected region as faction region. (usage: /region <set/del>) (You need to be inside a protected region.)"
                 + "\ninvitetype: Shows your faction's invite type but if you're the leader you can change the invite type such as \"/f invitetype 3\""
-                + "\ninvite: Invites the target player to your faction"
-                + "\naccept: Accepts the last faction invitation"
-                + "\ninfo: Shows the information of target faction"
+                + "\ninvite: Invites the target player to your faction."
+                + "\naccept: Accepts the last faction invitation."
+                + "\ninfo: Shows the information of target faction."
+                + "\nbase: Teleports you to the faction base."
+                + "\nwar: Starts a war between factions. (usage: /war invite <enemy faction name>, /f war <accept/decline>)"
                 );
         }
     }

@@ -100,7 +100,7 @@ namespace SFactions
         {
             if (eventArgs.npc.rarity == 10) Abilities.Extensions.ExplosiveEffectEffect(eventArgs.npc.position, eventArgs.npc.lifeMax / 5);
         }
-        
+
         private static void OnDropLoot(NpcLootDropEventArgs eventArgs)
         {
             if (Main.npc[eventArgs.NpcArrayIndex].rarity == 11) eventArgs.Handled = true;
@@ -118,6 +118,80 @@ namespace SFactions
                 else Hooks.OnNpcStrike_HyperCrit(args, false);
             }
             else Hooks.OnNpcStrike_HyperCrit(args, false);
+        }
+
+        public static void OnKillMe_War(object? sender, GetDataHandlers.KillMeEventArgs args)
+        {
+            if (!SFactions.OnlineMembers.ContainsKey(args.PlayerId)) return;
+
+            int fId = SFactions.OnlineMembers[args.PlayerId];
+
+            if (fId == Commands.ActiveWar!.Faction1.Id)
+            {
+                Commands.ActiveWar!.KillCount2++;
+            }
+            else if (fId == Commands.ActiveWar!.Faction2.Id)
+            {
+                Commands.ActiveWar!.KillCount1++;
+            }
+        }
+
+        public static void OnPlayerChangeTeam_War(object? sender, GetDataHandlers.PlayerTeamEventArgs args)
+        {
+            if (!SFactions.OnlineMembers.ContainsKey(args.PlayerId)) return;
+
+            int fId = SFactions.OnlineMembers[args.PlayerId];
+
+            if (fId == Commands.ActiveWar!.Faction1.Id)
+            {
+                args.Handled = true;
+                args.Player.TPlayer.team = 1;
+                TSPlayer.All.SendData(PacketTypes.PlayerTeam, number: args.PlayerId);
+            }
+            else if (fId == Commands.ActiveWar!.Faction2.Id)
+            {
+                args.Handled = true;
+                args.Player.TPlayer.team = 2;
+                TSPlayer.All.SendData(PacketTypes.PlayerTeam, number: args.PlayerId);
+            }
+        }
+
+        public static void OnPlayerTogglePvP_War(object? sender, GetDataHandlers.TogglePvpEventArgs args)
+        {
+            if (!SFactions.OnlineMembers.ContainsKey(args.PlayerId)) return;
+
+            int fId = SFactions.OnlineMembers[args.PlayerId];
+
+            if (fId == Commands.ActiveWar!.Faction1.Id || fId == Commands.ActiveWar!.Faction2.Id)
+            {
+                args.Handled = true;
+                args.Player.TPlayer.hostile = true;
+                TSPlayer.All.SendData(PacketTypes.TogglePvp, number: args.PlayerId);
+            }
+        }
+
+        public static void OnNetGreetPlayer_War(GreetPlayerEventArgs args)
+        {
+            if (!SFactions.OnlineMembers.ContainsKey((byte)args.Who)) return;
+
+            int fId = SFactions.OnlineMembers[(byte)args.Who];
+
+            TSPlayer plr = TShock.Players[args.Who];
+
+            if (fId == Commands.ActiveWar!.Faction1.Id)
+            {
+                plr.TPlayer.team = 1;
+                TSPlayer.All.SendData(PacketTypes.PlayerTeam, number: args.Who);
+                plr.TPlayer.hostile = true;
+                TSPlayer.All.SendData(PacketTypes.TogglePvp, number: args.Who);
+            }
+            else if (fId == Commands.ActiveWar!.Faction2.Id)
+            {
+                plr.TPlayer.team = 2;
+                TSPlayer.All.SendData(PacketTypes.PlayerTeam, number: args.Who);
+                plr.TPlayer.hostile = true;
+                TSPlayer.All.SendData(PacketTypes.TogglePvp, number: args.Who);
+            }
         }
     }
 }
