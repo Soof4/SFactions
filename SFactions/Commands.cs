@@ -28,7 +28,7 @@ namespace SFactions
                 case "create":
                     new CreateCommand().Execute(args); return;
                 case "join":
-                    JoinCmd(args); return;
+                    new JoinCommand().Execute(args); return;
                 case "leave":
                     LeaveCmd(args); return;
                 case "rename":
@@ -358,52 +358,54 @@ namespace SFactions
 
         private static void JoinCmd(CommandArgs args)
         {
-            TSPlayer plr = args.Player;
-            string factionName;
+            /*
+                TSPlayer plr = args.Player;
+                string factionName;
 
-            if (SFactions.OnlineMembers.ContainsKey((byte)plr.Index))
-            {
-                plr.SendErrorMessage("You need to leave your current faction to join another one.");
-                return;
-            }
+                if (SFactions.OnlineMembers.ContainsKey((byte)plr.Index))
+                {
+                    plr.SendErrorMessage("You need to leave your current faction to join another one.");
+                    return;
+                }
 
-            if (args.Parameters.Count < 2)
-            {
-                plr.SendErrorMessage("You need to specify a the faction name.");
-                return;
-            }
+                if (args.Parameters.Count < 2)
+                {
+                    plr.SendErrorMessage("You need to specify a the faction name.");
+                    return;
+                }
 
-            factionName = string.Join(' ', args.Parameters.GetRange(1, args.Parameters.Count - 1));
+                factionName = string.Join(' ', args.Parameters.GetRange(1, args.Parameters.Count - 1));
 
-            if (!SFactions.DbManager.DoesFactionExist(factionName))
-            {
-                plr.SendErrorMessage($"There is no faction called {factionName}.");
-                return;
-            }
+                if (!SFactions.DbManager.DoesFactionExist(factionName))
+                {
+                    plr.SendErrorMessage($"There is no faction called {factionName}.");
+                    return;
+                }
 
-            Faction newFaction = SFactions.DbManager.GetFaction(factionName);
+                Faction newFaction = SFactions.DbManager.GetFaction(factionName);
 
-            if (newFaction.InviteType != InviteType.Open)
-            {
-                plr.SendErrorMessage($"{newFaction.Name} is an invite only faction.");
-                return;
-            }
+                if (newFaction.InviteType != InviteType.Open)
+                {
+                    plr.SendErrorMessage($"{newFaction.Name} is an invite only faction.");
+                    return;
+                }
 
-            SFactions.OnlineMembers.Add((byte)plr.Index, newFaction.Id);
-            SFactions.DbManager.InsertMember(plr.Name, newFaction.Id);
+                SFactions.OnlineMembers.Add((byte)plr.Index, newFaction.Id);
+                SFactions.DbManager.InsertMember(plr.Name, newFaction.Id);
 
-            if (!SFactions.OnlineFactions.ContainsKey(newFaction.Id))
-            {
-                SFactions.OnlineFactions.Add(newFaction.Id, newFaction);
-            }
-            RegionManager.AddMember(plr);
-            plr.SendSuccessMessage($"You've joined {newFaction.Name}.");
+                if (!SFactions.OnlineFactions.ContainsKey(newFaction.Id))
+                {
+                    SFactions.OnlineFactions.Add(newFaction.Id, newFaction);
+                }
+                RegionManager.AddMember(plr);
+                plr.SendSuccessMessage($"You've joined {newFaction.Name}.");
+                */
         }
 
         private static void CreateCmd(CommandArgs args)
         {
-            
-            
+
+
             /*
             TSPlayer plr = args.Player;
             if (args.Parameters.Count < 2)
