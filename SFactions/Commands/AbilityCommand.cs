@@ -25,7 +25,7 @@ namespace SFactions
             _plr.SendSuccessMessage($"Your faction's ability is now \"{args.Parameters[1]}\".");
         }
 
-        protected override bool TryParseCommands(CommandArgs args)
+        protected override bool TryParseParameters(CommandArgs args)
         {
             _plr = args.Player;
 

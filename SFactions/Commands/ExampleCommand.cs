@@ -17,7 +17,7 @@ namespace SFactions
             // Logic here
         }
 
-        protected override bool TryParseCommands(CommandArgs args)
+        protected override bool TryParseParameters(CommandArgs args)
         {
             // Parsing and error handling here
 

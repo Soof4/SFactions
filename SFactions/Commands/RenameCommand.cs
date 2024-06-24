@@ -22,7 +22,7 @@ namespace SFactions
             _plr.SendSuccessMessage($"Successfully changed faction name to \"{_factionName}\"");
         }
 
-        protected override bool TryParseCommands(CommandArgs args)
+        protected override bool TryParseParameters(CommandArgs args)
         {
             _plr = args.Player;
 

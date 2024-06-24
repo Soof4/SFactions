@@ -23,7 +23,7 @@ namespace SFactions
             args.Player.SendSuccessMessage($"You've created {_factionName}");
         }
 
-        protected override bool TryParseCommands(CommandArgs args)
+        protected override bool TryParseParameters(CommandArgs args)
         {
             _plr = args.Player;
 

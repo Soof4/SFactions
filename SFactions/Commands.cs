@@ -38,7 +38,7 @@ namespace SFactions
                 case "ability":
                     new AbilityCommand().Execute(args); return;
                 case "region":
-                    RegionCmd(args); return;
+                    new RegionCommand().Execute(args); return;
                 case "invitetype":
                     InviteTypeCmd(args); return;
                 case "invite":
@@ -214,6 +214,7 @@ namespace SFactions
 
         private static void RegionCmd(CommandArgs args)
         {
+            /*
             TSPlayer plr = args.Player;
             if (!SFactions.OnlineMembers.ContainsKey((byte)plr.Index))
             {
@@ -269,6 +270,7 @@ namespace SFactions
                     plr.SendErrorMessage("Invalid region subcommand. (Please use either \"set\" or \"del\")");
                     return;
             }
+            */
         }
 
         private static void AbilityCmd(CommandArgs args)

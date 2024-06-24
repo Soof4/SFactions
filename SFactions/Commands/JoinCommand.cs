@@ -28,7 +28,7 @@ namespace SFactions
             _plr.SendSuccessMessage($"You've joined {_newFaction.Name}.");
         }
 
-        protected override bool TryParseCommands(CommandArgs args)
+        protected override bool TryParseParameters(CommandArgs args)
         {
             _plr = args.Player;
 
