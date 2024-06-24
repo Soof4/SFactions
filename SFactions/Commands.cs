@@ -36,7 +36,7 @@ namespace SFactions
                 case "lead":
                     new LeadCommand().Execute(args); return;
                 case "ability":
-                    AbilityCmd(args); return;
+                    new AbilityCommand().Execute(args); return;
                 case "region":
                     RegionCmd(args); return;
                 case "invitetype":
@@ -273,6 +273,7 @@ namespace SFactions
 
         private static void AbilityCmd(CommandArgs args)
         {
+            /*
             TSPlayer plr = args.Player;
             if (!SFactions.OnlineMembers.ContainsKey((byte)plr.Index))
             {
@@ -314,6 +315,7 @@ namespace SFactions
             SFactions.DbManager.SaveFaction(SFactions.OnlineFactions[plrFaction.Id]);
 
             plr.SendSuccessMessage($"Your faction's ability is now \"{args.Parameters[1]}\".");
+            */
         }
 
         private static void LeaveCmd(CommandArgs args)
