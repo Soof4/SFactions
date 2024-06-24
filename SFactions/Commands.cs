@@ -30,11 +30,11 @@ namespace SFactions
                 case "join":
                     new JoinCommand().Execute(args); return;
                 case "leave":
-                    LeaveCmd(args); return;
+                    new LeaveCommand().Execute(args); return;
                 case "rename":
-                    RenameCmd(args); return;
+                    new RenameCommand().Execute(args); return;
                 case "lead":
-                    LeadCmd(args); return;
+                    new LeadCommand().Execute(args); return;
                 case "ability":
                     AbilityCmd(args); return;
                 case "region":
@@ -318,6 +318,7 @@ namespace SFactions
 
         private static void LeaveCmd(CommandArgs args)
         {
+            /*
             if (!SFactions.OnlineMembers.ContainsKey((byte)args.Player.Index))
             {
                 args.Player.SendErrorMessage("You're not in a faction.");
@@ -354,103 +355,12 @@ namespace SFactions
                 }
                 SFactions.OnlineFactions.Remove(plrFaction.Id);  // if no other member is online, remove the faction from onlineFactions.
             }
-        }
-
-        private static void JoinCmd(CommandArgs args)
-        {
-            /*
-                TSPlayer plr = args.Player;
-                string factionName;
-
-                if (SFactions.OnlineMembers.ContainsKey((byte)plr.Index))
-                {
-                    plr.SendErrorMessage("You need to leave your current faction to join another one.");
-                    return;
-                }
-
-                if (args.Parameters.Count < 2)
-                {
-                    plr.SendErrorMessage("You need to specify a the faction name.");
-                    return;
-                }
-
-                factionName = string.Join(' ', args.Parameters.GetRange(1, args.Parameters.Count - 1));
-
-                if (!SFactions.DbManager.DoesFactionExist(factionName))
-                {
-                    plr.SendErrorMessage($"There is no faction called {factionName}.");
-                    return;
-                }
-
-                Faction newFaction = SFactions.DbManager.GetFaction(factionName);
-
-                if (newFaction.InviteType != InviteType.Open)
-                {
-                    plr.SendErrorMessage($"{newFaction.Name} is an invite only faction.");
-                    return;
-                }
-
-                SFactions.OnlineMembers.Add((byte)plr.Index, newFaction.Id);
-                SFactions.DbManager.InsertMember(plr.Name, newFaction.Id);
-
-                if (!SFactions.OnlineFactions.ContainsKey(newFaction.Id))
-                {
-                    SFactions.OnlineFactions.Add(newFaction.Id, newFaction);
-                }
-                RegionManager.AddMember(plr);
-                plr.SendSuccessMessage($"You've joined {newFaction.Name}.");
-                */
-        }
-
-        private static void CreateCmd(CommandArgs args)
-        {
-
-
-            /*
-            TSPlayer plr = args.Player;
-            if (args.Parameters.Count < 2)
-            {
-                plr.SendErrorMessage("You need to specify a the faction name.");
-                return;
-            }
-            string factionName = string.Join(' ', args.Parameters.GetRange(1, args.Parameters.Count - 1));
-
-            if (factionName.Length < SFactions.Config.MinNameLength)
-            {
-                plr.SendErrorMessage($"Faction name needs to be at least {SFactions.Config.MinNameLength} characters long.");
-                return;
-            }
-
-            if (factionName.Length > SFactions.Config.MaxNameLength)
-            {
-                plr.SendErrorMessage($"Faction name needs to be at most {SFactions.Config.MaxNameLength} characters long.");
-                return;
-            }
-
-            if (SFactions.OnlineMembers.ContainsKey((byte)args.Player.Index))
-            {
-                plr.SendErrorMessage("You need to leave your current faction first to create new.\n" +
-                                     "If you want to leave your current faction do '/faction leave'");
-                return;
-            }
-
-            if (SFactions.DbManager.DoesFactionExist(factionName))
-            {
-                plr.SendErrorMessage("A faction with this name already exists.");
-                return;
-            }
-
-            SFactions.DbManager.InsertFaction(plr.Name, factionName);
-            Faction newFaction = SFactions.DbManager.GetFaction(factionName);
-            SFactions.DbManager.InsertMember(plr.Name, newFaction.Id);
-            SFactions.OnlineMembers.Add((byte)plr.Index, newFaction.Id);
-            SFactions.OnlineFactions.Add(newFaction.Id, newFaction);
-            args.Player.SendSuccessMessage($"You've created {factionName}");
             */
         }
 
         private static void RenameCmd(CommandArgs args)
         {
+            /*
             TSPlayer plr = args.Player;
             if (!SFactions.OnlineMembers.ContainsKey((byte)plr.Index))
             {
@@ -493,10 +403,12 @@ namespace SFactions
             SFactions.OnlineFactions[plrFaction.Id].Name = plrFaction.Name;
             SFactions.DbManager.SaveFaction(plrFaction);
             plr.SendSuccessMessage($"Successfully changed faction name to \"{factionName}\"");
+            */
         }
 
         private static void LeadCmd(CommandArgs args)
         {
+            /*
             TSPlayer plr = args.Player;
 
             if (!SFactions.OnlineMembers.ContainsKey((byte)plr.Index))
@@ -517,6 +429,7 @@ namespace SFactions
             {
                 plr.SendErrorMessage($"{plrFaction.Leader} is your faction's leader already.");
             }
+            */
         }
 
         private static void BaseCmd(CommandArgs args)

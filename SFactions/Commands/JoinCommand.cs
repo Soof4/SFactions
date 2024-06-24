@@ -12,7 +12,6 @@ namespace SFactions
         private string _factionName;
         private Faction _newFaction;
 
-
 #pragma warning disable CS8618
 
         protected override void Function(CommandArgs args)

@@ -3,7 +3,7 @@ using TShockAPI;
 
 namespace SFactions
 {
-    public class ExampleCommand : AbstractCommand
+    public class AbilityCommand : AbstractCommand
     {
 
 #pragma warning disable CS8618
