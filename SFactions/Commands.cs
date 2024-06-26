@@ -9,9 +9,9 @@ namespace SFactions
 {
     public static class Commands
     {
-        private static Dictionary<string, Faction> Invitations = new();
-        private static List<(Faction, Faction)> _warInvitations = new();
-        public static War? ActiveWar = null;
+        // private static Dictionary<string, Faction> Invitations = new();
+        // private static List<(Faction, Faction)> _warInvitations = new();
+        // public static War? ActiveWar = null;
         public static void FactionCmd(CommandArgs args)
         {
             TSPlayer player = args.Player;
@@ -40,17 +40,17 @@ namespace SFactions
                 case "region":
                     new RegionCommand().Execute(args); return;
                 case "invitetype":
-                    InviteTypeCmd(args); return;
+                    new InviteTypeCommand().Execute(args); return;
                 case "invite":
-                    InviteCmd(args); return;
+                    new InviteCommand().Execute(args); return;
                 case "accept":
-                    AcceptCmd(args); return;
+                    new AcceptCommand().Execute(args); return;
                 case "info":
-                    InfoCmd(args); return;
+                    new InfoCommand().Execute(args); return;
                 case "base":
-                    BaseCmd(args); return;
+                    new BaseCommand().Execute(args); return;
                 case "war":
-                    WarCmd(args); return;
+                    new WarCommand().Execute(args); return;
                 default:
                     HelpCmd(args); return;
             }
@@ -58,6 +58,7 @@ namespace SFactions
 
         private static void AcceptCmd(CommandArgs args)
         {
+            /*
             TSPlayer plr = args.Player;
             if (SFactions.OnlineMembers.ContainsKey((byte)plr.Index))
             {
@@ -82,11 +83,12 @@ namespace SFactions
 
             RegionManager.AddMember(plr);
             plr.SendSuccessMessage($"You've joined {newFaction.Name}.");
-
+            */
         }
 
         private static void InfoCmd(CommandArgs args)
         {
+            /*
             TSPlayer plr = args.Player;
             if (args.Parameters.Count < 2)
             {
@@ -110,10 +112,12 @@ namespace SFactions
                                 $"Has a Region: {faction.Region != null}\n" +
                                 $"Invite Type: {faction.InviteType}"
                                 );
+            */
         }
 
         private static void InviteCmd(CommandArgs args)
         {
+            /*
             TSPlayer plr = args.Player;
             if (!SFactions.OnlineMembers.ContainsKey((byte)plr.Index))
             {
@@ -165,6 +169,7 @@ namespace SFactions
 
             targetPLr.SendInfoMessage($"{plr.Name} has invited you to {plrFaction.Name}. Type \"/faction accept\" to join. Do nothing if you don't want to join.");
             plr.SendSuccessMessage($"You've successfully invited {targetPLr.Name} to your faction.");
+            */
         }
 
         private static void InviteTypeCmd(CommandArgs args)
@@ -440,6 +445,7 @@ namespace SFactions
 
         private static void BaseCmd(CommandArgs args)
         {
+            /*
             TSPlayer plr = args.Player;
 
             if (!SFactions.OnlineMembers.ContainsKey((byte)plr.Index))
@@ -457,10 +463,12 @@ namespace SFactions
             }
 
             plr.Teleport((float)(16 * plrFaction.BaseX), (float)(16 * plrFaction.BaseY));
+            */
         }
 
         private static void WarCmd(CommandArgs args)
         {
+            /*
             TSPlayer plr = args.Player;
 
             if (!SFactions.OnlineMembers.ContainsKey((byte)plr.Index))
@@ -592,11 +600,7 @@ namespace SFactions
                         return;
                     }
             }
-
-
-
-
-
+            */
         }
 
         private static void HelpCmd(CommandArgs args)

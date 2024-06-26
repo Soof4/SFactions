@@ -13,12 +13,12 @@ namespace SFactions
     public class SFactions : TerrariaPlugin
     {
         #region Plugin Info
-        
+
         public override string Name => "SFactions";
         public override Version Version => new Version(1, 3, 0);
         public override string Author => "Soofa";
         public override string Description => "Soofa's Factions";
-        
+
         #endregion
 
         public SFactions(Main game) : base(game) { }
@@ -26,17 +26,19 @@ namespace SFactions
         public static Configuration Config = Configuration.Reload();
         public static Random RandomGen = new();
         public static TerrariaPlugin? Instance;
+        public static Dictionary<string, Faction> Invitations { get; set; } = new Dictionary<string, Faction>();
 
         /// <summary>
         /// Key: Player index <br></br>
         /// Value: Faction Id
         /// </summary>
-        public static Dictionary<byte, int> OnlineMembers = new();
+        public static Dictionary<byte, int> OnlineMembers { get; set; } = new Dictionary<byte, int>();
+        
         /// <summary>
         /// Key: Faction Id <br></br>
         /// Value: Faction object
         /// </summary>
-        public static Dictionary<int, Faction> OnlineFactions = new();
+        public static Dictionary<int, Faction> OnlineFactions { get; set; } = new Dictionary<int, Faction>();
 
         public override void Initialize()
         {
@@ -55,7 +57,7 @@ namespace SFactions
         {
             if (disposing)
             {
-               Handlers.DisposeHandlers(this);
+                Handlers.DisposeHandlers(this);
             }
             base.Dispose(disposing);
         }

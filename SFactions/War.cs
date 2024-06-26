@@ -25,22 +25,22 @@ namespace SFactions
 
         public async void Start()
         {
-            if (Commands.ActiveWar == null) return;
-            
-            TSPlayer.All.SendInfoMessage($"{Commands.ActiveWar.Faction1.Name} vs {Commands.ActiveWar.Faction2.Name} war has started!");
+            if (WarCommand.ActiveWar == null) return;
+
+            TSPlayer.All.SendInfoMessage($"{WarCommand.ActiveWar.Faction1.Name} vs {WarCommand.ActiveWar.Faction2.Name} war has started!");
 
             foreach (TSPlayer p in TShock.Players)
             {
                 if (p != null && p.Active && SFactions.OnlineMembers.ContainsKey((byte)p.Index))
                 {
-                    if (SFactions.OnlineMembers[(byte)p.Index] == Commands.ActiveWar.Faction1.Id)
+                    if (SFactions.OnlineMembers[(byte)p.Index] == WarCommand.ActiveWar.Faction1.Id)
                     {
                         p.TPlayer.team = 1;
                         TSPlayer.All.SendData(PacketTypes.PlayerTeam, number: p.Index);
                         p.TPlayer.hostile = true;
                         TSPlayer.All.SendData(PacketTypes.TogglePvp, number: p.Index);
                     }
-                    else if (SFactions.OnlineMembers[(byte)p.Index] == Commands.ActiveWar.Faction2.Id)
+                    else if (SFactions.OnlineMembers[(byte)p.Index] == WarCommand.ActiveWar.Faction2.Id)
                     {
                         p.TPlayer.team = 2;
                         TSPlayer.All.SendData(PacketTypes.PlayerTeam, number: p.Index);
@@ -50,32 +50,32 @@ namespace SFactions
                 }
             }
 
-            ServerApi.Hooks.NetGreetPlayer.Register(SFactions.Instance, Handlers.OnNetGreetPlayer_War);
-            GetDataHandlers.KillMe += Handlers.OnKillMe_War;
-            GetDataHandlers.PlayerTeam += Handlers.OnPlayerChangeTeam_War;
-            GetDataHandlers.TogglePvp += Handlers.OnPlayerTogglePvP_War;
+            ServerApi.Hooks.NetGreetPlayer.Register(SFactions.Instance, OnNetGreetPlayer_War);
+            GetDataHandlers.KillMe += OnKillMe_War;
+            GetDataHandlers.PlayerTeam += OnPlayerChangeTeam_War;
+            GetDataHandlers.TogglePvp += OnPlayerTogglePvP_War;
 
             await Task.Delay(1 * 60 * 1000);
-            TSPlayer.All.SendInfoMessage($"{Commands.ActiveWar.Faction1.Name}: {Commands.ActiveWar.KillCount1} vs {Commands.ActiveWar.Faction2.Name}: {Commands.ActiveWar.KillCount2}");
+            TSPlayer.All.SendInfoMessage($"{WarCommand.ActiveWar.Faction1.Name}: {WarCommand.ActiveWar.KillCount1} vs {WarCommand.ActiveWar.Faction2.Name}: {WarCommand.ActiveWar.KillCount2}");
 
             await Task.Delay(1 * 60 * 1000);
-            TSPlayer.All.SendInfoMessage($"{Commands.ActiveWar.Faction1.Name}: {Commands.ActiveWar.KillCount1} vs {Commands.ActiveWar.Faction2.Name}: {Commands.ActiveWar.KillCount2}");
+            TSPlayer.All.SendInfoMessage($"{WarCommand.ActiveWar.Faction1.Name}: {WarCommand.ActiveWar.KillCount1} vs {WarCommand.ActiveWar.Faction2.Name}: {WarCommand.ActiveWar.KillCount2}");
 
             await Task.Delay(1 * 60 * 1000);
-            TSPlayer.All.SendInfoMessage($"{Commands.ActiveWar.Faction1.Name}: {Commands.ActiveWar.KillCount1} vs {Commands.ActiveWar.Faction2.Name}: {Commands.ActiveWar.KillCount2}");
+            TSPlayer.All.SendInfoMessage($"{WarCommand.ActiveWar.Faction1.Name}: {WarCommand.ActiveWar.KillCount1} vs {WarCommand.ActiveWar.Faction2.Name}: {WarCommand.ActiveWar.KillCount2}");
 
 
-            if (Commands.ActiveWar.KillCount1 == Commands.ActiveWar.KillCount2)
+            if (WarCommand.ActiveWar.KillCount1 == WarCommand.ActiveWar.KillCount2)
             {
-                TSPlayer.All.SendSuccessMessage($"The war between {Commands.ActiveWar.Faction1.Name} and {Commands.ActiveWar.Faction2.Name} ended as a TIE!");
+                TSPlayer.All.SendSuccessMessage($"The war between {WarCommand.ActiveWar.Faction1.Name} and {WarCommand.ActiveWar.Faction2.Name} ended as a TIE!");
             }
-            else if (Commands.ActiveWar.KillCount1 > Commands.ActiveWar.KillCount2)
+            else if (WarCommand.ActiveWar.KillCount1 > WarCommand.ActiveWar.KillCount2)
             {
-                TSPlayer.All.SendSuccessMessage($"The war between {Commands.ActiveWar.Faction1.Name} and {Commands.ActiveWar.Faction2.Name} ended as {Commands.ActiveWar.Faction1.Name} being victorious!");
+                TSPlayer.All.SendSuccessMessage($"The war between {WarCommand.ActiveWar.Faction1.Name} and {WarCommand.ActiveWar.Faction2.Name} ended as {WarCommand.ActiveWar.Faction1.Name} being victorious!");
 
                 foreach (var kvp in SFactions.OnlineMembers)
                 {
-                    if (kvp.Value == Commands.ActiveWar.Faction1.Id)
+                    if (kvp.Value == WarCommand.ActiveWar.Faction1.Id)
                     {
                         TSPlayer p = TShock.Players[kvp.Key];
                         string cmd = SFactions.Config.FactionWarWinCommand.Replace("%playername%", p.Name);
@@ -85,15 +85,94 @@ namespace SFactions
             }
             else
             {
-                TSPlayer.All.SendSuccessMessage($"The war between {Commands.ActiveWar.Faction1.Name} and {Commands.ActiveWar.Faction2.Name} ended as {Commands.ActiveWar.Faction2.Name} being victorious!");
+                TSPlayer.All.SendSuccessMessage($"The war between {WarCommand.ActiveWar.Faction1.Name} and {WarCommand.ActiveWar.Faction2.Name} ended as {WarCommand.ActiveWar.Faction2.Name} being victorious!");
             }
 
-            ServerApi.Hooks.NetGreetPlayer.Deregister(SFactions.Instance, Handlers.OnNetGreetPlayer_War);
-            GetDataHandlers.KillMe -= Handlers.OnKillMe_War;
-            GetDataHandlers.PlayerTeam -= Handlers.OnPlayerChangeTeam_War;
-            GetDataHandlers.TogglePvp -= Handlers.OnPlayerTogglePvP_War;
+            ServerApi.Hooks.NetGreetPlayer.Deregister(SFactions.Instance, OnNetGreetPlayer_War);
+            GetDataHandlers.KillMe -= OnKillMe_War;
+            GetDataHandlers.PlayerTeam -= OnPlayerChangeTeam_War;
+            GetDataHandlers.TogglePvp -= OnPlayerTogglePvP_War;
 
-            Commands.ActiveWar = null;
+            WarCommand.ActiveWar = null;
         }
+
+
+        #region Handlers
+
+        private static void OnKillMe_War(object? sender, GetDataHandlers.KillMeEventArgs args)
+        {
+            if (!SFactions.OnlineMembers.ContainsKey(args.PlayerId)) return;
+
+            int fId = SFactions.OnlineMembers[args.PlayerId];
+
+            if (fId == WarCommand.ActiveWar!.Faction1.Id)
+            {
+                WarCommand.ActiveWar!.KillCount2++;
+            }
+            else if (fId == WarCommand.ActiveWar!.Faction2.Id)
+            {
+                WarCommand.ActiveWar!.KillCount1++;
+            }
+        }
+
+        private static void OnPlayerChangeTeam_War(object? sender, GetDataHandlers.PlayerTeamEventArgs args)
+        {
+            if (!SFactions.OnlineMembers.ContainsKey(args.PlayerId)) return;
+
+            int fId = SFactions.OnlineMembers[args.PlayerId];
+
+            if (fId == WarCommand.ActiveWar!.Faction1.Id)
+            {
+                args.Handled = true;
+                args.Player.TPlayer.team = 1;
+                TSPlayer.All.SendData(PacketTypes.PlayerTeam, number: args.PlayerId);
+            }
+            else if (fId == WarCommand.ActiveWar!.Faction2.Id)
+            {
+                args.Handled = true;
+                args.Player.TPlayer.team = 2;
+                TSPlayer.All.SendData(PacketTypes.PlayerTeam, number: args.PlayerId);
+            }
+        }
+
+        private static void OnPlayerTogglePvP_War(object? sender, GetDataHandlers.TogglePvpEventArgs args)
+        {
+            if (!SFactions.OnlineMembers.ContainsKey(args.PlayerId)) return;
+
+            int fId = SFactions.OnlineMembers[args.PlayerId];
+
+            if (fId == WarCommand.ActiveWar!.Faction1.Id || fId == WarCommand.ActiveWar!.Faction2.Id)
+            {
+                args.Handled = true;
+                args.Player.TPlayer.hostile = true;
+                TSPlayer.All.SendData(PacketTypes.TogglePvp, number: args.PlayerId);
+            }
+        }
+
+        private static void OnNetGreetPlayer_War(GreetPlayerEventArgs args)
+        {
+            if (!SFactions.OnlineMembers.ContainsKey((byte)args.Who)) return;
+
+            int fId = SFactions.OnlineMembers[(byte)args.Who];
+
+            TSPlayer plr = TShock.Players[args.Who];
+
+            if (fId == WarCommand.ActiveWar!.Faction1.Id)
+            {
+                plr.TPlayer.team = 1;
+                TSPlayer.All.SendData(PacketTypes.PlayerTeam, number: args.Who);
+                plr.TPlayer.hostile = true;
+                TSPlayer.All.SendData(PacketTypes.TogglePvp, number: args.Who);
+            }
+            else if (fId == WarCommand.ActiveWar!.Faction2.Id)
+            {
+                plr.TPlayer.team = 2;
+                TSPlayer.All.SendData(PacketTypes.PlayerTeam, number: args.Who);
+                plr.TPlayer.hostile = true;
+                TSPlayer.All.SendData(PacketTypes.TogglePvp, number: args.Who);
+            }
+        }
+
+        #endregion
     }
 }
