@@ -122,7 +122,7 @@ namespace SFactions
             }
             Faction plrFaction = SFactions.OnlineFactions[SFactions.OnlineMembers[(byte)plr.Index]];
 
-            if (plrFaction.InviteType == InviteType.OnlyLeaderCanInvite && !plr.Name.Equals(plrFaction.Leader))
+            if (plrFaction.InviteType == InviteType.Closed && !plr.Name.Equals(plrFaction.Leader))
             {
                 plr.SendErrorMessage("Only leader can invite new people.");
                 return;
@@ -169,47 +169,49 @@ namespace SFactions
 
         private static void InviteTypeCmd(CommandArgs args)
         {
-            TSPlayer plr = args.Player;
-            if (!SFactions.OnlineMembers.ContainsKey((byte)plr.Index))
-            {
-                plr.SendErrorMessage("You're not in a faction.");
-                return;
-            }
-            Faction plrFaction = SFactions.OnlineFactions[SFactions.OnlineMembers[(byte)plr.Index]];
-
-            if (args.Parameters.Count < 2)
-            {    // if no args were gşven for the sub-cmd
-                string inviteType = "open.";
-                switch (plrFaction.InviteType)
+            /*
+                TSPlayer plr = args.Player;
+                if (!SFactions.OnlineMembers.ContainsKey((byte)plr.Index))
                 {
-                    case InviteType.EveryoneCanInvite:
-                        inviteType = "invite only. (Any member can invite)";
-                        break;
-                    case InviteType.OnlyLeaderCanInvite:
-                        inviteType = "invite only. (Only the leader can invite)";
-                        break;
+                    plr.SendErrorMessage("You're not in a faction.");
+                    return;
+                }
+                Faction plrFaction = SFactions.OnlineFactions[SFactions.OnlineMembers[(byte)plr.Index]];
+
+                if (args.Parameters.Count < 2)
+                {    // if no args were gşven for the sub-cmd
+                    string inviteType = "open.";
+                    switch (plrFaction.InviteType)
+                    {
+                        case InviteType.EveryoneCanInvite:
+                            inviteType = "invite only. (Any member can invite)";
+                            break;
+                        case InviteType.OnlyLeaderCanInvite:
+                            inviteType = "invite only. (Only the leader can invite)";
+                            break;
+                    }
+
+                    plr.SendInfoMessage($"Your faction is {inviteType}");
+                    return;
                 }
 
-                plr.SendInfoMessage($"Your faction is {inviteType}");
-                return;
-            }
+                if (!plr.Name.Equals(plrFaction.Leader))
+                {
+                    plr.SendErrorMessage("Only leader can change invite type of the faction.");
+                    return;
+                }
 
-            if (!plr.Name.Equals(plrFaction.Leader))
-            {
-                plr.SendErrorMessage("Only leader can change invite type of the faction.");
-                return;
-            }
+                // if any args were given for sub-cmd
+                if (!int.TryParse(args.Parameters[1], out int newType) || newType < 1 || newType > 3)
+                {
+                    plr.SendErrorMessage("Wrong command usage. (/faction invitetype [1/2/3])\n1: Open, 2: Members can invite, 3: Only leader can invite\neg.: /faction invitetype 2");
+                    return;
+                }
 
-            // if any args were given for sub-cmd
-            if (!int.TryParse(args.Parameters[1], out int newType) || newType < 1 || newType > 3)
-            {
-                plr.SendErrorMessage("Wrong command usage. (/faction invitetype [1/2/3])\n1: Open, 2: Members can invite, 3: Only leader can invite\neg.: /faction invitetype 2");
-                return;
-            }
-
-            plrFaction.InviteType = (InviteType)(newType - 1);
-            SFactions.DbManager.SaveFaction(plrFaction);
-            plr.SendSuccessMessage($"You've successfully changed you faction's invite type to {plrFaction.InviteType}");
+                plrFaction.InviteType = (InviteType)(newType - 1);
+                SFactions.DbManager.SaveFaction(plrFaction);
+                plr.SendSuccessMessage($"You've successfully changed you faction's invite type to {plrFaction.InviteType}");
+                */
         }
 
         private static void RegionCmd(CommandArgs args)
