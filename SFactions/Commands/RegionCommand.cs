@@ -6,14 +6,16 @@ namespace SFactions
 {
     public class RegionCommand : AbstractCommand
     {
-
+        public static new string HelpText => "Sets or deletes faction's region. (You must be inside an already defined region before setting it.)";
+        public static new string SyntaxHelp => "/faction <set / del>";
+        
 #pragma warning disable CS8618
 
         private TSPlayer _plr;
         private Faction _plrFaction;
         private SubCommand _subCommand;
 
-#pragma warning disable CS8618
+#pragma warning restore CS8618
 
         protected override void Function(CommandArgs args)
         {

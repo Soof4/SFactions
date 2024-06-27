@@ -5,13 +5,15 @@ namespace SFactions
 {
     public class LeadCommand : AbstractCommand
     {
-
+        public static new string HelpText => "Used for becoming the leader of your faction if leader quits the faction.";
+        public static new string SyntaxHelp => "/faction lead";
+        
 #pragma warning disable CS8618
 
         private TSPlayer _plr;
         private Faction _plrFaction;
 
-#pragma warning disable CS8618
+#pragma warning restore CS8618
 
         protected override void Function(CommandArgs args)
         {

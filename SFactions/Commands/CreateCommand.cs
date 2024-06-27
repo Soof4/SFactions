@@ -5,13 +5,15 @@ namespace SFactions
 {
     public class CreateCommand : AbstractCommand
     {
+        public static new string HelpText => "Creates a new faction.";
+        public static new string SyntaxHelp => "/faction create <faction name>";
 
 #pragma warning disable CS8618
 
         private TSPlayer _plr;
         private string _factionName;
 
-#pragma warning disable CS8618
+#pragma warning restore CS8618
 
         protected override void Function(CommandArgs args)
         {

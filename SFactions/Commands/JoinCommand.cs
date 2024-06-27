@@ -5,6 +5,8 @@ namespace SFactions
 {
     public class JoinCommand : AbstractCommand
     {
+        public static new string HelpText => "Used for joining an open faction.";
+        public static new string SyntaxHelp => "/faction join <faction name>";
 
 #pragma warning disable CS8618
 
@@ -12,7 +14,7 @@ namespace SFactions
         private string _factionName;
         private Faction _newFaction;
 
-#pragma warning disable CS8618
+#pragma warning restore CS8618
 
         protected override void Function(CommandArgs args)
         {
@@ -23,7 +25,7 @@ namespace SFactions
             {
                 SFactions.OnlineFactions.Add(_newFaction.Id, _newFaction);
             }
-            
+
             RegionManager.AddMember(_plr);
             _plr.SendSuccessMessage($"You've joined {_newFaction.Name}.");
         }

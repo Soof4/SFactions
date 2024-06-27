@@ -5,13 +5,15 @@ namespace SFactions
 {
     public class InfoCommand : AbstractCommand
     {
+        public static new string HelpText => "Shows the information about the faction.";
+        public static new string SyntaxHelp => "/faction info <faction name>";
 
 #pragma warning disable CS8618
 
         private TSPlayer _plr;
         private Faction _faction;
 
-#pragma warning disable CS8618
+#pragma warning restore CS8618
 
         protected override void Function(CommandArgs args)
         {

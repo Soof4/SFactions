@@ -5,6 +5,8 @@ namespace SFactions
 {
     public class InviteTypeCommand : AbstractCommand
     {
+        public static new string HelpText => "Shows or changes your faction's invite type.";
+        public static new string SyntaxHelp => "/faction invitetype [open / inviteonly / closed]";
 
 #pragma warning disable CS8618
 
@@ -13,7 +15,7 @@ namespace SFactions
         private SubCommand _subCommand;
 
 
-#pragma warning disable CS8618
+#pragma warning restore CS8618
 
         protected override void Function(CommandArgs args)
         {

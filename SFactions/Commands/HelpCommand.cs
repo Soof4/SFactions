@@ -3,10 +3,10 @@ using TShockAPI;
 
 namespace SFactions
 {
-    public class ExampleCommand : AbstractCommand
+    public class HelpCommand : AbstractCommand
     {
-        public static new string HelpText => "HelpText";
-        public static new string SyntaxHelp => "SyntaxHelp";
+        public static new string HelpText => "Shows help texts for faction commands.";
+        public static new string SyntaxHelp => "/faction help [page number / command name]";
 #pragma warning disable CS8618
 
         private TSPlayer _plr;
@@ -20,7 +20,7 @@ namespace SFactions
 
         protected override bool TryParseParameters(CommandArgs args)
         {
-            // Parsing and error handling here
+            _plr = args.Player;
 
             return true;
         }

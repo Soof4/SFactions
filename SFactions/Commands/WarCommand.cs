@@ -6,7 +6,9 @@ namespace SFactions
 {
     public class WarCommand : AbstractCommand
     {
-
+        public static new string HelpText => "Invites, accepts or declines war invitations.";
+        public static new string SyntaxHelp => "/faction war <invite / accept / decline> [faction name]";
+        
 #pragma warning disable CS8618
 
         private TSPlayer _plr;
@@ -15,7 +17,7 @@ namespace SFactions
         private static List<(Faction, Faction)> _warInvitations = new();
         public static War? ActiveWar = null;
 
-#pragma warning disable CS8618
+#pragma warning restore CS8618
 
         protected override void Function(CommandArgs args)
         {

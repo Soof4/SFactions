@@ -6,6 +6,8 @@ namespace SFactions
 {
     public class AbilityCommand : AbstractCommand
     {
+        public static new string HelpText => "Changes faction's ability.";
+        public static new string SyntaxHelp => "/faction ability <ability name>";
 
 #pragma warning disable CS8618
 
@@ -13,7 +15,7 @@ namespace SFactions
         private Faction _plrFaction;
         private AbilityType _newType;
 
-#pragma warning disable CS8618
+#pragma warning restore CS8618
 
         protected override void Function(CommandArgs args)
         {

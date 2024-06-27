@@ -5,6 +5,8 @@ namespace SFactions
 {
     public class InviteCommand : AbstractCommand
     {
+        public static new string HelpText => "Sends an invitation to another player.";
+        public static new string SyntaxHelp => "/faction invite <player name>";
 
 #pragma warning disable CS8618
 
@@ -12,7 +14,7 @@ namespace SFactions
         private Faction _plrFaction;
         private TSPlayer _targetPlr;
 
-#pragma warning disable CS8618
+#pragma warning restore CS8618
 
         protected override void Function(CommandArgs args)
         {
