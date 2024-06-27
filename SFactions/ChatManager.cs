@@ -38,10 +38,10 @@ namespace SFactions
         {
             string result = "";
 
-            if (SFactions.OnlineMembers.ContainsKey((byte)playerIndex))
+            if (OnlineFactions.IsPlayerAMemberOfAnyFaction(playerIndex))
             {
                 result = SFactions.Config.ChatFactionNameOpeningParenthesis;
-                result += SFactions.OnlineFactions[SFactions.OnlineMembers[(byte)playerIndex]].Name;
+                result += OnlineFactions.GetPlayerFaction(playerIndex).Name;
                 result += SFactions.Config.ChatFactionNameClosingParanthesis;
             }
             

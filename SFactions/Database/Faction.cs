@@ -6,7 +6,6 @@ namespace SFactions.Database
 {
     public class Faction
     {
-
         public int Id { get; set; }
         public string Name { get; set; }
         public string? Leader { get; set; }
@@ -18,8 +17,8 @@ namespace SFactions.Database
         public int? BaseX { get; set; }
         public int? BaseY { get; set; }
 
-        public Faction(int id, string name, string? leader, AbilityType abilityType, string? region,
-            DateTime? lastAbilityChangeTime, InviteType inviteType = InviteType.Open, int? baseX = null, int? baseY = null)
+        public Faction(int id, string name, string? leader, AbilityType abilityType, string? region, DateTime? lastAbilityChangeTime,
+                       InviteType inviteType = InviteType.Open, int? baseX = null, int? baseY = null)
         {
             Id = id;
             Name = name;

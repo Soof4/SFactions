@@ -3,7 +3,6 @@ using SFactions.Database;
 using TShockAPI;
 using Terraria;
 using System.Text;
-using System.Text.RegularExpressions;
 
 namespace SFactions
 {
@@ -35,7 +34,7 @@ namespace SFactions
                 _ => new DryadsRingOfHealing(abilityLevel)
             };
         }
-        
+
         public static bool TryGetAbilityTypeFromString(string type, out AbilityType result)
         {
             switch (type.ToLower())
@@ -230,7 +229,7 @@ namespace SFactions
 
             return res;
         }
-        
+
         public static bool TryParseInt(string? s, ref int result)
         {
             try

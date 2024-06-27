@@ -31,16 +31,16 @@ namespace SFactions
 
             foreach (TSPlayer p in TShock.Players)
             {
-                if (p != null && p.Active && SFactions.OnlineMembers.ContainsKey((byte)p.Index))
+                if (p != null && p.Active && OnlineFactions.IsPlayerInAnyFaction(p.Index))
                 {
-                    if (SFactions.OnlineMembers[(byte)p.Index] == WarCommand.ActiveWar.Faction1.Id)
+                    if (OnlineFactions.GetFactionID(p.Index) == WarCommand.ActiveWar.Faction1.Id)
                     {
                         p.TPlayer.team = 1;
                         TSPlayer.All.SendData(PacketTypes.PlayerTeam, number: p.Index);
                         p.TPlayer.hostile = true;
                         TSPlayer.All.SendData(PacketTypes.TogglePvp, number: p.Index);
                     }
-                    else if (SFactions.OnlineMembers[(byte)p.Index] == WarCommand.ActiveWar.Faction2.Id)
+                    else if (OnlineFactions.GetFactionID(p.Index) == WarCommand.ActiveWar.Faction2.Id)
                     {
                         p.TPlayer.team = 2;
                         TSPlayer.All.SendData(PacketTypes.PlayerTeam, number: p.Index);
@@ -73,19 +73,23 @@ namespace SFactions
             {
                 TSPlayer.All.SendSuccessMessage($"The war between {WarCommand.ActiveWar.Faction1.Name} and {WarCommand.ActiveWar.Faction2.Name} ended as {WarCommand.ActiveWar.Faction1.Name} being victorious!");
 
-                foreach (var kvp in SFactions.OnlineMembers)
+                List<TSPlayer> members = OnlineFactions.GetAllMembers(WarCommand.ActiveWar.Faction1.Id);
+                foreach (TSPlayer p in members)
                 {
-                    if (kvp.Value == WarCommand.ActiveWar.Faction1.Id)
-                    {
-                        TSPlayer p = TShock.Players[kvp.Key];
-                        string cmd = SFactions.Config.FactionWarWinCommand.Replace("%playername%", p.Name);
-                        TShockAPI.Commands.HandleCommand(TSPlayer.Server, cmd);
-                    }
+                    string cmd = SFactions.Config.FactionWarWinCommand.Replace("%playername%", p.Name);
+                    TShockAPI.Commands.HandleCommand(TSPlayer.Server, cmd);
                 }
             }
             else
             {
                 TSPlayer.All.SendSuccessMessage($"The war between {WarCommand.ActiveWar.Faction1.Name} and {WarCommand.ActiveWar.Faction2.Name} ended as {WarCommand.ActiveWar.Faction2.Name} being victorious!");
+
+                List<TSPlayer> members = OnlineFactions.GetAllMembers(WarCommand.ActiveWar.Faction2.Id);
+                foreach (TSPlayer p in members)
+                {
+                    string cmd = SFactions.Config.FactionWarWinCommand.Replace("%playername%", p.Name);
+                    TShockAPI.Commands.HandleCommand(TSPlayer.Server, cmd);
+                }
             }
 
             ServerApi.Hooks.NetGreetPlayer.Deregister(SFactions.Instance, OnNetGreetPlayer_War);
@@ -101,9 +105,9 @@ namespace SFactions
 
         private static void OnKillMe_War(object? sender, GetDataHandlers.KillMeEventArgs args)
         {
-            if (!SFactions.OnlineMembers.ContainsKey(args.PlayerId)) return;
+            if (!OnlineFactions.IsPlayerInAnyFaction(args.PlayerId)) return;
 
-            int fId = SFactions.OnlineMembers[args.PlayerId];
+            int fId = OnlineFactions.GetFactionID(args.PlayerId);
 
             if (fId == WarCommand.ActiveWar!.Faction1.Id)
             {

@@ -4,29 +4,29 @@ using SFactions.Database;
 namespace SFactions {
     public static class RegionManager {
         public static void SetRegion(TSPlayer plr) {
-            Faction faction = SFactions.OnlineFactions[SFactions.OnlineMembers[(byte)plr.Index]];
+            Faction faction = OnlineFactions.GetPlayerFaction(plr.Index);
             faction.Region = plr.CurrentRegion.Name;
             faction.BaseX = plr.TileX;
             faction.BaseY = plr.TileY;
-            SFactions.DbManager.SaveFaction(SFactions.OnlineFactions[SFactions.OnlineMembers[(byte)plr.Index]]);
+            SFactions.DbManager.SaveFaction(faction);
         }
 
         public static void DelRegion(TSPlayer plr) {
-            Faction faction = SFactions.OnlineFactions[SFactions.OnlineMembers[(byte)plr.Index]];
+            Faction faction = OnlineFactions.GetPlayerFaction(plr.Index);
             faction.Region = null;
             faction.BaseX = null;
             faction.BaseY = null;
-            SFactions.DbManager.SaveFaction(SFactions.OnlineFactions[SFactions.OnlineMembers[(byte)plr.Index]]);
+            SFactions.DbManager.SaveFaction(faction);
         }
 
         public static void AddMember(TSPlayer plr) {
-            string? regionName = SFactions.OnlineFactions[SFactions.OnlineMembers[(byte)plr.Index]].Region;
+            string? regionName = OnlineFactions.GetPlayerFaction(plr.Index).Region;
             if (regionName != null) {
                 TShock.Regions.AddNewUser(regionName, plr.Name);
             }
         }
         public static void DelMember(TSPlayer plr) {
-            string? regionName = SFactions.OnlineFactions[SFactions.OnlineMembers[(byte)plr.Index]].Region;
+            string? regionName = OnlineFactions.GetPlayerFaction(plr.Index).Region;
             if (regionName != null) {
                 TShock.Regions.RemoveUser(regionName, plr.Name);
             }

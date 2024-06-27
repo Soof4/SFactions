@@ -28,18 +28,6 @@ namespace SFactions
         public static TerrariaPlugin? Instance;
         public static Dictionary<string, Faction> Invitations { get; set; } = new Dictionary<string, Faction>();
 
-        /// <summary>
-        /// Key: Player index <br></br>
-        /// Value: Faction Id
-        /// </summary>
-        public static Dictionary<byte, int> OnlineMembers { get; set; } = new Dictionary<byte, int>();
-        
-        /// <summary>
-        /// Key: Faction Id <br></br>
-        /// Value: Faction object
-        /// </summary>
-        public static Dictionary<int, Faction> OnlineFactions { get; set; } = new Dictionary<int, Faction>();
-
         public override void Initialize()
         {
             Handlers.InitializeHandlers(this);

@@ -25,12 +25,13 @@ namespace SFactions.Commands
         {
             _plr = args.Player;
 
-            if (!SFactions.OnlineMembers.ContainsKey((byte)_plr.Index))
+            if (!OnlineMembers.IsPlayerAMemberOfAnyFaction(_plr.Index))
             {
                 _plr.SendErrorMessage("You're not in a faction.");
                 return false;
             }
 
+            _plrFaction = OnlineFactions.GetFaction(OnlineMembers.GetFactionID(_plr.Index));
             _plrFaction = SFactions.OnlineFactions[SFactions.OnlineMembers[(byte)_plr.Index]];
 
             if (_plrFaction.BaseX == null || _plrFaction.BaseY == null)
