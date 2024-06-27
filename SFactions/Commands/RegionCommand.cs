@@ -8,6 +8,7 @@ namespace SFactions.Commands
     {
         public override string HelpText => "Sets or deletes faction's region. (You must be inside an already defined region before setting it.)";
         public override string SyntaxHelp => "/faction <set / del>";
+        protected override bool AllowServer => false;
         
 #pragma warning disable CS8618
 

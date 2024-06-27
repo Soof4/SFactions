@@ -8,6 +8,8 @@ namespace SFactions.Commands
     {
         public override string HelpText => "HelpText";
         public override string SyntaxHelp => "SyntaxHelp";
+        protected override bool AllowServer => false;
+        
 #pragma warning disable CS8618
 
         private TSPlayer _plr;

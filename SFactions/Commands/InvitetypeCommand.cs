@@ -7,6 +7,7 @@ namespace SFactions.Commands
     {
         public override string HelpText => "Shows or changes your faction's invite type.";
         public override string SyntaxHelp => "/faction invitetype [open / inviteonly / closed]";
+        protected override bool AllowServer => false;
 
 #pragma warning disable CS8618
 

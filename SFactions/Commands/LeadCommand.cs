@@ -7,6 +7,7 @@ namespace SFactions.Commands
     {
         public override string HelpText => "Used for becoming the leader of your faction if leader quits the faction.";
         public override string SyntaxHelp => "/faction lead";
+        protected override bool AllowServer => false;
         
 #pragma warning disable CS8618
 

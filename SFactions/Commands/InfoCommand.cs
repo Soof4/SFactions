@@ -7,6 +7,7 @@ namespace SFactions.Commands
     {
         public override string HelpText => "Shows the information about the faction.";
         public override string SyntaxHelp => "/faction info <faction name>";
+        protected override bool AllowServer => true;
 
 #pragma warning disable CS8618
 

@@ -7,6 +7,7 @@ namespace SFactions.Commands
     {
         public override string HelpText => "Creates a new faction.";
         public override string SyntaxHelp => "/faction create <faction name>";
+        protected override bool AllowServer => false;
 
 #pragma warning disable CS8618
 

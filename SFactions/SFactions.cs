@@ -46,7 +46,6 @@ namespace SFactions
 
             TShockAPI.Commands.ChatCommands.Add(new("sfactions.faction", CommandManager.FactionCmd, "faction", "f")
             {
-                AllowServer = false,
                 HelpText = "To see the detailed help message do \"/faction help\""
             });
 

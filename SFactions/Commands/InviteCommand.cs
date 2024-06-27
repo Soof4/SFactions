@@ -7,6 +7,7 @@ namespace SFactions.Commands
     {
         public override string HelpText => "Sends an invitation to another player.";
         public override string SyntaxHelp => "/faction invite <player name>";
+        protected override bool AllowServer => false;
 
 #pragma warning disable CS8618
 

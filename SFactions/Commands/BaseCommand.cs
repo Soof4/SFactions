@@ -7,6 +7,7 @@ namespace SFactions.Commands
     {
         public override string HelpText => "Teleports player to the faction base.";
         public override string SyntaxHelp => "/faction base";
+        protected override bool AllowServer => false;
 
 #pragma warning disable CS8618
 

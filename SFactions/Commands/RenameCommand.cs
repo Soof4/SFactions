@@ -7,6 +7,7 @@ namespace SFactions.Commands
     {
         public override string HelpText => "Renames the faction.";
         public override string SyntaxHelp => "/faction rename <new name>";
+        protected override bool AllowServer => false;
         
 #pragma warning disable CS8618
 

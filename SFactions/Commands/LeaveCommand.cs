@@ -8,6 +8,7 @@ namespace SFactions.Commands
     {
         public override string HelpText => "Used for leaving your current faction.";
         public override string SyntaxHelp => "/faction leave";
+        protected override bool AllowServer => false;
         
 #pragma warning disable CS8618
 

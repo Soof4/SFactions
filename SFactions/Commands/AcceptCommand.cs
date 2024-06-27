@@ -7,6 +7,7 @@ namespace SFactions.Commands
     {
         public override string HelpText => "Accepts a faction invite.";
         public override string SyntaxHelp => "/faction accept";
+        protected override bool AllowServer => false;
 
 #pragma warning disable CS8618
 

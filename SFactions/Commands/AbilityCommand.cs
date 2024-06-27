@@ -8,6 +8,7 @@ namespace SFactions.Commands
     {
         public override string HelpText => "Changes faction's ability.";
         public override string SyntaxHelp => "/faction ability <ability name>";
+        protected override bool AllowServer => false;
 
 #pragma warning disable CS8618
 

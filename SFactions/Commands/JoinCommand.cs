@@ -7,6 +7,7 @@ namespace SFactions.Commands
     {
         public override string HelpText => "Used for joining an open faction.";
         public override string SyntaxHelp => "/faction join <faction name>";
+        protected override bool AllowServer => false;
 
 #pragma warning disable CS8618
 
