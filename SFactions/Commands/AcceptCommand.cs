@@ -1,12 +1,12 @@
 using SFactions.Database;
 using TShockAPI;
 
-namespace SFactions
+namespace SFactions.Commands
 {
     public class AcceptCommand : AbstractCommand
     {
-        public static new string HelpText => "Accepts a faction invite.";
-        public static new string SyntaxHelp => "/faction accept";
+        public override string HelpText => "Accepts a faction invite.";
+        public override string SyntaxHelp => "/faction accept";
 
 #pragma warning disable CS8618
 

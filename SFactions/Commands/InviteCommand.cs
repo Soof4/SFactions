@@ -1,12 +1,12 @@
 using SFactions.Database;
 using TShockAPI;
 
-namespace SFactions
+namespace SFactions.Commands
 {
     public class InviteCommand : AbstractCommand
     {
-        public static new string HelpText => "Sends an invitation to another player.";
-        public static new string SyntaxHelp => "/faction invite <player name>";
+        public override string HelpText => "Sends an invitation to another player.";
+        public override string SyntaxHelp => "/faction invite <player name>";
 
 #pragma warning disable CS8618
 

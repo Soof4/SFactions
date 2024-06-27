@@ -1,12 +1,12 @@
 using SFactions.Database;
 using TShockAPI;
 
-namespace SFactions
+namespace SFactions.Commands
 {
     public class CreateCommand : AbstractCommand
     {
-        public static new string HelpText => "Creates a new faction.";
-        public static new string SyntaxHelp => "/faction create <faction name>";
+        public override string HelpText => "Creates a new faction.";
+        public override string SyntaxHelp => "/faction create <faction name>";
 
 #pragma warning disable CS8618
 

@@ -2,12 +2,12 @@ using System.Reflection;
 using SFactions.Database;
 using TShockAPI;
 
-namespace SFactions
+namespace SFactions.Commands
 {
     public class RegionCommand : AbstractCommand
     {
-        public static new string HelpText => "Sets or deletes faction's region. (You must be inside an already defined region before setting it.)";
-        public static new string SyntaxHelp => "/faction <set / del>";
+        public override string HelpText => "Sets or deletes faction's region. (You must be inside an already defined region before setting it.)";
+        public override string SyntaxHelp => "/faction <set / del>";
         
 #pragma warning disable CS8618
 

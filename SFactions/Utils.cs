@@ -206,5 +206,40 @@ namespace SFactions
 
             return builder.ToString();
         }
+
+        public static string GetFirstWord(string str)
+        {
+            if (str.Trim().Length <= 1) return str.Trim().ToUpper();
+
+            str = str.Trim();
+
+            string res = str[0].ToString().ToLower();
+
+            for (int i = 1; i < str.Length; i++)
+            {
+                char c = str[i];
+
+                if (char.IsUpper(c) || char.IsDigit(c))
+                {
+                    break;
+                }
+
+                res += c;
+            }
+
+            return res;
+        }
+        public static bool TryParseInt(string? s, ref int result)
+        {
+            try
+            {
+                result = int.Parse(s!);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
     }
 }

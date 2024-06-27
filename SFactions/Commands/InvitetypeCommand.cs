@@ -1,19 +1,18 @@
 using SFactions.Database;
 using TShockAPI;
 
-namespace SFactions
+namespace SFactions.Commands
 {
-    public class InviteTypeCommand : AbstractCommand
+    public class InvitetypeCommand : AbstractCommand
     {
-        public static new string HelpText => "Shows or changes your faction's invite type.";
-        public static new string SyntaxHelp => "/faction invitetype [open / inviteonly / closed]";
+        public override string HelpText => "Shows or changes your faction's invite type.";
+        public override string SyntaxHelp => "/faction invitetype [open / inviteonly / closed]";
 
 #pragma warning disable CS8618
 
         private TSPlayer _plr;
         private Faction _plrFaction;
         private SubCommand _subCommand;
-
 
 #pragma warning restore CS8618
 

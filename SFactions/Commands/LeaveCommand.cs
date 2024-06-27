@@ -2,12 +2,12 @@ using Abilities;
 using SFactions.Database;
 using TShockAPI;
 
-namespace SFactions
+namespace SFactions.Commands
 {
     public class LeaveCommand : AbstractCommand
     {
-        public static new string HelpText => "Used for leaving your current faction.";
-        public static new string SyntaxHelp => "/faction leave";
+        public override string HelpText => "Used for leaving your current faction.";
+        public override string SyntaxHelp => "/faction leave";
         
 #pragma warning disable CS8618
 

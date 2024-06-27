@@ -1,12 +1,12 @@
 using SFactions.Database;
 using TShockAPI;
 
-namespace SFactions
+namespace SFactions.Commands
 {
     public class LeadCommand : AbstractCommand
     {
-        public static new string HelpText => "Used for becoming the leader of your faction if leader quits the faction.";
-        public static new string SyntaxHelp => "/faction lead";
+        public override string HelpText => "Used for becoming the leader of your faction if leader quits the faction.";
+        public override string SyntaxHelp => "/faction lead";
         
 #pragma warning disable CS8618
 

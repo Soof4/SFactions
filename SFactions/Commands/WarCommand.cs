@@ -2,12 +2,12 @@ using SFactions.Database;
 using TerrariaApi.Server;
 using TShockAPI;
 
-namespace SFactions
+namespace SFactions.Commands
 {
     public class WarCommand : AbstractCommand
     {
-        public static new string HelpText => "Invites, accepts or declines war invitations.";
-        public static new string SyntaxHelp => "/faction war <invite / accept / decline> [faction name]";
+        public override string HelpText => "Invites, accepts or declines war invitations.";
+        public override string SyntaxHelp => "/faction war <invite / accept / decline> [faction name]";
         
 #pragma warning disable CS8618
 

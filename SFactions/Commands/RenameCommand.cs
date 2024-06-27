@@ -1,12 +1,12 @@
 using SFactions.Database;
 using TShockAPI;
 
-namespace SFactions
+namespace SFactions.Commands
 {
     public class RenameCommand : AbstractCommand
     {
-        public static new string HelpText => "Renames the faction.";
-        public static new string SyntaxHelp => "/faction rename <new name>";
+        public override string HelpText => "Renames the faction.";
+        public override string SyntaxHelp => "/faction rename <new name>";
         
 #pragma warning disable CS8618
 

@@ -1,12 +1,12 @@
 using SFactions.Database;
 using TShockAPI;
 
-namespace SFactions
+namespace SFactions.Commands
 {
     public class BaseCommand : AbstractCommand
     {
-        public static new string HelpText => "Teleports player to the faction base.";
-        public static new string SyntaxHelp => "/faction base";
+        public override string HelpText => "Teleports player to the faction base.";
+        public override string SyntaxHelp => "/faction base";
 
 #pragma warning disable CS8618
 

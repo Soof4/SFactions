@@ -1,12 +1,12 @@
 using SFactions.Database;
 using TShockAPI;
 
-namespace SFactions
+namespace SFactions.Commands
 {
     public class JoinCommand : AbstractCommand
     {
-        public static new string HelpText => "Used for joining an open faction.";
-        public static new string SyntaxHelp => "/faction join <faction name>";
+        public override string HelpText => "Used for joining an open faction.";
+        public override string SyntaxHelp => "/faction join <faction name>";
 
 #pragma warning disable CS8618
 

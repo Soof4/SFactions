@@ -1,12 +1,12 @@
 using SFactions.Database;
 using TShockAPI;
 
-namespace SFactions
+namespace SFactions.Commands
 {
     public class InfoCommand : AbstractCommand
     {
-        public static new string HelpText => "Shows the information about the faction.";
-        public static new string SyntaxHelp => "/faction info <faction name>";
+        public override string HelpText => "Shows the information about the faction.";
+        public override string SyntaxHelp => "/faction info <faction name>";
 
 #pragma warning disable CS8618
 

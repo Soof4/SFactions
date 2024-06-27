@@ -1,12 +1,13 @@
+#if false
 using SFactions.Database;
 using TShockAPI;
 
-namespace SFactions
+namespace SFactions.Commands
 {
     public class ExampleCommand : AbstractCommand
     {
-        public static new string HelpText => "HelpText";
-        public static new string SyntaxHelp => "SyntaxHelp";
+        public override string HelpText => "HelpText";
+        public override string SyntaxHelp => "SyntaxHelp";
 #pragma warning disable CS8618
 
         private TSPlayer _plr;
@@ -26,3 +27,4 @@ namespace SFactions
         }
     }
 }
+#endif

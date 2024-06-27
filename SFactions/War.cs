@@ -1,5 +1,5 @@
+using SFactions.Commands;
 using SFactions.Database;
-using Steamworks;
 using TerrariaApi.Server;
 using TShockAPI;
 

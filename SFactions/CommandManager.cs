@@ -4,10 +4,11 @@ using Abilities;
 using TShockAPI.Configuration;
 using TerrariaApi.Server;
 using Org.BouncyCastle.Tsp;
+using SFactions.Commands;
 
 namespace SFactions
 {
-    public static class Commands
+    public static class CommandManager
     {
         // private static Dictionary<string, Faction> Invitations = new();
         // private static List<(Faction, Faction)> _warInvitations = new();
@@ -21,39 +22,7 @@ namespace SFactions
                 return;
             }
 
-            string subcmd = args.Parameters[0];
-
-            switch (subcmd)
-            {
-                case "create":
-                    new CreateCommand().Execute(args); return;
-                case "join":
-                    new JoinCommand().Execute(args); return;
-                case "leave":
-                    new LeaveCommand().Execute(args); return;
-                case "rename":
-                    new RenameCommand().Execute(args); return;
-                case "lead":
-                    new LeadCommand().Execute(args); return;
-                case "ability":
-                    new AbilityCommand().Execute(args); return;
-                case "region":
-                    new RegionCommand().Execute(args); return;
-                case "invitetype":
-                    new InviteTypeCommand().Execute(args); return;
-                case "invite":
-                    new InviteCommand().Execute(args); return;
-                case "accept":
-                    new AcceptCommand().Execute(args); return;
-                case "info":
-                    new InfoCommand().Execute(args); return;
-                case "base":
-                    new BaseCommand().Execute(args); return;
-                case "war":
-                    new WarCommand().Execute(args); return;
-                default:
-                    HelpCmd(args); return;
-            }
+            GetSubCommandInstance(args.Parameters[0].ToLower()).Execute(args);
         }
 
         private static void AcceptCmd(CommandArgs args)
@@ -601,6 +570,27 @@ namespace SFactions
                     }
             }
             */
+        }
+
+        public static AbstractCommand GetSubCommandInstance(string str)
+        {
+            return str switch
+            {
+                "create" => new CreateCommand(),
+                "join" => new JoinCommand(),
+                "leave" => new LeaveCommand(),
+                "rename" => new RenameCommand(),
+                "lead" => new LeadCommand(),
+                "ability" => new AbilityCommand(),
+                "region" => new RegionCommand(),
+                "invitetype" => new InvitetypeCommand(),
+                "invite" => new InviteCommand(),
+                "accept" => new AcceptCommand(),
+                "info" => new InfoCommand(),
+                "base" => new BaseCommand(),
+                "war" => new WarCommand(),
+                _ => new HelpCommand(),
+            };
         }
 
         private static void HelpCmd(CommandArgs args)

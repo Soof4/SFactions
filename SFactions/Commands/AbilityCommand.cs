@@ -2,12 +2,12 @@ using Abilities;
 using SFactions.Database;
 using TShockAPI;
 
-namespace SFactions
+namespace SFactions.Commands
 {
     public class AbilityCommand : AbstractCommand
     {
-        public static new string HelpText => "Changes faction's ability.";
-        public static new string SyntaxHelp => "/faction ability <ability name>";
+        public override string HelpText => "Changes faction's ability.";
+        public override string SyntaxHelp => "/faction ability <ability name>";
 
 #pragma warning disable CS8618
 
