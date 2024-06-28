@@ -23,7 +23,7 @@ namespace SFactions.Commands
             _plrFaction.AbilityType = _newType;
             _plrFaction.Ability = Utils.CreateAbility(_newType, Utils.GetAbilityLevel(_plrFaction));
 
-            SFactions.DbManager.SaveFaction(SFactions.OnlineFactions[_plrFaction.Id]);
+            SFactions.DbManager.SaveFaction(_plrFaction);
 
             _plr.SendSuccessMessage($"Your faction's ability is now \"{args.Parameters[1]}\".");
         }
@@ -32,13 +32,13 @@ namespace SFactions.Commands
         {
             _plr = args.Player;
 
-            if (!SFactions.OnlineMembers.ContainsKey((byte)_plr.Index))
+            if (!OnlineFactions.IsPlayerInAnyFaction(_plr))
             {
                 _plr.SendErrorMessage("You're not in a faction.");
                 return false;
             }
 
-            _plrFaction = SFactions.OnlineFactions[SFactions.OnlineMembers[(byte)_plr.Index]];
+            _plrFaction = OnlineFactions.GetPlayerFaction(_plr);
 
             if (_plr.Name != _plrFaction.Leader)
             {
@@ -49,21 +49,21 @@ namespace SFactions.Commands
             if (args.Parameters.Count < 2)
             {
                 _plr.SendErrorMessage("Invalid ability type. Valid types are:\n" +
-                                     string.Join(", ", SFactions.Config.EnabledAbilities));
+                                      string.Join(", ", SFactions.Config.EnabledAbilities));
                 return false;
             }
 
             if (!Utils.TryGetAbilityTypeFromString(args.Parameters[1].ToLower(), out _newType))
             {
                 _plr.SendErrorMessage("Invalid ability type. Valid types are:\n" +
-                                     string.Join(", ", SFactions.Config.EnabledAbilities));
+                                      string.Join(", ", SFactions.Config.EnabledAbilities));
                 return false;
             }
 
             if (!SFactions.Config.EnabledAbilities.Contains(args.Parameters[1].ToLower()))
             {
                 _plr.SendErrorMessage("Invalid ability type. Valid types are:\n" +
-                                     string.Join(", ", SFactions.Config.EnabledAbilities));
+                                      string.Join(", ", SFactions.Config.EnabledAbilities));
                 return false;
             }
 

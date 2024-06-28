@@ -18,12 +18,12 @@ namespace SFactions.Commands
 
         protected override void Function(CommandArgs args)
         {
-            SFactions.OnlineMembers.Add((byte)_plr.Index, _faction.Id);
+            OnlineFactions.AddMember(_plr, _faction);
             SFactions.DbManager.InsertMember(_plr.Name, _faction.Id);
 
-            if (!SFactions.OnlineFactions.ContainsKey(_faction.Id))
+            if (!OnlineFactions.IsFactionOnline(_faction))
             {
-                SFactions.OnlineFactions.Add(_faction.Id, _faction);
+                OnlineFactions.AddFaction(_faction);
             }
 
             RegionManager.AddMember(_plr);
@@ -34,7 +34,7 @@ namespace SFactions.Commands
         {
             _plr = args.Player;
 
-            if (SFactions.OnlineMembers.ContainsKey((byte)_plr.Index))
+            if (OnlineFactions.IsPlayerInAnyFaction(_plr))
             {
                 _plr.SendErrorMessage("You need to leave your current faction to join another.");
                 return false;

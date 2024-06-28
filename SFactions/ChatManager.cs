@@ -38,7 +38,7 @@ namespace SFactions
         {
             string result = "";
 
-            if (OnlineFactions.IsPlayerAMemberOfAnyFaction(playerIndex))
+            if (OnlineFactions.IsPlayerInAnyFaction(playerIndex))
             {
                 result = SFactions.Config.ChatFactionNameOpeningParenthesis;
                 result += OnlineFactions.GetPlayerFaction(playerIndex).Name;

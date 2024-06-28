@@ -26,13 +26,14 @@ namespace SFactions.Commands
         protected override bool TryParseParameters(CommandArgs args)
         {
             _plr = args.Player;
-            if (!SFactions.OnlineMembers.ContainsKey((byte)_plr.Index))
+
+            if (OnlineFactions.IsPlayerInAnyFaction(_plr))
             {
                 _plr.SendErrorMessage("You're not in a faction.");
                 return false;
             }
 
-            _plrFaction = SFactions.OnlineFactions[SFactions.OnlineMembers[(byte)_plr.Index]];
+            _plrFaction = OnlineFactions.GetFaction(_plr);
 
             if (_plrFaction.InviteType == InviteType.Closed && !_plr.Name.Equals(_plrFaction.Leader))
             {

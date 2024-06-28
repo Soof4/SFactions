@@ -9,7 +9,7 @@ namespace SFactions.Commands
         public override string HelpText => "Used for leaving your current faction.";
         public override string SyntaxHelp => "/faction leave";
         protected override bool AllowServer => false;
-        
+
 #pragma warning disable CS8618
 
         private TSPlayer _plr;
@@ -25,7 +25,7 @@ namespace SFactions.Commands
             }
 
             RegionManager.DelMember(args.Player);
-            SFactions.OnlineMembers.Remove((byte)args.Player.Index);
+            OnlineFactions.RemoveMember(_plr);
             SFactions.DbManager.DeleteMember(args.Player.Name);
 
             args.Player.SendSuccessMessage("You've left your faction.");
@@ -34,20 +34,12 @@ namespace SFactions.Commands
             {
                 _plrFaction.Leader = null;
                 SFactions.DbManager.SaveFaction(_plrFaction);
-                SFactions.OnlineFactions[_plrFaction.Id].Leader = null;
 
-
-                // Check if anyone else is in the same faction and online
-                foreach (int id in SFactions.OnlineMembers.Values)
+                // Check if anyone else is in the same faction and online, if not then make it offline
+                if (!OnlineFactions.IsAnyoneOnline(_plrFaction))
                 {
-                    if (id == _plrFaction.Id)
-                    {
-                        return;
-                    }
+                    OnlineFactions.RemoveFaction(_plrFaction);
                 }
-
-                // If no other member is online, remove the faction from OnlineFactions.
-                SFactions.OnlineFactions.Remove(_plrFaction.Id);  
             }
         }
 
@@ -55,13 +47,13 @@ namespace SFactions.Commands
         {
             _plr = args.Player;
 
-            if (!SFactions.OnlineMembers.ContainsKey((byte)args.Player.Index))
+            if (!OnlineFactions.IsPlayerInAnyFaction(_plr))
             {
                 args.Player.SendErrorMessage("You're not in a faction.");
                 return false;
             }
 
-            _plrFaction = SFactions.OnlineFactions[SFactions.OnlineMembers[(byte)args.Player.Index]];
+            _plrFaction = OnlineFactions.GetFaction(_plr);
 
             return true;
         }

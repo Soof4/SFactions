@@ -45,10 +45,9 @@ namespace SFactions
             try
             {
                 Faction plrFaction = SFactions.DbManager.GetPlayerFaction(TShock.Players[args.Who].Name);
-                SFactions.OnlineMembers.Add((byte)args.Who, plrFaction.Id);
 
-                // Add the faction to OnlineFactions
-                SFactions.OnlineFactions.TryAdd(plrFaction.Id, plrFaction);
+                OnlineFactions.AddFaction(plrFaction);
+                OnlineFactions.AddMember(args.Who, plrFaction);
             }
             catch (NullReferenceException) { }
         }
@@ -57,13 +56,13 @@ namespace SFactions
         {
             HyperCrit.HyperCritActive.Remove((byte)args.Who);
 
-            if (SFactions.OnlineMembers.ContainsKey((byte)args.Who))
+            if (OnlineFactions.IsPlayerInAnyFaction(args.Who))
             {
-                int factionId = SFactions.OnlineMembers[(byte)args.Who];
-                SFactions.OnlineMembers.Remove((byte)args.Who);
+                int factionId = OnlineFactions.GetFactionID(args.Who);
+                OnlineFactions.RemoveMember(args.Who);
 
                 // Remove the faction from onlineFactions if nobody else is online
-                if (!SFactions.OnlineMembers.Values.Contains(factionId)) SFactions.OnlineFactions.Remove(factionId);
+                if (!OnlineFactions.IsAnyoneOnline(factionId)) OnlineFactions.RemoveFaction(factionId);
             }
         }
 
@@ -75,22 +74,24 @@ namespace SFactions
 
         private static void OnPlayerUpdate(object? sender, GetDataHandlers.PlayerUpdateEventArgs args)
         {
-            if (args.Control.IsUsingItem && SFactions.OnlineMembers.ContainsKey(args.PlayerId))
+            if (args.Control.IsUsingItem && OnlineFactions.IsPlayerInAnyFaction(args.PlayerId))
             {
                 if (args.Player.SelectedItem.netID == ItemID.Harp)
                 {
-                    Faction plrFaction = SFactions.OnlineFactions[SFactions.OnlineMembers[args.PlayerId]];
+                    Faction plrFaction = OnlineFactions.GetFaction(args.Player);
                     int level = Utils.GetAbilityLevel(plrFaction);
                     int cooldown = Utils.GetAbilityCooldownByAbilityLevel(level, 100);
+
                     if (plrFaction.AbilityType == AbilityType.MagicDice)
                     {
                         cooldown = 70 - SFactions.RandomGen.Next(16);
                     }
+
                     plrFaction.Ability.Cast(args.Player, cooldown, level);
                 }
                 else if (args.Player.SelectedItem.netID == ItemID.CopperWatch)
                 {
-                    Faction plrFaction = SFactions.OnlineFactions[SFactions.OnlineMembers[args.PlayerId]];
+                    Faction plrFaction = OnlineFactions.GetFaction(args.Player);
                     plrFaction.Ability.Cycle(args.Player);
                 }
             }
@@ -108,14 +109,20 @@ namespace SFactions
 
         public static void OnNpcStrike(NpcStrikeEventArgs args)
         {
-            if (SFactions.OnlineMembers.ContainsKey((byte)args.Player.whoAmI))
+            if (OnlineFactions.IsPlayerInAnyFaction(args.Player.whoAmI))
             {
-                if (SFactions.OnlineFactions.ContainsKey(SFactions.OnlineMembers[(byte)args.Player.whoAmI]))
+                Faction faction = OnlineFactions.GetFaction(args.Player.whoAmI);
+                
+                if (faction.AbilityType == AbilityType.HyperCrit)
                 {
-                    if (SFactions.OnlineFactions[SFactions.OnlineMembers[(byte)args.Player.whoAmI]].AbilityType == AbilityType.HyperCrit) Hooks.OnNpcStrike_HyperCrit(args, true);
-                    else Hooks.OnNpcStrike_HyperCrit(args, false);
+                    Hooks.OnNpcStrike_HyperCrit(args, true);
                 }
-                else Hooks.OnNpcStrike_HyperCrit(args, false);
+                else
+                {
+                    Hooks.OnNpcStrike_HyperCrit(args, false);
+                }
+
+                // else Hooks.OnNpcStrike_HyperCrit(args, false);
             }
             else Hooks.OnNpcStrike_HyperCrit(args, false);
         }

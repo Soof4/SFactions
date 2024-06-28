@@ -21,16 +21,16 @@ namespace SFactions.Commands
             SFactions.DbManager.InsertFaction(_plr.Name, _factionName);
             Faction newFaction = SFactions.DbManager.GetFaction(_factionName);
             SFactions.DbManager.InsertMember(_plr.Name, newFaction.Id);
-            SFactions.OnlineMembers.Add((byte)_plr.Index, newFaction.Id);
-            SFactions.OnlineFactions.Add(newFaction.Id, newFaction);
-            args.Player.SendSuccessMessage($"You've created {_factionName}");
+            OnlineFactions.AddMember(_plr, newFaction);
+            OnlineFactions.AddFaction(newFaction);
+            _plr.SendSuccessMessage($"You've created {_factionName}.");
         }
 
         protected override bool TryParseParameters(CommandArgs args)
         {
             _plr = args.Player;
 
-            if (SFactions.OnlineMembers.ContainsKey((byte)args.Player.Index))
+            if (OnlineFactions.IsPlayerInAnyFaction(_plr))
             {
                 _plr.SendErrorMessage("You need to leave your current faction first to create new.\n" +
                                      "If you want to leave your current faction do '/faction leave'");

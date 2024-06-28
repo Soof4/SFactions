@@ -20,7 +20,6 @@ namespace SFactions.Commands
         protected override void Function(CommandArgs args)
         {
             _plrFaction.Name = _factionName;
-            SFactions.OnlineFactions[_plrFaction.Id].Name = _plrFaction.Name;
             SFactions.DbManager.SaveFaction(_plrFaction);
             _plr.SendSuccessMessage($"Successfully changed faction name to \"{_factionName}\"");
         }
@@ -29,13 +28,13 @@ namespace SFactions.Commands
         {
             _plr = args.Player;
 
-            if (!SFactions.OnlineMembers.ContainsKey((byte)_plr.Index))
+            if (!OnlineFactions.IsPlayerInAnyFaction(_plr))
             {
                 _plr.SendErrorMessage("You're not in a faction.");
                 return false;
             }
 
-            _plrFaction = SFactions.OnlineFactions[SFactions.OnlineMembers[(byte)_plr.Index]];
+            _plrFaction = OnlineFactions.GetFaction(_plr);
 
             if (_plr.Name != _plrFaction.Leader)
             {

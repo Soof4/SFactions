@@ -20,7 +20,6 @@ namespace SFactions.Commands
         {
             _plrFaction.Leader = _plr.Name;
             SFactions.DbManager.SaveFaction(_plrFaction);
-            SFactions.OnlineFactions[_plrFaction.Id].Leader = _plrFaction.Leader;
             _plr.SendSuccessMessage("You're the leader of your faction now.");
         }
 
@@ -28,13 +27,13 @@ namespace SFactions.Commands
         {
             _plr = args.Player;
 
-            if (!SFactions.OnlineMembers.ContainsKey((byte)_plr.Index))
+            if (!OnlineFactions.IsPlayerInAnyFaction(_plr))
             {
                 _plr.SendErrorMessage("You're not in a faction.");
                 return false;
             }
 
-            _plrFaction = SFactions.OnlineFactions[SFactions.OnlineMembers[(byte)_plr.Index]];
+            _plrFaction = OnlineFactions.GetFaction(_plr);
 
             if (_plrFaction.Leader != null)
             {

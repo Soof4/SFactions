@@ -121,9 +121,9 @@ namespace SFactions
 
         private static void OnPlayerChangeTeam_War(object? sender, GetDataHandlers.PlayerTeamEventArgs args)
         {
-            if (!SFactions.OnlineMembers.ContainsKey(args.PlayerId)) return;
+            if (!OnlineFactions.IsPlayerInAnyFaction(args.PlayerId)) return;
 
-            int fId = SFactions.OnlineMembers[args.PlayerId];
+            int fId = OnlineFactions.GetFactionID(args.PlayerId);
 
             if (fId == WarCommand.ActiveWar!.Faction1.Id)
             {
@@ -141,9 +141,9 @@ namespace SFactions
 
         private static void OnPlayerTogglePvP_War(object? sender, GetDataHandlers.TogglePvpEventArgs args)
         {
-            if (!SFactions.OnlineMembers.ContainsKey(args.PlayerId)) return;
+            if (!OnlineFactions.IsPlayerInAnyFaction(args.PlayerId)) return;
 
-            int fId = SFactions.OnlineMembers[args.PlayerId];
+            int fId = OnlineFactions.GetFactionID(args.PlayerId);
 
             if (fId == WarCommand.ActiveWar!.Faction1.Id || fId == WarCommand.ActiveWar!.Faction2.Id)
             {
@@ -155,9 +155,9 @@ namespace SFactions
 
         private static void OnNetGreetPlayer_War(GreetPlayerEventArgs args)
         {
-            if (!SFactions.OnlineMembers.ContainsKey((byte)args.Who)) return;
+            if (!OnlineFactions.IsPlayerInAnyFaction(args.Who)) return;
 
-            int fId = SFactions.OnlineMembers[(byte)args.Who];
+            int fId = OnlineFactions.GetFactionID(args.Who);
 
             TSPlayer plr = TShock.Players[args.Who];
 

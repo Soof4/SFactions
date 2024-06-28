@@ -29,13 +29,13 @@ namespace SFactions.Commands
         {
             _plr = args.Player;
 
-            if (!SFactions.OnlineMembers.ContainsKey((byte)_plr.Index))
+            if (!OnlineFactions.IsPlayerInAnyFaction(_plr))
             {
                 _plr.SendErrorMessage("You're not in a faction.");
                 return false;
             }
 
-            _plrFaction = SFactions.OnlineFactions[SFactions.OnlineMembers[(byte)_plr.Index]];
+            _plrFaction = OnlineFactions.GetFaction(_plr);
 
             if (_plr.Name != _plrFaction.Leader)
             {
@@ -72,19 +72,7 @@ namespace SFactions.Commands
         {
             string enemyFactionName = string.Join(' ', args.Parameters.GetRange(2, args.Parameters.Count - 2));
 
-            Faction? enemyFaction = null;
-            foreach (Faction f in SFactions.OnlineFactions.Values)
-            {
-                if (f.Name == enemyFactionName)
-                {
-                    enemyFaction = f;
-                    break;
-                }
-                else if (f.Name.StartsWith(enemyFactionName))
-                {
-                    enemyFaction = f;
-                }
-            }
+            Faction? enemyFaction = OnlineFactions.FindFaction(enemyFactionName);
 
             if (enemyFaction == null)
             {
@@ -92,15 +80,7 @@ namespace SFactions.Commands
                 return;
             }
 
-            TSPlayer? enemyLeader = null;
-            foreach (var kvp in SFactions.OnlineMembers)
-            {
-                if (kvp.Value == enemyFaction.Id && TShock.Players[kvp.Key].Name == enemyFaction.Leader)
-                {
-                    enemyLeader = TShock.Players[kvp.Key];
-                    break;
-                }
-            }
+            TSPlayer? enemyLeader = OnlineFactions.GetLeader(enemyFaction);
 
             if (enemyLeader == null)
             {

@@ -27,13 +27,13 @@ namespace SFactions.Commands
         {
             _plr = args.Player;
 
-            if (!SFactions.OnlineMembers.ContainsKey((byte)_plr.Index))
+            if (!OnlineFactions.IsPlayerInAnyFaction(_plr))
             {
                 _plr.SendErrorMessage("You're not in a faction.");
                 return false;
             }
 
-            _plrFaction = SFactions.OnlineFactions[SFactions.OnlineMembers[(byte)_plr.Index]];
+            _plrFaction = OnlineFactions.GetFaction(_plr);
 
             if (_plr.Name != _plrFaction.Leader)
             {
@@ -84,7 +84,7 @@ namespace SFactions.Commands
             }
 
             RegionManager.SetRegion(_plr);
-            RegionManager.AddAllMembers(SFactions.OnlineFactions[SFactions.OnlineMembers[(byte)_plr.Index]]);
+            RegionManager.AddAllMembers(_plrFaction);
             _plr.SendSuccessMessage("Successfully set region.");
         }
 
