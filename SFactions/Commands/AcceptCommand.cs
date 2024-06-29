@@ -26,6 +26,7 @@ namespace SFactions.Commands
                 OnlineFactions.AddFaction(_faction);
             }
 
+            SFactions.Invitations.Remove(_plr.Name);
             RegionManager.AddMember(_plr);
             _plr.SendSuccessMessage($"You've joined {_faction.Name}.");
         }

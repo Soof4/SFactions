@@ -149,59 +149,33 @@ namespace SFactions
             builder.Append(str[0]);
 
             char preC = str[0];
-            for (int i = 1; i < str.Length; i++)
+            char c = str[1];
+
+            for (int i = 1; i < str.Length; i++, preC = c)
             {
-                char c = str[i];
+                c = str[i];
+                if (char.IsWhiteSpace(preC) && char.IsWhiteSpace(c))
+                {
+                    continue;
+                }
 
                 if (char.IsDigit(c))
                 {
-                    if (char.IsWhiteSpace(preC))
-                    {
-                        if (!char.IsWhiteSpace(c))
-                        {
-                            if (char.IsDigit(preC))
-                            {
-                                builder.Append(c);
-                            }
-                            else
-                            {
-                                builder.Append(c);
-                            }
-                        }
-                    }
-                    else    // if preC is not whitespace
-                    {
-                        if (char.IsDigit(preC))
-                        {
-                            builder.Append(c);
-                        }
-                        else
-                        {
-                            builder.Append(' ');
-                            builder.Append(c);
-                        }
-                    }
+                    if (!char.IsDigit(preC) && !char.IsWhiteSpace(preC)) builder.Append(' ');
+
+                    builder.Append(c);
+
                 }
-                else if (char.IsLower(c))
+                else if (char.IsUpper(c))
+                {
+                    if (!char.IsWhiteSpace(preC)) builder.Append(' ');
+
+                    builder.Append(c);
+                }
+                else    // If c is lowercase
                 {
                     builder.Append(c);
                 }
-                else    // If c is uppercase
-                {
-                    if (char.IsWhiteSpace(preC))
-                    {
-                        if (!char.IsWhiteSpace(c))
-                        {
-                            builder.Append(c);
-                        }
-                    }
-                    else    // if preC is not whitespace
-                    {
-                        builder.Append(c);
-                    }
-                }
-
-                preC = c;
             }
 
             return builder.ToString();

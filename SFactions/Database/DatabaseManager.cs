@@ -80,8 +80,8 @@ namespace SFactions.Database
                     reader.Get<string>("Region"),
                     DateTime.Parse(reader.Get<string>("LastAbilityChangeTime")),
                     (InviteType)reader.Get<int>("InviteType"),
-                    reader.Get<int>("BaseX"),
-                    reader.Get<int>("BaseY")
+                    reader.Get<int?>("BaseX"),
+                    reader.Get<int?>("BaseY")
                     );
             }
             throw new NullReferenceException();
@@ -106,7 +106,9 @@ namespace SFactions.Database
                     (AbilityType)reader2.Get<int>("AbilityType"),
                     reader2.Get<string>("Region"),
                     DateTime.Parse(reader2.Get<string>("LastAbilityChangeTime")),
-                    (InviteType)reader2.Get<int>("InviteType")
+                    (InviteType)reader2.Get<int>("InviteType"),
+                    reader2.Get<int?>("BaseX"),
+                    reader2.Get<int?>("BaseY")
                     );
                 }
             }

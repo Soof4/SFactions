@@ -9,7 +9,7 @@ namespace SFactions.Commands
         public override string HelpText => "Sets or deletes faction's region. (You must be inside an already defined region before setting it.)";
         public override string SyntaxHelp => "/faction <set / del>";
         protected override bool AllowServer => false;
-        
+
 #pragma warning disable CS8618
 
         private TSPlayer _plr;
@@ -90,6 +90,12 @@ namespace SFactions.Commands
 
         private void Delete(CommandArgs args)
         {
+            if (_plrFaction.Region == null)
+            {
+                _plr.SendErrorMessage("Your faction doesn't have a region set.");
+                return;
+            }
+
             RegionManager.DelAllMembers(_plrFaction);
             RegionManager.DelRegion(_plr);
             _plr.SendSuccessMessage("Successfully deleted the region.");

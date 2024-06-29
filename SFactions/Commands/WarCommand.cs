@@ -88,6 +88,12 @@ namespace SFactions.Commands
                 return;
             }
 
+            if (enemyFaction == _plrFaction)
+            {
+                _plr.SendErrorMessage("You can't start a war with yourself!");
+                return;
+            }
+
             if (ActiveWar != null)
             {
                 _plr.SendErrorMessage("There is another war ongoing right now. Please wait till it ends.");
@@ -127,9 +133,11 @@ namespace SFactions.Commands
                     ActiveWar.Start();
 
                     _warInvitations.Remove(inv);
-                    break;
+                    return;
                 }
             }
+
+            _plr.SendErrorMessage("You don't have a pending invitation.");
         }
 
         private void Decline(CommandArgs args)
@@ -146,8 +154,11 @@ namespace SFactions.Commands
 
                     _plr.SendSuccessMessage($"You've declined the war invitation.");
                     _warInvitations.Remove(inv);
+                    return;
                 }
             }
+
+            _plr.SendErrorMessage("You don't have a pending invitation.");
         }
     }
 }

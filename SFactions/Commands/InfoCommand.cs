@@ -23,7 +23,7 @@ namespace SFactions.Commands
                                  $"Faction Leader: {_faction.Leader}\n" +
                                  $"Faction Ability: {Utils.ToTitleCase(_faction.Ability.GetType().Name)}\n" +
                                  $"Has a Region: {_faction.Region != null}\n" +
-                                 $"Invite Type: {Utils.ToTitleCase(_faction.InviteType.GetType().Name)}"
+                                 $"Invite Type: {Utils.ToTitleCase(_faction.InviteType.ToString())}"
                                  );
         }
 

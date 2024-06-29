@@ -40,5 +40,8 @@ namespace SFactions.Database
             InviteType = inviteType;
             Ability = Utils.CreateAbility(AbilityType, Utils.GetAbilityLevel(this));
         }
+
+        public override bool Equals(object? obj) => obj != null && Id == ((Faction)obj).Id;
+        public override int GetHashCode() => Id;
     }
 }

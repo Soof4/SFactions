@@ -26,7 +26,7 @@ namespace SFactions.Commands
         {
             _plr = args.Player;
 
-            if (OnlineFactions.IsPlayerInAnyFaction(_plr))
+            if (!OnlineFactions.IsPlayerInAnyFaction(_plr))
             {
                 _plr.SendErrorMessage("You're not in a faction.");
                 return false;
@@ -41,22 +41,7 @@ namespace SFactions.Commands
 
         private void Get(CommandArgs args)
         {
-            string msg = "Your faction is ";
-
-            switch (_plrFaction.InviteType)
-            {
-                case InviteType.Open:
-                    msg += Utils.ToTitleCase(InviteType.Open.GetType().Name).ToLower();
-                    break;
-                case InviteType.InviteOnly:
-                    msg += Utils.ToTitleCase(InviteType.InviteOnly.GetType().Name).ToLower();
-                    break;
-                case InviteType.Closed:
-                    msg += Utils.ToTitleCase(InviteType.Closed.GetType().Name).ToLower();
-                    break;
-            }
-
-            _plr.SendInfoMessage(msg);
+            _plr.SendInfoMessage($"Your faction is {Utils.ToTitleCase(_plrFaction.InviteType.ToString()).ToLower()}.");
         }
 
         private void Set(CommandArgs args)
@@ -86,7 +71,7 @@ namespace SFactions.Commands
 
             SFactions.DbManager.SaveFaction(_plrFaction);
             _plr.SendSuccessMessage($"You've successfully changed you faction's invite type to "
-                                    + Utils.ToTitleCase(_plrFaction.InviteType.GetType().Name).ToLower());
+                                    + Utils.ToTitleCase(_plrFaction.InviteType.ToString()).ToLower() + ".");
         }
     }
 }

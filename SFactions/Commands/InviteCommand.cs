@@ -27,7 +27,7 @@ namespace SFactions.Commands
         {
             _plr = args.Player;
 
-            if (OnlineFactions.IsPlayerInAnyFaction(_plr))
+            if (!OnlineFactions.IsPlayerInAnyFaction(_plr))
             {
                 _plr.SendErrorMessage("You're not in a faction.");
                 return false;

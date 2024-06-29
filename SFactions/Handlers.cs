@@ -111,7 +111,7 @@ namespace SFactions
         {
             if (OnlineFactions.IsPlayerInAnyFaction(args.Player.whoAmI))
             {
-                Faction faction = OnlineFactions.GetFaction(args.Player.whoAmI);
+                Faction faction = OnlineFactions.GetPlayerFaction(args.Player.whoAmI);
                 
                 if (faction.AbilityType == AbilityType.HyperCrit)
                 {
