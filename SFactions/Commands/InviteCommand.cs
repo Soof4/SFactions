@@ -23,17 +23,17 @@ namespace SFactions.Commands
             _plr.SendSuccessMessage($"You've successfully invited {_targetPlr.Name} to your faction.");
         }
 
-        protected override bool TryParseParameters(CommandArgs args)
+        protected override void ParseParameters(CommandArgs args)
         {
             _plr = args.Player;
 
-            if (!OnlineFactions.IsPlayerInAnyFaction(_plr))
+            if (!FactionService.IsPlayerInAnyFaction(_plr))
             {
                 _plr.SendErrorMessage("You're not in a faction.");
                 return false;
             }
 
-            _plrFaction = OnlineFactions.GetFaction(_plr);
+            _plrFaction = FactionService.GetFaction(_plr);
 
             if (_plrFaction.InviteType == InviteType.Closed && !_plr.Name.Equals(_plrFaction.Leader))
             {

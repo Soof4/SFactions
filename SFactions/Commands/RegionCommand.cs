@@ -23,17 +23,17 @@ namespace SFactions.Commands
             _subCommand.Invoke(args);
         }
 
-        protected override bool TryParseParameters(CommandArgs args)
+        protected override void ParseParameters(CommandArgs args)
         {
             _plr = args.Player;
 
-            if (!OnlineFactions.IsPlayerInAnyFaction(_plr))
+            if (!FactionService.IsPlayerInAnyFaction(_plr))
             {
                 _plr.SendErrorMessage("You're not in a faction.");
                 return false;
             }
 
-            _plrFaction = OnlineFactions.GetFaction(_plr);
+            _plrFaction = FactionService.GetFaction(_plr);
 
             if (_plr.Name != _plrFaction.Leader)
             {

@@ -38,13 +38,13 @@ namespace SFactions
         {
             string result = "";
 
-            if (OnlineFactions.IsPlayerInAnyFaction(playerIndex))
+            if (FactionService.IsPlayerInAnyFaction(playerIndex))
             {
                 result = SFactions.Config.ChatFactionNameOpeningParenthesis;
-                result += OnlineFactions.GetPlayerFaction(playerIndex).Name;
+                result += FactionService.GetPlayerFaction(playerIndex).Name;
                 result += SFactions.Config.ChatFactionNameClosingParanthesis;
             }
-            
+
             return result;
         }
     }

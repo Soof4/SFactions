@@ -18,12 +18,12 @@ namespace SFactions.Commands
 
         protected override void Function(CommandArgs args)
         {
-            OnlineFactions.AddMember(_plr, _faction);
+            FactionService.AddMember(_plr, _faction);
             SFactions.DbManager.InsertMember(_plr.Name, _faction.Id);
 
-            if (!OnlineFactions.IsFactionOnline(_faction))
+            if (!FactionService.IsFactionOnline(_faction))
             {
-                OnlineFactions.AddFaction(_faction);
+                FactionService.AddFaction(_faction);
             }
 
             SFactions.Invitations.Remove(_plr.Name);
@@ -31,27 +31,23 @@ namespace SFactions.Commands
             _plr.SendSuccessMessage($"You've joined {_faction.Name}.");
         }
 
-        protected override bool TryParseParameters(CommandArgs args)
+        protected override void ParseParameters(CommandArgs args)
         {
             _plr = args.Player;
 
-            if (OnlineFactions.IsPlayerInAnyFaction(_plr))
+            if (FactionService.IsPlayerInAnyFaction(_plr))
             {
-                _plr.SendErrorMessage("You need to leave your current faction to join another.");
-                return false;
+                throw new CommandException("You need to leave your current faction to join another.");
             }
 
             if (!SFactions.Invitations.ContainsKey(_plr.Name))
             {
-                _plr.SendErrorMessage("Couldn't find a pending invitation.");
-                return false;
+                throw new CommandException("Couldn't find a pending invitation.");
             }
             else
             {
                 _faction = SFactions.Invitations[_plr.Name];
             }
-
-            return true;
         }
     }
 }

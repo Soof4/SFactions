@@ -8,13 +8,24 @@ namespace SFactions.Commands
         public abstract string SyntaxHelp { get; }
         protected abstract bool AllowServer { get; }
         protected delegate void SubCommand(CommandArgs args);
-        protected abstract bool TryParseParameters(CommandArgs args);
+        protected abstract void ParseParameters(CommandArgs args);
         protected abstract void Function(CommandArgs args);
+
         public void Execute(CommandArgs args)
         {
-            if ((args.Player.RealPlayer || AllowServer) && TryParseParameters(args))
+            if (!args.Player.RealPlayer && !AllowServer)
             {
-                Function(args);
+                args.Player.SendErrorMessage("You can only use this command in game.");
+                return;
+            }
+
+            try
+            {
+                ParseParameters(args);
+            }
+            catch (CommandException e)
+            {
+                args.Player.SendErrorMessage(e.ErrorMessage);
             }
         }
     }

@@ -8,7 +8,7 @@ namespace SFactions.Commands
         public override string HelpText => "Used for becoming the leader of your faction if leader quits the faction.";
         public override string SyntaxHelp => "/faction lead";
         protected override bool AllowServer => false;
-        
+
 #pragma warning disable CS8618
 
         private TSPlayer _plr;
@@ -23,17 +23,17 @@ namespace SFactions.Commands
             _plr.SendSuccessMessage("You're the leader of your faction now.");
         }
 
-        protected override bool TryParseParameters(CommandArgs args)
+        protected override void ParseParameters(CommandArgs args)
         {
             _plr = args.Player;
 
-            if (!OnlineFactions.IsPlayerInAnyFaction(_plr))
+            if (!FactionService.IsPlayerInAnyFaction(_plr))
             {
                 _plr.SendErrorMessage("You're not in a faction.");
                 return false;
             }
 
-            _plrFaction = OnlineFactions.GetFaction(_plr);
+            _plrFaction = FactionService.GetFaction(_plr);
 
             if (_plrFaction.Leader != null)
             {

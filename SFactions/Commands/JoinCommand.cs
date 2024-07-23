@@ -19,23 +19,23 @@ namespace SFactions.Commands
 
         protected override void Function(CommandArgs args)
         {
-            OnlineFactions.AddMember(_plr, _newFaction);
+            FactionService.AddMember(_plr, _newFaction);
             SFactions.DbManager.InsertMember(_plr.Name, _newFaction.Id);
 
-            if (!OnlineFactions.IsFactionOnline(_newFaction))
+            if (!FactionService.IsFactionOnline(_newFaction))
             {
-                OnlineFactions.AddFaction(_newFaction);
+                FactionService.AddFaction(_newFaction);
             }
 
             RegionManager.AddMember(_plr);
             _plr.SendSuccessMessage($"You've joined {_newFaction.Name}.");
         }
 
-        protected override bool TryParseParameters(CommandArgs args)
+        protected override void ParseParameters(CommandArgs args)
         {
             _plr = args.Player;
 
-            if (OnlineFactions.IsPlayerInAnyFaction(_plr))
+            if (FactionService.IsPlayerInAnyFaction(_plr))
             {
                 _plr.SendErrorMessage("You need to leave your current faction to join another one.");
                 return false;

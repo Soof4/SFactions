@@ -3,7 +3,6 @@ using SFactions.Database;
 using Abilities;
 using TShockAPI.Configuration;
 using TerrariaApi.Server;
-using Org.BouncyCastle.Tsp;
 using SFactions.Commands;
 
 namespace SFactions

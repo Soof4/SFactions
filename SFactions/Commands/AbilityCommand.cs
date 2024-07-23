@@ -28,46 +28,24 @@ namespace SFactions.Commands
             _plr.SendSuccessMessage($"Your faction's ability is now \"{args.Parameters[1]}\".");
         }
 
-        protected override bool TryParseParameters(CommandArgs args)
+        protected override void ParseParameters(CommandArgs args)
         {
             _plr = args.Player;
+            _plrFaction = CommandParser.GetPlayerFaction(args);
+            CommandParser.IsPlayerTheLeader(_plrFaction, _plr);
 
-            if (!OnlineFactions.IsPlayerInAnyFaction(_plr))
-            {
-                _plr.SendErrorMessage("You're not in a faction.");
-                return false;
-            }
-
-            _plrFaction = OnlineFactions.GetPlayerFaction(_plr);
-
-            if (_plr.Name != _plrFaction.Leader)
-            {
-                _plr.SendErrorMessage("Only leaders can change the faction ability.");
-                return false;
-            }
-
-            if (args.Parameters.Count < 2)
-            {
-                _plr.SendErrorMessage("Invalid ability type. Valid types are:\n" +
-                                      string.Join(", ", SFactions.Config.EnabledAbilities));
-                return false;
-            }
+            string validTypes = string.Join(", ", SFactions.Config.EnabledAbilities);
+            CommandParser.IsMissingArgument(args, 1, $"Missing ability name. Valid ability types are: {validTypes}");
 
             if (!Utils.TryGetAbilityTypeFromString(args.Parameters[1].ToLower(), out _newType))
             {
-                _plr.SendErrorMessage("Invalid ability type. Valid types are:\n" +
-                                      string.Join(", ", SFactions.Config.EnabledAbilities));
-                return false;
+                throw new CommandException($"Invalid ability name. Valid ability types are: {validTypes}");
             }
 
             if (!SFactions.Config.EnabledAbilities.Contains(args.Parameters[1].ToLower()))
             {
-                _plr.SendErrorMessage("Invalid ability type. Valid types are:\n" +
-                                      string.Join(", ", SFactions.Config.EnabledAbilities));
-                return false;
+                throw new CommandException($"Invalid ability name. Valid ability types are: {validTypes}");
             }
-
-            return true;
         }
     }
 }

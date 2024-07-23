@@ -21,25 +21,15 @@ namespace SFactions.Commands
             _plr.Teleport((float)(16 * _plrFaction.BaseX!), (float)(16 * _plrFaction.BaseY!));
         }
 
-        protected override bool TryParseParameters(CommandArgs args)
+        protected override void ParseParameters(CommandArgs args)
         {
             _plr = args.Player;
-
-            if (!OnlineFactions.IsPlayerInAnyFaction(_plr))
-            {
-                _plr.SendErrorMessage("You're not in a faction.");
-                return false;
-            }
-
-            _plrFaction = OnlineFactions.GetFaction(_plr);
+            _plrFaction = CommandParser.GetPlayerFaction(args);
 
             if (_plrFaction.BaseX == null || _plrFaction.BaseY == null)
             {
-                _plr.SendErrorMessage("Your faction doesn't have a base!");
-                return false;
+                throw new CommandException("Your faction doesn't have a base!");
             }
-
-            return true;
         }
     }
 }

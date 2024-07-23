@@ -21,11 +21,9 @@ namespace SFactions.Commands
             // Logic here
         }
 
-        protected override bool TryParseParameters(CommandArgs args)
+        protected override void ParseParameters(CommandArgs args)
         {
             // Parsing and error handling here
-
-            return true;
         }
     }
 }

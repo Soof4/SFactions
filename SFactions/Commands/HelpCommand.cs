@@ -67,9 +67,7 @@ namespace SFactions.Commands
             }
         }
 
-
-
-        protected override bool TryParseParameters(CommandArgs args)
+        protected override void ParseParameters(CommandArgs args)
         {
             _plr = args.Player;
 
@@ -95,8 +93,6 @@ namespace SFactions.Commands
             {
                 _command = new HelpCommand();
             }
-
-            return true;
         }
     }
 }

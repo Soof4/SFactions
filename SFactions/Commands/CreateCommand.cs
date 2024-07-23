@@ -21,49 +21,39 @@ namespace SFactions.Commands
             SFactions.DbManager.InsertFaction(_plr.Name, _factionName);
             Faction newFaction = SFactions.DbManager.GetFaction(_factionName);
             SFactions.DbManager.InsertMember(_plr.Name, newFaction.Id);
-            OnlineFactions.AddMember(_plr, newFaction);
-            OnlineFactions.AddFaction(newFaction);
+            FactionService.AddMember(_plr, newFaction);
+            FactionService.AddFaction(newFaction);
             _plr.SendSuccessMessage($"You've created {_factionName}.");
         }
 
-        protected override bool TryParseParameters(CommandArgs args)
+        protected override void ParseParameters(CommandArgs args)
         {
             _plr = args.Player;
 
-            if (OnlineFactions.IsPlayerInAnyFaction(_plr))
+            if (FactionService.IsPlayerInAnyFaction(_plr))
             {
-                _plr.SendErrorMessage("You need to leave your current faction first to create new.\n" +
-                                     "If you want to leave your current faction do '/faction leave'");
-                return false;
+                throw new CommandException("You need to leave your current faction first to create new.\n" +
+                                           "If you want to leave your current faction do '/faction leave'");
             }
 
-            if (args.Parameters.Count < 2)
-            {
-                _plr.SendErrorMessage("You need to specify a the faction name.");
-                return false;
-            }
+            CommandParser.IsMissingArgument(args, 1, "You need to specify a the faction name.");
 
             _factionName = string.Join(' ', args.Parameters.GetRange(1, args.Parameters.Count - 1));
 
             if (_factionName.Length < SFactions.Config.MinNameLength)
             {
-                _plr.SendErrorMessage($"Faction name needs to be at least {SFactions.Config.MinNameLength} characters long.");
-                return false;
+                throw new CommandException($"Faction name needs to be at least {SFactions.Config.MinNameLength} characters long.");
             }
 
             if (_factionName.Length > SFactions.Config.MaxNameLength)
             {
-                _plr.SendErrorMessage($"Faction name needs to be at most {SFactions.Config.MaxNameLength} characters long.");
-                return false;
+                throw new CommandException($"Faction name needs to be at most {SFactions.Config.MaxNameLength} characters long.");
             }
 
             if (SFactions.DbManager.DoesFactionExist(_factionName))
             {
-                _plr.SendErrorMessage("A faction with this name already exists.");
-                return false;
+                throw new CommandException("A faction with this name already exists.");
             }
-
-            return true;
         }
     }
 }

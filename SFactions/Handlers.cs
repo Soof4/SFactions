@@ -46,8 +46,8 @@ namespace SFactions
             {
                 Faction plrFaction = SFactions.DbManager.GetPlayerFaction(TShock.Players[args.Who].Name);
 
-                OnlineFactions.AddFaction(plrFaction);
-                OnlineFactions.AddMember(args.Who, plrFaction);
+                FactionService.AddFaction(plrFaction);
+                FactionService.AddMember(args.Who, plrFaction);
             }
             catch (NullReferenceException) { }
         }
@@ -56,13 +56,13 @@ namespace SFactions
         {
             HyperCrit.HyperCritActive.Remove((byte)args.Who);
 
-            if (OnlineFactions.IsPlayerInAnyFaction(args.Who))
+            if (FactionService.IsPlayerInAnyFaction(args.Who))
             {
-                int factionId = OnlineFactions.GetFactionID(args.Who);
-                OnlineFactions.RemoveMember(args.Who);
+                int factionId = FactionService.GetFactionID(args.Who);
+                FactionService.RemoveMember(args.Who);
 
                 // Remove the faction from onlineFactions if nobody else is online
-                if (!OnlineFactions.IsAnyoneOnline(factionId)) OnlineFactions.RemoveFaction(factionId);
+                if (!FactionService.IsAnyoneOnline(factionId)) FactionService.RemoveFaction(factionId);
             }
         }
 
@@ -74,11 +74,11 @@ namespace SFactions
 
         private static void OnPlayerUpdate(object? sender, GetDataHandlers.PlayerUpdateEventArgs args)
         {
-            if (args.Control.IsUsingItem && OnlineFactions.IsPlayerInAnyFaction(args.PlayerId))
+            if (args.Control.IsUsingItem && FactionService.IsPlayerInAnyFaction(args.PlayerId))
             {
                 if (args.Player.SelectedItem.netID == ItemID.Harp)
                 {
-                    Faction plrFaction = OnlineFactions.GetFaction(args.Player);
+                    Faction plrFaction = FactionService.GetFaction(args.Player);
                     int level = Utils.GetAbilityLevel(plrFaction);
                     int cooldown = Utils.GetAbilityCooldownByAbilityLevel(level, 100);
 
@@ -91,7 +91,7 @@ namespace SFactions
                 }
                 else if (args.Player.SelectedItem.netID == ItemID.CopperWatch)
                 {
-                    Faction plrFaction = OnlineFactions.GetFaction(args.Player);
+                    Faction plrFaction = FactionService.GetFaction(args.Player);
                     plrFaction.Ability.Cycle(args.Player);
                 }
             }
@@ -109,10 +109,10 @@ namespace SFactions
 
         public static void OnNpcStrike(NpcStrikeEventArgs args)
         {
-            if (OnlineFactions.IsPlayerInAnyFaction(args.Player.whoAmI))
+            if (FactionService.IsPlayerInAnyFaction(args.Player.whoAmI))
             {
-                Faction faction = OnlineFactions.GetPlayerFaction(args.Player.whoAmI);
-                
+                Faction faction = FactionService.GetPlayerFaction(args.Player.whoAmI);
+
                 if (faction.AbilityType == AbilityType.HyperCrit)
                 {
                     Hooks.OnNpcStrike_HyperCrit(args, true);

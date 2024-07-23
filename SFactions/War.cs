@@ -31,16 +31,16 @@ namespace SFactions
 
             foreach (TSPlayer p in TShock.Players)
             {
-                if (p != null && p.Active && OnlineFactions.IsPlayerInAnyFaction(p.Index))
+                if (p != null && p.Active && FactionService.IsPlayerInAnyFaction(p.Index))
                 {
-                    if (OnlineFactions.GetFactionID(p.Index) == WarCommand.ActiveWar.Faction1.Id)
+                    if (FactionService.GetFactionID(p.Index) == WarCommand.ActiveWar.Faction1.Id)
                     {
                         p.TPlayer.team = 1;
                         TSPlayer.All.SendData(PacketTypes.PlayerTeam, number: p.Index);
                         p.TPlayer.hostile = true;
                         TSPlayer.All.SendData(PacketTypes.TogglePvp, number: p.Index);
                     }
-                    else if (OnlineFactions.GetFactionID(p.Index) == WarCommand.ActiveWar.Faction2.Id)
+                    else if (FactionService.GetFactionID(p.Index) == WarCommand.ActiveWar.Faction2.Id)
                     {
                         p.TPlayer.team = 2;
                         TSPlayer.All.SendData(PacketTypes.PlayerTeam, number: p.Index);
@@ -73,7 +73,7 @@ namespace SFactions
             {
                 TSPlayer.All.SendSuccessMessage($"The war between {WarCommand.ActiveWar.Faction1.Name} and {WarCommand.ActiveWar.Faction2.Name} ended as {WarCommand.ActiveWar.Faction1.Name} being victorious!");
 
-                List<TSPlayer> members = OnlineFactions.GetAllMembers(WarCommand.ActiveWar.Faction1.Id);
+                List<TSPlayer> members = FactionService.GetAllMembers(WarCommand.ActiveWar.Faction1.Id);
                 foreach (TSPlayer p in members)
                 {
                     string cmd = SFactions.Config.FactionWarWinCommand.Replace("%playername%", p.Name);
@@ -84,7 +84,7 @@ namespace SFactions
             {
                 TSPlayer.All.SendSuccessMessage($"The war between {WarCommand.ActiveWar.Faction1.Name} and {WarCommand.ActiveWar.Faction2.Name} ended as {WarCommand.ActiveWar.Faction2.Name} being victorious!");
 
-                List<TSPlayer> members = OnlineFactions.GetAllMembers(WarCommand.ActiveWar.Faction2.Id);
+                List<TSPlayer> members = FactionService.GetAllMembers(WarCommand.ActiveWar.Faction2.Id);
                 foreach (TSPlayer p in members)
                 {
                     string cmd = SFactions.Config.FactionWarWinCommand.Replace("%playername%", p.Name);
@@ -105,9 +105,9 @@ namespace SFactions
 
         private static void OnKillMe_War(object? sender, GetDataHandlers.KillMeEventArgs args)
         {
-            if (!OnlineFactions.IsPlayerInAnyFaction(args.PlayerId)) return;
+            if (!FactionService.IsPlayerInAnyFaction(args.PlayerId)) return;
 
-            int fId = OnlineFactions.GetFactionID(args.PlayerId);
+            int fId = FactionService.GetFactionID(args.PlayerId);
 
             if (fId == WarCommand.ActiveWar!.Faction1.Id)
             {
@@ -121,9 +121,9 @@ namespace SFactions
 
         private static void OnPlayerChangeTeam_War(object? sender, GetDataHandlers.PlayerTeamEventArgs args)
         {
-            if (!OnlineFactions.IsPlayerInAnyFaction(args.PlayerId)) return;
+            if (!FactionService.IsPlayerInAnyFaction(args.PlayerId)) return;
 
-            int fId = OnlineFactions.GetFactionID(args.PlayerId);
+            int fId = FactionService.GetFactionID(args.PlayerId);
 
             if (fId == WarCommand.ActiveWar!.Faction1.Id)
             {
@@ -141,9 +141,9 @@ namespace SFactions
 
         private static void OnPlayerTogglePvP_War(object? sender, GetDataHandlers.TogglePvpEventArgs args)
         {
-            if (!OnlineFactions.IsPlayerInAnyFaction(args.PlayerId)) return;
+            if (!FactionService.IsPlayerInAnyFaction(args.PlayerId)) return;
 
-            int fId = OnlineFactions.GetFactionID(args.PlayerId);
+            int fId = FactionService.GetFactionID(args.PlayerId);
 
             if (fId == WarCommand.ActiveWar!.Faction1.Id || fId == WarCommand.ActiveWar!.Faction2.Id)
             {
@@ -155,9 +155,9 @@ namespace SFactions
 
         private static void OnNetGreetPlayer_War(GreetPlayerEventArgs args)
         {
-            if (!OnlineFactions.IsPlayerInAnyFaction(args.Who)) return;
+            if (!FactionService.IsPlayerInAnyFaction(args.Who)) return;
 
-            int fId = OnlineFactions.GetFactionID(args.Who);
+            int fId = FactionService.GetFactionID(args.Who);
 
             TSPlayer plr = TShock.Players[args.Who];
 

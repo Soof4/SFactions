@@ -3,7 +3,7 @@ using TShockAPI;
 
 namespace SFactions
 {
-    public static class OnlineFactions
+    public static class FactionService
     {
         private static Dictionary<int, Faction> _onlineFactions = new Dictionary<int, Faction>();
         private static Dictionary<int, int> _onlineMembers = new Dictionary<int, int>();
@@ -136,7 +136,7 @@ namespace SFactions
         public static TSPlayer? GetLeader(Faction faction)
         {
             TSPlayer? leader = null;
-            
+
             foreach (var kvp in _onlineMembers)
             {
                 if (kvp.Value == faction.Id && TShock.Players[kvp.Key].Name == faction.Leader)

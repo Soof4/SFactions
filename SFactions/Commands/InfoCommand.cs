@@ -27,26 +27,20 @@ namespace SFactions.Commands
                                  );
         }
 
-        protected override bool TryParseParameters(CommandArgs args)
+        protected override void ParseParameters(CommandArgs args)
         {
             _plr = args.Player;
-            if (args.Parameters.Count < 2)
-            {
-                _plr.SendErrorMessage("Please specify a faction name.");
-                return false;
-            }
+
+            CommandParser.IsMissingArgument(args, 1, "Please specify a faction name.");
 
             string factionName = string.Join(' ', args.Parameters.GetRange(1, args.Parameters.Count - 1));
 
             if (!SFactions.DbManager.DoesFactionExist(factionName))
             {
-                _plr.SendErrorMessage($"There is no faction called {factionName}.");
-                return false;
+                throw new FactionNotFoundException();
             }
 
             _faction = SFactions.DbManager.GetFaction(factionName);
-
-            return true;
         }
     }
 }

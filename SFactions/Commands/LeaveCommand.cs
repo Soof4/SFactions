@@ -25,7 +25,7 @@ namespace SFactions.Commands
             }
 
             RegionManager.DelMember(args.Player);
-            OnlineFactions.RemoveMember(_plr);
+            FactionService.RemoveMember(_plr);
             SFactions.DbManager.DeleteMember(args.Player.Name);
 
             args.Player.SendSuccessMessage("You've left your faction.");
@@ -36,24 +36,24 @@ namespace SFactions.Commands
                 SFactions.DbManager.SaveFaction(_plrFaction);
 
                 // Check if anyone else is in the same faction and online, if not then make it offline
-                if (!OnlineFactions.IsAnyoneOnline(_plrFaction))
+                if (!FactionService.IsAnyoneOnline(_plrFaction))
                 {
-                    OnlineFactions.RemoveFaction(_plrFaction);
+                    FactionService.RemoveFaction(_plrFaction);
                 }
             }
         }
 
-        protected override bool TryParseParameters(CommandArgs args)
+        protected override void ParseParameters(CommandArgs args)
         {
             _plr = args.Player;
 
-            if (!OnlineFactions.IsPlayerInAnyFaction(_plr))
+            if (!FactionService.IsPlayerInAnyFaction(_plr))
             {
                 args.Player.SendErrorMessage("You're not in a faction.");
                 return false;
             }
 
-            _plrFaction = OnlineFactions.GetFaction(_plr);
+            _plrFaction = FactionService.GetFaction(_plr);
 
             return true;
         }
