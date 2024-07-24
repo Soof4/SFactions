@@ -32,10 +32,10 @@ namespace SFactions.Commands
             // Get concrete command classes
             var namespaceTypes = types.Where(t =>
                 t.Namespace == "SFactions.Commands" &&
-                !t.IsAbstract
+                !t.IsAbstract && t.BaseType == typeof(AbstractCommand)
             ).ToList();
 
-            int maxPage = (int)Math.Ceiling((namespaceTypes.Count - 2) / 4f) - 1;
+            int maxPage = (int)Math.Ceiling(namespaceTypes.Count / 4f) - 1;
 
             if (_pageNumber > maxPage)
             {
@@ -45,7 +45,7 @@ namespace SFactions.Commands
             string msg = $"Sub-commands (Page: {_pageNumber + 1}/{maxPage + 1}):";
 
             int startIndex = _pageNumber * 4;
-            int endIndex = Math.Min(startIndex + 4, namespaceTypes.Count - 1);
+            int endIndex = Math.Min(startIndex + 4, namespaceTypes.Count);
 
             for (int i = startIndex; i < endIndex; i++)
             {

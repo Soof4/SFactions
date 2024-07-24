@@ -35,7 +35,23 @@ namespace SFactions.Commands
             _plrFaction = CommandParser.GetPlayerFaction(args);
             CommandParser.IsPlayerTheLeader(_plrFaction, _plr);
 
-            string validTypes = string.Join(", ", SFactions.Config.EnabledAbilities);
+            string validTypes = "\n";
+            int i = 0;
+
+            foreach (string str in SFactions.Config.EnabledAbilities)
+            {
+                if (i == 3)
+                {
+                    validTypes += "\n";
+                    i = 0;
+                }
+
+                validTypes += str + ", ";
+                i++;
+            }
+
+            validTypes = validTypes[..^2];
+
             CommandParser.IsMissingArgument(args, 1, $"Missing ability name. Valid ability types are: {validTypes}");
 
             if (!Utils.TryGetAbilityTypeFromString(args.Parameters[1].ToLower(), out _newType))
