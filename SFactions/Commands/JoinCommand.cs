@@ -18,18 +18,42 @@ namespace SFactions.Commands
 
 #pragma warning restore CS8618
 
-        protected override void Function(CommandArgs args)
+        protected override async void Function(CommandArgs args)
         {
-            FactionService.AddMember(_plr, _newFaction);
-            SFactions.DbManager.InsertMember(_plr.Name, _newFaction.Id);
-
-            if (!FactionService.IsFactionOnline(_newFaction))
+            try
             {
-                FactionService.AddFaction(_newFaction);
-            }
+                if (!await SFactions.DbManager.DoesFactionExistAsync(_factionName))
+                {
+                    throw new GenericCommandException($"There is no faction called {_factionName}.");
+                }
 
-            RegionManager.AddMember(_plr);
-            _plr.SendSuccessMessage($"You've joined {_newFaction.Name}.");
+                _newFaction = await SFactions.DbManager.GetFactionAsync(_factionName);
+
+                if (_newFaction.InviteType != InviteType.Open)
+                {
+                    throw new GenericCommandException($"{_newFaction.Name} is an invite only faction.");
+                }
+
+                FactionService.AddMember(_plr, _newFaction);
+                await SFactions.DbManager.InsertMemberAsync(_plr.Name, _newFaction.Id);
+
+                if (!FactionService.IsFactionOnline(_newFaction))
+                {
+                    FactionService.AddFaction(_newFaction);
+                }
+
+                RegionManager.AddMember(_plr);
+                _plr.SendSuccessMessage($"You've joined {_newFaction.Name}.");
+            }
+            catch (GenericCommandException e)
+            {
+                _plr.SendErrorMessage(e.ErrorMessage);
+            }
+            catch (Exception e)
+            {
+                _plr.SendErrorMessage("Command failed, check logs for more details.");
+                TShock.Log.Error(e.ToString());
+            }
         }
 
         protected override void ParseParameters(CommandArgs args)
@@ -42,17 +66,7 @@ namespace SFactions.Commands
             _factionName = string.Join(' ', args.Parameters.GetRange(1, args.Parameters.Count - 1));
 
 
-            if (!SFactions.DbManager.DoesFactionExist(_factionName))
-            {
-                throw new GenericCommandException($"There is no faction called {_factionName}.");
-            }
 
-            _newFaction = SFactions.DbManager.GetFaction(_factionName);
-
-            if (_newFaction.InviteType != InviteType.Open)
-            {
-                throw new GenericCommandException($"{_newFaction.Name} is an invite only faction.");
-            }
         }
     }
 }

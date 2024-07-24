@@ -3,6 +3,8 @@ using SFactions.Database;
 using TShockAPI;
 using Terraria;
 using System.Text;
+using System.Data;
+using TShockAPI.DB;
 
 namespace SFactions
 {
@@ -216,5 +218,30 @@ namespace SFactions
                 return false;
             }
         }
+
+        private static object _locker = new();
+        public static Task<int> AsyncQuery(this IDbConnection db, string query, params object?[] args)
+        {
+            return Task.Run(() =>
+            {
+                lock (_locker)
+                {
+                    return db.Query(query, args);
+
+                }
+            });
+        }
+
+        public static Task<QueryResult> AsyncQueryReader(this IDbConnection db, string query, params object?[] args)
+        {
+            return Task.Run(() =>
+            {
+                lock (_locker)
+                {
+                    return db.QueryReader(query, args);
+                }
+            });
+        }
+
     }
 }

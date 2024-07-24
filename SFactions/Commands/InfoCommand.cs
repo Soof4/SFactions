@@ -14,18 +14,38 @@ namespace SFactions.Commands
 
         private TSPlayer _plr;
         private Faction _faction;
+        private string _factionName;
 
 #pragma warning restore CS8618
 
-        protected override void Function(CommandArgs args)
+        protected override async void Function(CommandArgs args)
         {
-            _plr.SendInfoMessage($"Faction ID: {_faction.Id}\n" +
-                                 $"Faction Name: {_faction.Name}\n" +
-                                 $"Faction Leader: {_faction.Leader}\n" +
-                                 $"Faction Ability: {Utils.ToTitleCase(_faction.Ability.GetType().Name)}\n" +
-                                 $"Has a Region: {_faction.Region != null}\n" +
-                                 $"Invite Type: {Utils.ToTitleCase(_faction.InviteType.ToString())}"
-                                 );
+            try
+            {
+                if (!await SFactions.DbManager.DoesFactionExistAsync(_factionName))
+                {
+                    throw new FactionNotFoundCommandException();
+                }
+
+                _faction = await SFactions.DbManager.GetFactionAsync(_factionName);
+
+                _plr.SendInfoMessage($"Faction ID: {_faction.Id}\n" +
+                                     $"Faction Name: {_faction.Name}\n" +
+                                     $"Faction Leader: {_faction.Leader}\n" +
+                                     $"Faction Ability: {Utils.ToTitleCase(_faction.Ability.GetType().Name)}\n" +
+                                     $"Has a Region: {_faction.Region != null}\n" +
+                                     $"Invite Type: {Utils.ToTitleCase(_faction.InviteType.ToString())}"
+                                     );
+            }
+            catch (GenericCommandException e)
+            {
+                _plr.SendErrorMessage(e.ErrorMessage);
+            }
+            catch (Exception e)
+            {
+                _plr.SendErrorMessage("Command failed, check logs for more details.");
+                TShock.Log.Error(e.ToString());
+            }
         }
 
         protected override void ParseParameters(CommandArgs args)
@@ -34,14 +54,7 @@ namespace SFactions.Commands
 
             CommandParser.IsMissingArgument(args, 1, "Please specify a faction name.");
 
-            string factionName = string.Join(' ', args.Parameters.GetRange(1, args.Parameters.Count - 1));
-
-            if (!SFactions.DbManager.DoesFactionExist(factionName))
-            {
-                throw new FactionNotFoundCommandException();
-            }
-
-            _faction = SFactions.DbManager.GetFaction(factionName);
+            _factionName = string.Join(' ', args.Parameters.GetRange(1, args.Parameters.Count - 1));
         }
     }
 }

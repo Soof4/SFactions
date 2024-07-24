@@ -1,5 +1,6 @@
 ﻿using Abilities;
 using MySql.Data.MySqlClient;
+using SFactions.Exceptions;
 using System.Data;
 using TShockAPI.DB;
 
@@ -33,42 +34,52 @@ namespace SFactions.Database
                 ));
         }
 
+
         #region Faction Management
-        public bool InsertFaction(string leaderName, string factionName)
+        public async Task<bool> InsertFactionAsync(string leaderName, string factionName)
         {
+            string q = "INSERT INTO Factions (Name, Leader, AbilityType, InviteType, LastAbilityChangeTime) VALUES (@0, @1, @2, @3, @4)";
+
             Utils.TryGetAbilityTypeFromString(SFactions.Config.DefaultAbility, out AbilityType defAbilityType);
-            return _db.Query("INSERT INTO Factions (Name, Leader, AbilityType, InviteType, LastAbilityChangeTime) " +
-                "VALUES (@0, @1, @2, @3, @4)",
-                factionName, leaderName, defAbilityType, InviteType.Open, DateTime.UtcNow.ToString()) != 0;
+            int num = await _db.AsyncQuery(q, factionName, leaderName, defAbilityType, InviteType.Open, DateTime.UtcNow.ToString());
+
+            return num > 0;
         }
 
-
-        public bool SaveFaction(Faction faction)
+        public async Task<bool> SaveFactionAsync(Faction faction)
         {
-            return _db.Query("UPDATE Factions SET Name = @1, Leader = @2, AbilityType = @3, Region = @4, InviteType = @5, LastAbilityChangeTime = @6, BaseX = @7, BaseY = @8 WHERE Id = @0",
-                faction.Id, faction.Name, faction.Leader, (int)faction.AbilityType, faction.Region, faction.InviteType, faction.LastAbilityChangeTime, faction.BaseX, faction.BaseY) != 0;
+
+            string q = "UPDATE Factions SET Name = @1, Leader = @2, AbilityType = @3, Region = @4, InviteType = @5, LastAbilityChangeTime = @6, BaseX = @7, BaseY = @8 WHERE Id = @0";
+            int num = await _db.AsyncQuery(q, faction.Id, faction.Name, faction.Leader, (int)faction.AbilityType, faction.Region, faction.InviteType, faction.LastAbilityChangeTime, faction.BaseX, faction.BaseY);
+
+            return num > 0;
+
         }
 
-        /// <summary>
-        /// Checks if the faction with this name exist.
-        /// </summary>
-        public bool DoesFactionExist(string name)
+        public async Task<bool> DoesFactionExistAsync(string name)
         {
-            using var reader = _db.QueryReader("SELECT * FROM Factions WHERE Name = @0", name);
+            string q = "SELECT * FROM Factions WHERE Name = @0";
+
+            using var reader = await _db.AsyncQueryReader(q, name);
             while (reader.Read())
             {
                 return true;
             }
+
             return false;
         }
 
         /// <summary>
-        /// Gets the faction from database.
+        /// 
         /// </summary>
-        /// <exception cref="NullReferenceException"></exception>
-        public Faction GetFaction(string factionName)
+        /// <param name="factionName"></param>
+        /// <returns></returns>
+        /// <exception cref="FactionDoesNotExistDatabaseException"></exception>
+        public async Task<Faction> GetFactionAsync(string factionName)
         {
-            using var reader = _db.QueryReader("SELECT * FROM Factions WHERE Name = @0", factionName);
+            string q = "SELECT * FROM Factions WHERE Name = @0";
+
+            using var reader = await _db.AsyncQueryReader(q, factionName);
             while (reader.Read())
             {
                 return new Faction(
@@ -83,16 +94,20 @@ namespace SFactions.Database
                     reader.Get<int?>("BaseY")
                     );
             }
-            throw new NullReferenceException();
+            throw new FactionDoesNotExistDatabaseException();
         }
 
         /// <summary>
-        /// Gets player's faction from databse.
+        /// 
         /// </summary>
-        /// <exception cref="NullReferenceException"></exception>
-        public Faction GetPlayerFaction(string playerName)
+        /// <param name="playerName"></param>
+        /// <returns></returns>
+        /// <exception cref="FactionDoesNotExistDatabaseException"></exception>
+        public async Task<Faction> GetPlayerFactionAsync(string playerName)
         {
-            using var reader = _db.QueryReader("SELECT * FROM Members WHERE Member = @0", playerName);
+            string q = "SELECT * FROM Members WHERE Member = @0";
+
+            using var reader = await _db.AsyncQueryReader(q, playerName);
             while (reader.Read())
             {
                 using var reader2 = _db.QueryReader("SELECT * FROM Factions WHERE Id = @0", reader.Get<int>("FactionId"));
@@ -111,32 +126,43 @@ namespace SFactions.Database
                     );
                 }
             }
-            throw new NullReferenceException();
+            throw new FactionDoesNotExistDatabaseException();
         }
         #endregion
 
 
         #region Member Management
-        public bool InsertMember(string name, int factionId)
+        public async Task<bool> InsertMemberAsync(string name, int factionId)
         {
-            return _db.Query("INSERT INTO Members (Member, FactionId) VALUES (@0, @1)", name, factionId) != 0;
+            string q = "INSERT INTO Members (Member, FactionId) VALUES (@0, @1)";
+            int num = await _db.AsyncQuery(q, name, factionId);
+
+            return num > 0;
         }
 
-        public bool DeleteMember(string name)
+        public async Task<bool> DeleteMemberAsync(string name)
         {
-            return _db.Query("DELETE FROM Members WHERE Member = @0", name) != 0;
+            string q = "DELETE FROM Members WHERE Member = @0";
+            int num = await _db.AsyncQuery(q, name);
+
+            return num > 0;
         }
 
-        public List<string> GetAllMembers(int factionId)
+
+        public async Task<List<string>> GetAllMembersAsync(int factionId)
         {
-            List<string> memberNames = new();
-            using var reader = _db.QueryReader("SELECT * FROM Members WHERE FactionId = @0", factionId);
+            string q = "SELECT * FROM Members WHERE FactionId = @0";
+            List<string> memberNames = new List<string>();
+
+            using var reader = await _db.AsyncQueryReader(q, factionId);
             while (reader.Read())
             {
                 memberNames.Add(reader.Get<string>("Member"));
             }
+
             return memberNames;
         }
+
         #endregion
     }
 }

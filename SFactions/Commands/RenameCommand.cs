@@ -18,11 +18,38 @@ namespace SFactions.Commands
 
 #pragma warning restore CS8618
 
-        protected override void Function(CommandArgs args)
+        protected override async void Function(CommandArgs args)
         {
-            _plrFaction.Name = _factionName;
-            SFactions.DbManager.SaveFaction(_plrFaction);
-            _plr.SendSuccessMessage($"Successfully changed faction name to \"{_factionName}\"");
+            try
+            {
+                if (await SFactions.DbManager.DoesFactionExistAsync(_factionName))
+                {
+                    throw new GenericCommandException("A faction with this name already exists.");
+                }
+
+                if (_factionName.Length < SFactions.Config.MinNameLength)
+                {
+                    throw new GenericCommandException($"Faction name needs to be at least {SFactions.Config.MinNameLength} characters long.");
+                }
+
+                if (_factionName.Length > SFactions.Config.MaxNameLength)
+                {
+                    throw new GenericCommandException($"Faction name needs to be at most {SFactions.Config.MaxNameLength} characters long.");
+                }
+
+                _plrFaction.Name = _factionName;
+                await SFactions.DbManager.SaveFactionAsync(_plrFaction);
+                _plr.SendSuccessMessage($"Successfully changed faction name to \"{_factionName}\"");
+            }
+            catch (GenericCommandException e)
+            {
+                _plr.SendErrorMessage(e.ErrorMessage);
+            }
+            catch (Exception e)
+            {
+                _plr.SendErrorMessage("Command failed, check logs for more details.");
+                TShock.Log.Error(e.ToString());
+            }
         }
 
         protected override void ParseParameters(CommandArgs args)
@@ -33,21 +60,6 @@ namespace SFactions.Commands
             CommandParser.IsMissingArgument(args, 1, "You need to specify a faction name.");
 
             _factionName = string.Join(' ', args.Parameters.GetRange(1, args.Parameters.Count - 1));
-
-            if (SFactions.DbManager.DoesFactionExist(_factionName))
-            {
-                throw new GenericCommandException("A faction with this name already exists.");
-            }
-
-            if (_factionName.Length < SFactions.Config.MinNameLength)
-            {
-                throw new GenericCommandException($"Faction name needs to be at least {SFactions.Config.MinNameLength} characters long.");
-            }
-
-            if (_factionName.Length > SFactions.Config.MaxNameLength)
-            {
-                throw new GenericCommandException($"Faction name needs to be at most {SFactions.Config.MaxNameLength} characters long.");
-            }
         }
     }
 }

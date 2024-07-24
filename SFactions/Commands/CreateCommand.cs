@@ -17,16 +17,32 @@ namespace SFactions.Commands
 
 #pragma warning restore CS8618
 
-        protected override void Function(CommandArgs args)
+        protected override async void Function(CommandArgs args)
         {
-            SFactions.DbManager.InsertFaction(_plr.Name, _factionName);
-            Faction newFaction = SFactions.DbManager.GetFaction(_factionName);
-            SFactions.DbManager.InsertMember(_plr.Name, newFaction.Id);
-            FactionService.AddMember(_plr, newFaction);
-            FactionService.AddFaction(newFaction);
-            _plr.SendSuccessMessage($"You've created {_factionName}.");
-        }
+            try
+            {
+                if (await SFactions.DbManager.DoesFactionExistAsync(_factionName))
+                {
+                    throw new GenericCommandException("A faction with this name already exists.");
+                }
 
+                await SFactions.DbManager.InsertFactionAsync(_plr.Name, _factionName);
+                Faction newFaction = await SFactions.DbManager.GetFactionAsync(_factionName);
+                await SFactions.DbManager.InsertMemberAsync(_plr.Name, newFaction.Id);
+                FactionService.AddMember(_plr, newFaction);
+                FactionService.AddFaction(newFaction);
+                _plr.SendSuccessMessage($"You've created {_factionName}.");
+            }
+            catch (GenericCommandException e)
+            {
+                _plr.SendErrorMessage(e.ErrorMessage);
+            }
+            catch (Exception e)
+            {
+                _plr.SendErrorMessage("Command failed, check logs for more details.");
+                TShock.Log.Error(e.ToString());
+            }
+        }
         protected override void ParseParameters(CommandArgs args)
         {
             _plr = args.Player;
@@ -49,11 +65,6 @@ namespace SFactions.Commands
             if (_factionName.Length > SFactions.Config.MaxNameLength)
             {
                 throw new GenericCommandException($"Faction name needs to be at most {SFactions.Config.MaxNameLength} characters long.");
-            }
-
-            if (SFactions.DbManager.DoesFactionExist(_factionName))
-            {
-                throw new GenericCommandException("A faction with this name already exists.");
             }
         }
     }

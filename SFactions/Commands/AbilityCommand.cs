@@ -24,7 +24,7 @@ namespace SFactions.Commands
             _plrFaction.AbilityType = _newType;
             _plrFaction.Ability = Utils.CreateAbility(_newType, Utils.GetAbilityLevel(_plrFaction));
 
-            SFactions.DbManager.SaveFaction(_plrFaction);
+            _ = SFactions.DbManager.SaveFactionAsync(_plrFaction);
 
             _plr.SendSuccessMessage($"Your faction's ability is now \"{args.Parameters[1]}\".");
         }

@@ -59,7 +59,7 @@ namespace SFactions.Commands
                     return;
             }
 
-            SFactions.DbManager.SaveFaction(_plrFaction);
+            _ = SFactions.DbManager.SaveFactionAsync(_plrFaction);
             _plr.SendSuccessMessage($"You've successfully changed you faction's invite type to "
                                     + Utils.ToTitleCase(_plrFaction.InviteType.ToString()).ToLower() + ".");
         }

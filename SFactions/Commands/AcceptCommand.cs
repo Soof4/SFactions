@@ -20,7 +20,7 @@ namespace SFactions.Commands
         protected override void Function(CommandArgs args)
         {
             FactionService.AddMember(_plr, _faction);
-            SFactions.DbManager.InsertMember(_plr.Name, _faction.Id);
+            _ = SFactions.DbManager.InsertMemberAsync(_plr.Name, _faction.Id);
 
             if (!FactionService.IsFactionOnline(_faction))
             {

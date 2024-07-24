@@ -42,14 +42,14 @@ namespace SFactions
         {
             HyperCrit.HyperCritActive.Add((byte)args.Who, 0);
 
-            try
+            Task.Run(async () =>
             {
-                Faction plrFaction = SFactions.DbManager.GetPlayerFaction(TShock.Players[args.Who].Name);
+                Faction plrFaction = await SFactions.DbManager.GetPlayerFactionAsync(TShock.Players[args.Who].Name);
 
                 FactionService.AddFaction(plrFaction);
                 FactionService.AddMember(args.Who, plrFaction);
-            }
-            catch (NullReferenceException) { }
+
+            });
         }
 
         private static void OnServerLeave(LeaveEventArgs args)

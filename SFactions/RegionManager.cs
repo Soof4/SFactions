@@ -11,7 +11,7 @@ namespace SFactions
             faction.Region = plr.CurrentRegion.Name;
             faction.BaseX = plr.TileX;
             faction.BaseY = plr.TileY;
-            SFactions.DbManager.SaveFaction(faction);
+            _ = SFactions.DbManager.SaveFactionAsync(faction);
         }
 
         public static void DelRegion(TSPlayer plr)
@@ -20,7 +20,7 @@ namespace SFactions
             faction.Region = null;
             faction.BaseX = null;
             faction.BaseY = null;
-            SFactions.DbManager.SaveFaction(faction);
+            _ = SFactions.DbManager.SaveFactionAsync(faction);
         }
 
         public static void AddMember(TSPlayer plr)
@@ -40,9 +40,9 @@ namespace SFactions
             }
         }
 
-        public static void AddAllMembers(Faction faction)
+        public static async void AddAllMembers(Faction faction)
         {
-            List<string> memberNames = SFactions.DbManager.GetAllMembers(faction.Id);
+            List<string> memberNames = await SFactions.DbManager.GetAllMembersAsync(faction.Id);
             if (faction.Region == null)
             {
                 throw new NullReferenceException();
@@ -54,9 +54,9 @@ namespace SFactions
             }
         }
 
-        public static void DelAllMembers(Faction faction)
+        public static async void DelAllMembers(Faction faction)
         {
-            List<string> memberNames = SFactions.DbManager.GetAllMembers(faction.Id);
+            List<string> memberNames = await SFactions.DbManager.GetAllMembersAsync(faction.Id);
             if (faction.Region == null)
             {
                 throw new NullReferenceException();

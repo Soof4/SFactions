@@ -20,7 +20,7 @@ namespace SFactions.Commands
         protected override void Function(CommandArgs args)
         {
             _plrFaction.Leader = _plr.Name;
-            SFactions.DbManager.SaveFaction(_plrFaction);
+            _ = SFactions.DbManager.SaveFactionAsync(_plrFaction);
             _plr.SendSuccessMessage("You're the leader of your faction now.");
         }
 

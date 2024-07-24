@@ -26,14 +26,14 @@ namespace SFactions.Commands
 
             RegionManager.DelMember(args.Player);
             FactionService.RemoveMember(_plr);
-            SFactions.DbManager.DeleteMember(args.Player.Name);
+            _ = SFactions.DbManager.DeleteMemberAsync(args.Player.Name);
 
             args.Player.SendSuccessMessage("You've left your faction.");
 
             if (args.Player.Name.Equals(_plrFaction.Leader))
             {
                 _plrFaction.Leader = null;
-                SFactions.DbManager.SaveFaction(_plrFaction);
+                _ = SFactions.DbManager.SaveFactionAsync(_plrFaction);
 
                 // Check if anyone else is in the same faction and online, if not then make it offline
                 if (!FactionService.IsAnyoneOnline(_plrFaction))
