@@ -35,35 +35,23 @@ namespace SFactions.Commands
         {
             _plr = args.Player;
 
-            if (FactionService.IsPlayerInAnyFaction(_plr))
-            {
-                _plr.SendErrorMessage("You need to leave your current faction to join another one.");
-                return false;
-            }
-
-            if (args.Parameters.Count < 2)
-            {
-                _plr.SendErrorMessage("You need to specify a the faction name.");
-                return false;
-            }
+            CommandParser.IsPlayerInAnyFaction(args);
+            CommandParser.IsMissingArgument(args, 1, "You need to specfiy a faction name.");
 
             _factionName = string.Join(' ', args.Parameters.GetRange(1, args.Parameters.Count - 1));
 
+
             if (!SFactions.DbManager.DoesFactionExist(_factionName))
             {
-                _plr.SendErrorMessage($"There is no faction called {_factionName}.");
-                return false;
+                throw new CommandException($"There is no faction called {_factionName}.");
             }
 
             _newFaction = SFactions.DbManager.GetFaction(_factionName);
 
             if (_newFaction.InviteType != InviteType.Open)
             {
-                _plr.SendErrorMessage($"{_newFaction.Name} is an invite only faction.");
-                return false;
+                throw new CommandException($"{_newFaction.Name} is an invite only faction.");
             }
-
-            return true;
         }
     }
 }

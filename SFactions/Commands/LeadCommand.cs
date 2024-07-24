@@ -26,22 +26,12 @@ namespace SFactions.Commands
         protected override void ParseParameters(CommandArgs args)
         {
             _plr = args.Player;
-
-            if (!FactionService.IsPlayerInAnyFaction(_plr))
-            {
-                _plr.SendErrorMessage("You're not in a faction.");
-                return false;
-            }
-
-            _plrFaction = FactionService.GetFaction(_plr);
+            _plrFaction = CommandParser.GetPlayerFaction(args);
 
             if (_plrFaction.Leader != null)
             {
-                _plr.SendErrorMessage($"{_plrFaction.Leader} is your faction's leader already.");
-                return false;
+                throw new CommandException($"{_plrFaction.Leader} is your faction's leader already.");
             }
-
-            return true;
         }
     }
 }

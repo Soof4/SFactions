@@ -32,4 +32,9 @@ namespace SFactions
     {
         public FactionNotFoundException(string errorMessage = "Faction not found.") : base(errorMessage) { }
     }
+
+    public class PlayerNotFoundException : CommandException
+    {
+        public PlayerNotFoundException(string errorMessage = "Player not found.") : base(errorMessage) { }
+    }
 }

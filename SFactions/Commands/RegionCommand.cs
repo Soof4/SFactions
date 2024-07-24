@@ -27,25 +27,12 @@ namespace SFactions.Commands
         {
             _plr = args.Player;
 
-            if (!FactionService.IsPlayerInAnyFaction(_plr))
-            {
-                _plr.SendErrorMessage("You're not in a faction.");
-                return false;
-            }
+            _plrFaction = CommandParser.GetPlayerFaction(args);
 
-            _plrFaction = FactionService.GetFaction(_plr);
+            CommandParser.IsPlayerTheLeader(_plrFaction, _plr);
 
-            if (_plr.Name != _plrFaction.Leader)
-            {
-                _plr.SendErrorMessage("Only leader can set or delete the faction region.");
-                return false;
-            }
 
-            if (args.Parameters.Count < 2)
-            {
-                _plr.SendErrorMessage("You did not specify \"set\" or \"del\"");
-                return false;
-            }
+            CommandParser.IsMissingArgument(args, 1, "You need to specify \"set\" or \"del\"");
 
             switch (args.Parameters[1].ToLower())
             {
@@ -56,11 +43,8 @@ namespace SFactions.Commands
                     _subCommand = Delete;
                     break;
                 default:
-                    _plr.SendErrorMessage("Invalid region subcommand. (Please use either \"set\" or \"del\")");
-                    return false;
+                    throw new CommandException("Invalid region subcommand. (Please use either \"set\" or \"del\"");
             }
-
-            return true;
         }
 
         private void Set(CommandArgs args)

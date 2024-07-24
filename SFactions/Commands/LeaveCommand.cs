@@ -46,16 +46,7 @@ namespace SFactions.Commands
         protected override void ParseParameters(CommandArgs args)
         {
             _plr = args.Player;
-
-            if (!FactionService.IsPlayerInAnyFaction(_plr))
-            {
-                args.Player.SendErrorMessage("You're not in a faction.");
-                return false;
-            }
-
-            _plrFaction = FactionService.GetFaction(_plr);
-
-            return true;
+            _plrFaction = CommandParser.GetPlayerFaction(args);
         }
     }
 }

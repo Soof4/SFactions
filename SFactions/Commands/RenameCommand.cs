@@ -27,48 +27,26 @@ namespace SFactions.Commands
         protected override void ParseParameters(CommandArgs args)
         {
             _plr = args.Player;
-
-            if (!FactionService.IsPlayerInAnyFaction(_plr))
-            {
-                _plr.SendErrorMessage("You're not in a faction.");
-                return false;
-            }
-
-            _plrFaction = FactionService.GetFaction(_plr);
-
-            if (_plr.Name != _plrFaction.Leader)
-            {
-                _plr.SendErrorMessage("Only leaders can change the faction name.");
-                return false;
-            }
-
-            if (args.Parameters.Count < 2)
-            {
-                _plr.SendErrorMessage("You need to specify a faction name.");
-                return false;
-            }
+            _plrFaction = CommandParser.GetPlayerFaction(args);
+            CommandParser.IsPlayerTheLeader(_plrFaction, _plr);
+            CommandParser.IsMissingArgument(args, 1, "You need to specify a faction name.");
 
             _factionName = string.Join(' ', args.Parameters.GetRange(1, args.Parameters.Count - 1));
 
             if (SFactions.DbManager.DoesFactionExist(_factionName))
             {
-                _plr.SendErrorMessage("A faction with this name already exists.");
-                return false;
+                throw new CommandException("A faction with this name already exists.");
             }
 
             if (_factionName.Length < SFactions.Config.MinNameLength)
             {
-                _plr.SendErrorMessage($"Faction name needs to be at least {SFactions.Config.MinNameLength} characters long.");
-                return false;
+                throw new CommandException($"Faction name needs to be at least {SFactions.Config.MinNameLength} characters long.");
             }
 
             if (_factionName.Length > SFactions.Config.MaxNameLength)
             {
-                _plr.SendErrorMessage($"Faction name needs to be at most {SFactions.Config.MaxNameLength} characters long.");
-                return false;
+                throw new CommandException($"Faction name needs to be at most {SFactions.Config.MaxNameLength} characters long.");
             }
-
-            return true;
         }
     }
 }

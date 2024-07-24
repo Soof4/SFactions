@@ -28,26 +28,10 @@ namespace SFactions.Commands
         protected override void ParseParameters(CommandArgs args)
         {
             _plr = args.Player;
+            _plrFaction = CommandParser.GetPlayerFaction(args);
 
-            if (!FactionService.IsPlayerInAnyFaction(_plr))
-            {
-                _plr.SendErrorMessage("You're not in a faction.");
-                return false;
-            }
-
-            _plrFaction = FactionService.GetFaction(_plr);
-
-            if (_plr.Name != _plrFaction.Leader)
-            {
-                _plr.SendErrorMessage("Only leaders can start, accept or decline a war.");
-                return false;
-            }
-
-            if (args.Parameters.Count < 2)
-            {
-                _plr.SendErrorMessage("You need to specify a <invite/accept/decline>");
-                return false;
-            }
+            CommandParser.IsPlayerTheLeader(_plrFaction, _plr);
+            CommandParser.IsMissingArgument(args, 1, "You need to specify \"invite\", \"accept\" or \"decline\".");
 
             switch (args.Parameters[1].ToLower())
             {
@@ -61,11 +45,8 @@ namespace SFactions.Commands
                     _subCommand = Decline;
                     break;
                 default:
-                    _plr.SendErrorMessage("Invalid sub-command.");
-                    return false;
+                    throw new CommandException("Invalid war subcommand. (Please use one of \"invite\", \"accept\" or \"decline\"");
             }
-
-            return true;
         }
 
         private void Invite(CommandArgs args)
