@@ -43,14 +43,14 @@ namespace SFactions.Commands
 
             if (!SFactions.DbManager.DoesFactionExist(_factionName))
             {
-                throw new CommandException($"There is no faction called {_factionName}.");
+                throw new GenericCommandException($"There is no faction called {_factionName}.");
             }
 
             _newFaction = SFactions.DbManager.GetFaction(_factionName);
 
             if (_newFaction.InviteType != InviteType.Open)
             {
-                throw new CommandException($"{_newFaction.Name} is an invite only faction.");
+                throw new GenericCommandException($"{_newFaction.Name} is an invite only faction.");
             }
         }
     }

@@ -1,8 +1,4 @@
 ﻿using TShockAPI;
-using SFactions.Database;
-using Abilities;
-using TShockAPI.Configuration;
-using TerrariaApi.Server;
 using SFactions.Commands;
 
 namespace SFactions
@@ -12,6 +8,7 @@ namespace SFactions
         public static void FactionCmd(CommandArgs args)
         {
             TSPlayer player = args.Player;
+
             if (args.Parameters.Count < 1)
             {
                 player.SendErrorMessage("You need to specify a subcommand. Do '/faction help' to see all subcommands.");

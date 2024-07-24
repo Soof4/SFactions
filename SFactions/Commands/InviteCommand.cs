@@ -31,7 +31,7 @@ namespace SFactions.Commands
 
             if (_plrFaction.InviteType == InviteType.Closed && !_plr.Name.Equals(_plrFaction.Leader))
             {
-                throw new CommandException("Only leader can invite new people.");
+                throw new GenericCommandException("Only leader can invite new people.");
             }
 
             CommandParser.IsMissingArgument(args, 1, "Please specify a player name.");
@@ -45,7 +45,7 @@ namespace SFactions.Commands
             {
                 if (SFactions.Invitations[_targetPlr.Name].Id == _plrFaction.Id)
                 {
-                    throw new CommandException("This player already has a pending invitation from your faction.");
+                    throw new GenericCommandException("This player already has a pending invitation from your faction.");
                 }
                 else
                 {

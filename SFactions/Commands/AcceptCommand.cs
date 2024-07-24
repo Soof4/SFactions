@@ -37,12 +37,12 @@ namespace SFactions.Commands
 
             if (FactionService.IsPlayerInAnyFaction(_plr))
             {
-                throw new CommandException("You need to leave your current faction to join another.");
+                throw new GenericCommandException("You need to leave your current faction to join another.");
             }
 
             if (!SFactions.Invitations.ContainsKey(_plr.Name))
             {
-                throw new CommandException("Couldn't find a pending invitation.");
+                throw new GenericCommandException("Couldn't find a pending invitation.");
             }
             else
             {

@@ -1,40 +1,40 @@
 namespace SFactions
 {
-    public class CommandException : Exception
+    public class GenericCommandException : Exception
     {
         public string ErrorMessage { get; set; }
 
-        public CommandException(string errorMessage)
+        public GenericCommandException(string errorMessage)
         {
             ErrorMessage = errorMessage;
         }
     }
 
 
-    public class PlayerNotInFactionException : CommandException
+    public class PlayerNotInFactionCommandException : GenericCommandException
     {
-        public PlayerNotInFactionException(string errorMessage = "You're not in a faction.") : base(errorMessage) { }
+        public PlayerNotInFactionCommandException(string errorMessage = "You're not in a faction.") : base(errorMessage) { }
 
     }
 
-    public class PlayerNotLeaderException : CommandException
+    public class PlayerNotLeaderCommandException : GenericCommandException
     {
-        public PlayerNotLeaderException(string errorMessage = "Only leaders can use this command.") : base(errorMessage) { }
+        public PlayerNotLeaderCommandException(string errorMessage = "Only leaders can use this command.") : base(errorMessage) { }
 
     }
 
-    public class MissingArgumentException : CommandException
+    public class MissingArgumentCommandException : GenericCommandException
     {
-        public MissingArgumentException(string errorMessage = "Missing an argument.") : base(errorMessage) { }
+        public MissingArgumentCommandException(string errorMessage = "Missing an argument.") : base(errorMessage) { }
     }
 
-    public class FactionNotFoundException : CommandException
+    public class FactionNotFoundCommandException : GenericCommandException
     {
-        public FactionNotFoundException(string errorMessage = "Faction not found.") : base(errorMessage) { }
+        public FactionNotFoundCommandException(string errorMessage = "Faction not found.") : base(errorMessage) { }
     }
 
-    public class PlayerNotFoundException : CommandException
+    public class PlayerNotFoundCommandException : GenericCommandException
     {
-        public PlayerNotFoundException(string errorMessage = "Player not found.") : base(errorMessage) { }
+        public PlayerNotFoundCommandException(string errorMessage = "Player not found.") : base(errorMessage) { }
     }
 }

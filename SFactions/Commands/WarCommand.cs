@@ -45,7 +45,7 @@ namespace SFactions.Commands
                     _subCommand = Decline;
                     break;
                 default:
-                    throw new CommandException("Invalid war subcommand. (Please use one of \"invite\", \"accept\" or \"decline\"");
+                    throw new GenericCommandException("Invalid war subcommand. (Please use one of \"invite\", \"accept\" or \"decline\"");
             }
         }
 

@@ -30,7 +30,7 @@ namespace SFactions.Commands
 
             if (_plrFaction.Leader != null)
             {
-                throw new CommandException($"{_plrFaction.Leader} is your faction's leader already.");
+                throw new GenericCommandException($"{_plrFaction.Leader} is your faction's leader already.");
             }
         }
     }

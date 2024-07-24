@@ -39,12 +39,12 @@ namespace SFactions.Commands
 
             if (!Utils.TryGetAbilityTypeFromString(args.Parameters[1].ToLower(), out _newType))
             {
-                throw new CommandException($"Invalid ability name. Valid ability types are: {validTypes}");
+                throw new GenericCommandException($"Invalid ability name. Valid ability types are: {validTypes}");
             }
 
             if (!SFactions.Config.EnabledAbilities.Contains(args.Parameters[1].ToLower()))
             {
-                throw new CommandException($"Invalid ability name. Valid ability types are: {validTypes}");
+                throw new GenericCommandException($"Invalid ability name. Valid ability types are: {validTypes}");
             }
         }
     }

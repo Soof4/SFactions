@@ -23,9 +23,13 @@ namespace SFactions.Commands
             {
                 ParseParameters(args);
             }
-            catch (CommandException e)
+            catch (GenericCommandException e)
             {
                 args.Player.SendErrorMessage(e.ErrorMessage);
+            }
+            catch
+            {
+                args.Player.SendErrorMessage("Unknown error, please report this to developer.");
             }
         }
     }

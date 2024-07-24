@@ -35,17 +35,17 @@ namespace SFactions.Commands
 
             if (SFactions.DbManager.DoesFactionExist(_factionName))
             {
-                throw new CommandException("A faction with this name already exists.");
+                throw new GenericCommandException("A faction with this name already exists.");
             }
 
             if (_factionName.Length < SFactions.Config.MinNameLength)
             {
-                throw new CommandException($"Faction name needs to be at least {SFactions.Config.MinNameLength} characters long.");
+                throw new GenericCommandException($"Faction name needs to be at least {SFactions.Config.MinNameLength} characters long.");
             }
 
             if (_factionName.Length > SFactions.Config.MaxNameLength)
             {
-                throw new CommandException($"Faction name needs to be at most {SFactions.Config.MaxNameLength} characters long.");
+                throw new GenericCommandException($"Faction name needs to be at most {SFactions.Config.MaxNameLength} characters long.");
             }
         }
     }

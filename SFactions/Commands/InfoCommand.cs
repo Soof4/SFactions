@@ -37,7 +37,7 @@ namespace SFactions.Commands
 
             if (!SFactions.DbManager.DoesFactionExist(factionName))
             {
-                throw new FactionNotFoundException();
+                throw new FactionNotFoundCommandException();
             }
 
             _faction = SFactions.DbManager.GetFaction(factionName);

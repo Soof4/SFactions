@@ -28,7 +28,7 @@ namespace SFactions.Commands
 
             if (_plrFaction.BaseX == null || _plrFaction.BaseY == null)
             {
-                throw new CommandException("Your faction doesn't have a base!");
+                throw new GenericCommandException("Your faction doesn't have a base!");
             }
         }
     }

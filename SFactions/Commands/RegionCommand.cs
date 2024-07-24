@@ -43,7 +43,7 @@ namespace SFactions.Commands
                     _subCommand = Delete;
                     break;
                 default:
-                    throw new CommandException("Invalid region subcommand. (Please use either \"set\" or \"del\"");
+                    throw new GenericCommandException("Invalid region subcommand. (Please use either \"set\" or \"del\"");
             }
         }
 

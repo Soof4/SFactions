@@ -9,7 +9,7 @@ namespace SFactions
         {
             if (!FactionService.IsPlayerInAnyFaction(args.Player))
             {
-                throw new PlayerNotInFactionException();
+                throw new PlayerNotInFactionCommandException();
             }
         }
 
@@ -17,7 +17,7 @@ namespace SFactions
         {
             if (!FactionService.IsPlayerInAnyFaction(args.Player))
             {
-                throw new PlayerNotInFactionException();
+                throw new PlayerNotInFactionCommandException();
             }
             return FactionService.GetPlayerFaction(args.Player);
         }
@@ -26,7 +26,7 @@ namespace SFactions
         {
             if (player.Name != faction.Leader)
             {
-                throw new PlayerNotLeaderException();
+                throw new PlayerNotLeaderCommandException();
             }
         }
 
@@ -34,7 +34,7 @@ namespace SFactions
         {
             if (args.Parameters.Count < neededArgCount + 1)
             {
-                throw new MissingArgumentException(errorMsg);
+                throw new MissingArgumentCommandException(errorMsg);
             }
         }
 
@@ -60,7 +60,7 @@ namespace SFactions
 
             if (plr == null)
             {
-                throw new PlayerNotFoundException();
+                throw new PlayerNotFoundCommandException();
             }
 
             return plr;
