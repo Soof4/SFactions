@@ -1,6 +1,5 @@
 ﻿using Abilities;
 using MySql.Data.MySqlClient;
-using Newtonsoft.Json;
 using System.Data;
 using TShockAPI.DB;
 

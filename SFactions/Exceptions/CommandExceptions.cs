@@ -1,4 +1,4 @@
-namespace SFactions
+namespace SFactions.Exceptions
 {
     public class GenericCommandException : Exception
     {
@@ -16,6 +16,13 @@ namespace SFactions
         public PlayerNotInFactionCommandException(string errorMessage = "You're not in a faction.") : base(errorMessage) { }
 
     }
+
+    public class PlayerIsInFactionCommandException : GenericCommandException
+    {
+        public PlayerIsInFactionCommandException(string errorMessage = "You're in a faction.") : base(errorMessage) { }
+
+    }
+
 
     public class PlayerNotLeaderCommandException : GenericCommandException
     {

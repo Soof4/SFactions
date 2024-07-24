@@ -1,4 +1,5 @@
 using SFactions.Database;
+using SFactions.Exceptions;
 using TShockAPI;
 
 namespace SFactions
@@ -12,6 +13,15 @@ namespace SFactions
                 throw new PlayerNotInFactionCommandException();
             }
         }
+
+        public static void IsPlayerNotInAnyFaction(CommandArgs args)
+        {
+            if (FactionService.IsPlayerInAnyFaction(args.Player))
+            {
+                throw new PlayerIsInFactionCommandException();
+            }
+        }
+
 
         public static Faction GetPlayerFaction(CommandArgs args)
         {

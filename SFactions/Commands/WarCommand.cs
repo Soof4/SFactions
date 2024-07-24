@@ -1,5 +1,5 @@
 using SFactions.Database;
-using TerrariaApi.Server;
+using SFactions.Exceptions;
 using TShockAPI;
 
 namespace SFactions.Commands

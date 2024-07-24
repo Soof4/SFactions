@@ -1,3 +1,4 @@
+using SFactions.Exceptions;
 using TShockAPI;
 
 namespace SFactions.Commands
@@ -22,14 +23,11 @@ namespace SFactions.Commands
             try
             {
                 ParseParameters(args);
+                Function(args);
             }
             catch (GenericCommandException e)
             {
                 args.Player.SendErrorMessage(e.ErrorMessage);
-            }
-            catch
-            {
-                args.Player.SendErrorMessage("Unknown error, please report this to developer.");
             }
         }
     }

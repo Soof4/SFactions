@@ -1,4 +1,5 @@
 using SFactions.Database;
+using SFactions.Exceptions;
 using TShockAPI;
 
 namespace SFactions.Commands
@@ -35,7 +36,7 @@ namespace SFactions.Commands
         {
             _plr = args.Player;
 
-            CommandParser.IsPlayerInAnyFaction(args);
+            CommandParser.IsPlayerNotInAnyFaction(args);
             CommandParser.IsMissingArgument(args, 1, "You need to specfiy a faction name.");
 
             _factionName = string.Join(' ', args.Parameters.GetRange(1, args.Parameters.Count - 1));
