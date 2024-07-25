@@ -21,7 +21,7 @@ namespace SFactions
 
         #endregion
 
-        public SFactions(Main game) : base(game) { }
+        public SFactions(Main game) : base(game) => Instance = this;
         public static DatabaseManager DbManager = new(new SqliteConnection("Data Source=" + Path.Combine(TShock.SavePath, "SFactions.sqlite")));
         public static Configuration Config = Configuration.Reload();
         public static Random RandomGen = new();
@@ -36,8 +36,6 @@ namespace SFactions
             {
                 HelpText = "To see the detailed help message do \"/faction help\""
             });
-
-            Instance = this;
         }
 
         protected override void Dispose(bool disposing)

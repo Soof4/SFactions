@@ -22,6 +22,7 @@ namespace SFactions
             ServerApi.Hooks.NpcKilled.Register(registrator, OnNpcKill);
             ServerApi.Hooks.NpcLootDrop.Register(registrator, OnDropLoot);
             ServerApi.Hooks.NpcStrike.Register(registrator, OnNpcStrike);
+            ServerApi.Hooks.GamePostInitialize.Register(registrator, OnGamePostInitialize);
         }
 
         public static void DisposeHandlers(TerrariaPlugin deregistrator)
@@ -36,6 +37,12 @@ namespace SFactions
             ServerApi.Hooks.NpcKilled.Deregister(deregistrator, OnNpcKill);
             ServerApi.Hooks.NpcLootDrop.Deregister(deregistrator, OnDropLoot);
             ServerApi.Hooks.NpcStrike.Deregister(deregistrator, OnNpcStrike);
+            ServerApi.Hooks.GamePostInitialize.Deregister(deregistrator, OnGamePostInitialize);
+        }
+
+        private static void OnGamePostInitialize(EventArgs args)
+        {
+            UpdateManager.CheckUpdateVerbose(SFactions.Instance);
         }
 
         private static void OnNetGreetPlayer(GreetPlayerEventArgs args)
