@@ -78,6 +78,11 @@ namespace SFactions
             _onlineMembers.Add(playerIndex, faction.Id);
         }
 
+        public static bool TryAddMember(int playerIndex, Faction faction)
+        {
+            return _onlineMembers.TryAdd(playerIndex, faction.Id);
+        }
+
         public static void RemoveMember(TSPlayer player)
         {
             _onlineMembers.Remove(player.Index);

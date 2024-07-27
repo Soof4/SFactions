@@ -42,30 +42,38 @@ namespace SFactions
 
         public static async void AddAllMembers(Faction faction)
         {
-            List<string> memberNames = await SFactions.DbManager.GetAllMembersAsync(faction.Id);
-            if (faction.Region == null)
+            try
             {
-                throw new NullReferenceException();
-            }
+                List<string> memberNames = await SFactions.DbManager.GetAllMembersAsync(faction.Id);
+                if (faction.Region == null)
+                {
+                    throw new NullReferenceException();
+                }
 
-            foreach (string memberName in memberNames)
-            {
-                TShock.Regions.AddNewUser(faction.Region, memberName);
+                foreach (string memberName in memberNames)
+                {
+                    TShock.Regions.AddNewUser(faction.Region, memberName);
+                }
             }
+            catch { }
         }
 
         public static async void DelAllMembers(Faction faction)
         {
-            List<string> memberNames = await SFactions.DbManager.GetAllMembersAsync(faction.Id);
-            if (faction.Region == null)
+            try
             {
-                throw new NullReferenceException();
-            }
+                List<string> memberNames = await SFactions.DbManager.GetAllMembersAsync(faction.Id);
+                if (faction.Region == null)
+                {
+                    throw new NullReferenceException();
+                }
 
-            foreach (string memberName in memberNames)
-            {
-                TShock.Regions.RemoveUser(faction.Region, memberName);
+                foreach (string memberName in memberNames)
+                {
+                    TShock.Regions.RemoveUser(faction.Region, memberName);
+                }
             }
+            catch { }
         }
     }
 }

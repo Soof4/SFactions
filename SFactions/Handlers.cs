@@ -53,9 +53,12 @@ namespace SFactions
             {
                 Faction plrFaction = await SFactions.DbManager.GetPlayerFactionAsync(TShock.Players[args.Who].Name);
 
-                FactionService.AddFaction(plrFaction);
-                FactionService.AddMember(args.Who, plrFaction);
+                if (!FactionService.IsFactionOnline(plrFaction.Id))
+                {
+                    FactionService.AddFaction(plrFaction);
+                }
 
+                FactionService.TryAddMember(args.Who, plrFaction);
             });
         }
 
