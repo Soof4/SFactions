@@ -17,7 +17,7 @@ namespace SFactions
             PlayerHooks.PlayerChat += ChatManager.OnPlayerChat;
 
             ServerApi.Hooks.NetGreetPlayer.Register(registrator, OnNetGreetPlayer);
-            ServerApi.Hooks.NetSendData.Register(registrator, Abilities.Extensions.RespawnCooldownBuffAdder);
+            ServerApi.Hooks.NetSendData.Register(registrator, Abilities.Utils.RespawnCooldownBuffAdder);
             ServerApi.Hooks.ServerLeave.Register(registrator, OnServerLeave);
             ServerApi.Hooks.NpcKilled.Register(registrator, OnNpcKill);
             ServerApi.Hooks.NpcLootDrop.Register(registrator, OnDropLoot);
@@ -32,7 +32,7 @@ namespace SFactions
             PlayerHooks.PlayerChat -= ChatManager.OnPlayerChat;
 
             ServerApi.Hooks.NetGreetPlayer.Deregister(deregistrator, OnNetGreetPlayer);
-            ServerApi.Hooks.NetSendData.Deregister(deregistrator, Abilities.Extensions.RespawnCooldownBuffAdder);
+            ServerApi.Hooks.NetSendData.Deregister(deregistrator, Abilities.Utils.RespawnCooldownBuffAdder);
             ServerApi.Hooks.ServerLeave.Deregister(deregistrator, OnServerLeave);
             ServerApi.Hooks.NpcKilled.Deregister(deregistrator, OnNpcKill);
             ServerApi.Hooks.NpcLootDrop.Deregister(deregistrator, OnDropLoot);
@@ -109,7 +109,7 @@ namespace SFactions
 
         private static void OnNpcKill(NpcKilledEventArgs eventArgs)
         {
-            if (eventArgs.npc.rarity == 10) Abilities.Extensions.ExplosiveEffectEffect(eventArgs.npc.position, eventArgs.npc.lifeMax / 5);
+            if (eventArgs.npc.rarity == 10) Abilities.Utils.ExplosiveEffectEffect(eventArgs.npc.position, eventArgs.npc.lifeMax / 5);
         }
 
         private static void OnDropLoot(NpcLootDropEventArgs eventArgs)
