@@ -5,6 +5,8 @@ using Terraria.ID;
 using TerrariaApi.Server;
 using TShockAPI;
 using TShockAPI.Hooks;
+using Abilities.Abilities;
+using Abilities.Enums;
 
 namespace SFactions
 {

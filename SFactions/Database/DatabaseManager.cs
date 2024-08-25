@@ -3,6 +3,8 @@ using MySql.Data.MySqlClient;
 using SFactions.Exceptions;
 using System.Data;
 using TShockAPI.DB;
+using Abilities.Enums;
+using Abilities.Abilities;
 
 namespace SFactions.Database
 {

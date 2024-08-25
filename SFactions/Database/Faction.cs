@@ -1,6 +1,8 @@
 ﻿using System.Drawing;
 using System.Reflection;
 using Abilities;
+using Abilities.Enums;
+using Abilities.Abilities;
 
 namespace SFactions.Database
 {

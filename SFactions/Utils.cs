@@ -5,6 +5,8 @@ using Terraria;
 using System.Text;
 using System.Data;
 using TShockAPI.DB;
+using Abilities.Enums;
+using Abilities.Abilities;
 
 namespace SFactions
 {

@@ -1,6 +1,8 @@
 using Abilities;
 using SFactions.Database;
 using TShockAPI;
+using Abilities.Enums;
+using Abilities.Abilities;
 
 namespace SFactions.Commands
 {
