@@ -1,0 +1,6 @@
+{
+  "Namespace": "SFactions.i18net",
+  "DefaultLang": "en_US",
+  "BaseDir": "i18net",
+  "LanguageFilesDir": "i18n/SFactions"
+}

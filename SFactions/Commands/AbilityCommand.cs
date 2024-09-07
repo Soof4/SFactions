@@ -4,13 +4,14 @@ using SFactions.Exceptions;
 using TShockAPI;
 using Abilities.Enums;
 using Abilities.Abilities;
+using SFactions.i18net;
 
 namespace SFactions.Commands
 {
     public class AbilityCommand : AbstractCommand
     {
-        public override string HelpText => "Changes faction's ability.";
-        public override string SyntaxHelp => "/faction ability <ability name>";
+        public override string HelpText => Localization.AbilityCommand_HelpText;
+        public override string SyntaxHelp => Localization.AbilityCommand_SyntaxHelp;
         protected override bool AllowServer => false;
 
 #pragma warning disable CS8618
@@ -27,8 +28,7 @@ namespace SFactions.Commands
             _plrFaction.Ability = Utils.CreateAbility(_newType, Utils.GetAbilityLevel(_plrFaction));
 
             _ = SFactions.DbManager.SaveFactionAsync(_plrFaction);
-
-            _plr.SendSuccessMessage($"Your faction's ability is now \"{args.Parameters[1]}\".");
+            _plr.SendSuccessMessage(string.Format(Localization.AbilityCommand_SuccessMessage, args.Parameters[1]));
         }
 
         protected override void ParseParameters(CommandArgs args)
@@ -54,7 +54,7 @@ namespace SFactions.Commands
 
             validTypes = validTypes[..^2];
 
-            CommandParser.IsMissingArgument(args, 1, $"Missing ability name. Valid ability types are: {validTypes}");
+            CommandParser.IsMissingArgument(args, 1, string.Format(Localization.AbilityCommand_ErrorMessage_MissingAbilityName, validTypes));
 
             if (!Utils.TryGetAbilityTypeFromString(args.Parameters[1].ToLower(), out _newType))
             {

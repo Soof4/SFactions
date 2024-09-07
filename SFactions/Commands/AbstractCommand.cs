@@ -1,4 +1,5 @@
 using SFactions.Exceptions;
+using SFactions.i18net;
 using TShockAPI;
 
 namespace SFactions.Commands
@@ -16,7 +17,7 @@ namespace SFactions.Commands
         {
             if (!args.Player.RealPlayer && !AllowServer)
             {
-                args.Player.SendErrorMessage("You can only use this command in game.");
+                args.Player.SendErrorMessage(Localization.ErrorMessage_OnlyInGameCommand);
                 return;
             }
 

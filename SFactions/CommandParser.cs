@@ -40,11 +40,11 @@ namespace SFactions
             }
         }
 
-        public static void IsMissingArgument(CommandArgs args, int neededArgCount, string errorMsg = "Missing an argument.")
+        public static void IsMissingArgument(CommandArgs args, int neededArgCount, string msg)
         {
             if (args.Parameters.Count < neededArgCount + 1)
             {
-                throw new MissingArgumentCommandException(errorMsg);
+                throw new GenericCommandException(msg);
             }
         }
 

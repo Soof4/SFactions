@@ -1,13 +1,14 @@
 using SFactions.Database;
 using SFactions.Exceptions;
+using SFactions.i18net;
 using TShockAPI;
 
 namespace SFactions.Commands
 {
     public class BaseCommand : AbstractCommand
     {
-        public override string HelpText => "Teleports player to the faction base.";
-        public override string SyntaxHelp => "/faction base";
+        public override string HelpText => Localization.BaseCommand_HelpText;
+        public override string SyntaxHelp => Localization.BaseCommand_SyntaxHelp;
         protected override bool AllowServer => false;
 
 #pragma warning disable CS8618
@@ -29,7 +30,7 @@ namespace SFactions.Commands
 
             if (_plrFaction.BaseX == null || _plrFaction.BaseY == null)
             {
-                throw new GenericCommandException("Your faction doesn't have a base!");
+                throw new GenericCommandException(Localization.BaseCommand_ErrorMessage_NoBase);
             }
         }
     }

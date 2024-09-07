@@ -1,6 +1,7 @@
 ﻿using TShockAPI;
 using SFactions.Commands;
 using SFactions.Exceptions;
+using SFactions.i18net;
 
 namespace SFactions
 {
@@ -12,7 +13,7 @@ namespace SFactions
 
             if (args.Parameters.Count < 1)
             {
-                player.SendErrorMessage("You need to specify a subcommand. Do '/faction help' to see all subcommands.");
+                player.SendErrorMessage(Localization.ErrorMessage_SpecifySubCommand);
                 return;
             }
 

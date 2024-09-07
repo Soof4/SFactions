@@ -1,13 +1,14 @@
 using SFactions.Database;
 using SFactions.Exceptions;
+using SFactions.i18net;
 using TShockAPI;
 
 namespace SFactions.Commands
 {
     public class CreateCommand : AbstractCommand
     {
-        public override string HelpText => "Creates a new faction.";
-        public override string SyntaxHelp => "/faction create <faction name>";
+        public override string HelpText => Localization.CreateCommand_HelpText;
+        public override string SyntaxHelp => Localization.CreateCommand_SyntaxHelp;
         protected override bool AllowServer => false;
 
 #pragma warning disable CS8618
@@ -23,7 +24,7 @@ namespace SFactions.Commands
             {
                 if (await SFactions.DbManager.DoesFactionExistAsync(_factionName))
                 {
-                    throw new GenericCommandException("A faction with this name already exists.");
+                    throw new GenericCommandException(Localization.ErrorMessage_NameTaken);
                 }
 
                 await SFactions.DbManager.InsertFactionAsync(_plr.Name, _factionName);
@@ -31,7 +32,7 @@ namespace SFactions.Commands
                 await SFactions.DbManager.InsertMemberAsync(_plr.Name, newFaction.Id);
                 FactionService.AddMember(_plr, newFaction);
                 FactionService.AddFaction(newFaction);
-                _plr.SendSuccessMessage($"You've created {_factionName}.");
+                _plr.SendSuccessMessage(string.Format(Localization.CreateCommand_SuccessMessage, _factionName));
             }
             catch (GenericCommandException e)
             {
@@ -39,7 +40,7 @@ namespace SFactions.Commands
             }
             catch (Exception e)
             {
-                _plr.SendErrorMessage("Command failed, check logs for more details.");
+                _plr.SendErrorMessage(Localization.ErrorMessage_GenericFail);
                 TShock.Log.Error(e.ToString());
             }
         }
@@ -49,22 +50,21 @@ namespace SFactions.Commands
 
             if (FactionService.IsPlayerInAnyFaction(_plr))
             {
-                throw new GenericCommandException("You need to leave your current faction first to create new.\n" +
-                                           "If you want to leave your current faction do '/faction leave'");
+                throw new GenericCommandException(Localization.CreateCommand_ErrorMessage_MustLeaveFaction);
             }
 
-            CommandParser.IsMissingArgument(args, 1, "You need to specify a the faction name.");
+            CommandParser.IsMissingArgument(args, 1, Localization.ErrorMessage_MissingFactionName);
 
             _factionName = string.Join(' ', args.Parameters.GetRange(1, args.Parameters.Count - 1));
 
             if (_factionName.Length < SFactions.Config.MinNameLength)
             {
-                throw new GenericCommandException($"Faction name needs to be at least {SFactions.Config.MinNameLength} characters long.");
+                throw new GenericCommandException(string.Format(Localization.ErrorMessage_FactionNameTooShort, SFactions.Config.MinNameLength));
             }
 
             if (_factionName.Length > SFactions.Config.MaxNameLength)
             {
-                throw new GenericCommandException($"Faction name needs to be at most {SFactions.Config.MaxNameLength} characters long.");
+                throw new GenericCommandException(string.Format(Localization.ErrorMessage_FactionNameTooLong, SFactions.Config.MaxNameLength));
             }
         }
     }

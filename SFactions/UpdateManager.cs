@@ -1,4 +1,5 @@
 using Newtonsoft.Json;
+using SFactions.i18net;
 using TerrariaApi.Server;
 
 namespace SFactions
@@ -33,7 +34,7 @@ namespace SFactions
                 }
                 catch
                 {
-                    Utils.Console_WriteLine("[SFactions] An error occurred while checking for updates.", ConsoleColor.Red);
+                    Utils.Console_WriteLine(Localization.UpdateManager_ErrorMessage, ConsoleColor.Red);
                 }
             }
 
@@ -52,19 +53,17 @@ namespace SFactions
         {
             if (plugin == null) return;
 
-            Utils.Console_WriteLine("[SFactions] Checking for updates...", ConsoleColor.White);
+            Utils.Console_WriteLine(Localization.UpdateManager_CheckingMessage, ConsoleColor.White);
 
             bool isUpToDate = await IsUpToDate(plugin);
 
             if (isUpToDate)
             {
-                Utils.Console_WriteLine("[SFactions] The plugin is up to date!", ConsoleColor.Green);
+                Utils.Console_WriteLine(Localization.UpdateManager_UpToDate, ConsoleColor.Green);
             }
             else
             {
-                Utils.Console_WriteLine("[SFactions] The plugin is not up to date.\n" +
-                                        "Please visit https://github.com/Soof4/SFactions/releases/latest to download the latest version.",
-                                        ConsoleColor.Red);
+                Utils.Console_WriteLine(Localization.UpdateManager_NotUpToDate, ConsoleColor.Red);
             }
         }
     }

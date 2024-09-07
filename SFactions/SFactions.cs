@@ -6,6 +6,7 @@ using TShockAPI;
 using TShockAPI.Hooks;
 using Abilities;
 using Terraria.ID;
+using SFactions.i18net;
 
 namespace SFactions
 {
@@ -31,10 +32,12 @@ namespace SFactions
         public override void Initialize()
         {
             Handlers.InitializeHandlers(this);
+            LocalizationManager.LoadLanguage(Config.Language);
+
 
             TShockAPI.Commands.ChatCommands.Add(new("sfactions.faction", CommandManager.FactionCmd, "faction", "f")
             {
-                HelpText = "To see the detailed help message do \"/faction help\""
+                HelpText = Localization.FactionCommandHelpText
             });
         }
 

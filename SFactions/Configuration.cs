@@ -8,7 +8,7 @@ namespace SFactions
     {
         public static string ConfigPath = Path.Combine(TShock.SavePath, "SFactionsConfig.json");
 
-        #pragma warning disable CS0414
+#pragma warning disable CS0414
 
         public int MinNameLength = 2;
         public int MaxNameLength = 20;
@@ -25,8 +25,9 @@ namespace SFactions
                                             "hypercrit", "pentagram", "silentorchestra",
                                             "shockwave"};
         public string FactionWarWinCommand = "/g \"gold coin\" %playername% 75";
+        public string Language = "en_US";
 
-        #pragma warning restore CS0414
+#pragma warning restore CS0414
 
         public static Configuration Reload()
         {

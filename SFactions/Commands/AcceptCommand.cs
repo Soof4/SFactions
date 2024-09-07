@@ -1,13 +1,14 @@
 using SFactions.Database;
 using SFactions.Exceptions;
+using SFactions.i18net;
 using TShockAPI;
 
 namespace SFactions.Commands
 {
     public class AcceptCommand : AbstractCommand
     {
-        public override string HelpText => "Accepts a faction invite.";
-        public override string SyntaxHelp => "/faction accept";
+        public override string HelpText => Localization.AcceptCommand_HelpText;
+        public override string SyntaxHelp => Localization.AcceptCommand_SyntaxHelp;
         protected override bool AllowServer => false;
 
 #pragma warning disable CS8618
@@ -29,7 +30,7 @@ namespace SFactions.Commands
 
             SFactions.Invitations.Remove(_plr.Name);
             RegionManager.AddMember(_plr);
-            _plr.SendSuccessMessage($"You've joined {_faction.Name}.");
+            _plr.SendSuccessMessage(string.Format(Localization.AcceptCommand_SuccessMessage, _faction.Name));
         }
 
         protected override void ParseParameters(CommandArgs args)
@@ -38,12 +39,12 @@ namespace SFactions.Commands
 
             if (FactionService.IsPlayerInAnyFaction(_plr))
             {
-                throw new GenericCommandException("You need to leave your current faction to join another.");
+                throw new GenericCommandException(Localization.AcceptCommand_ErrorMessage_MustLeaveFaction);
             }
 
             if (!SFactions.Invitations.ContainsKey(_plr.Name))
             {
-                throw new GenericCommandException("Couldn't find a pending invitation.");
+                throw new GenericCommandException(Localization.ErrorMessage_NoInviteFound);
             }
             else
             {

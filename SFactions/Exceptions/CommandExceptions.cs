@@ -1,3 +1,5 @@
+using SFactions.i18net;
+
 namespace SFactions.Exceptions
 {
     public class GenericCommandException : Exception
@@ -13,35 +15,32 @@ namespace SFactions.Exceptions
 
     public class PlayerNotInFactionCommandException : GenericCommandException
     {
-        public PlayerNotInFactionCommandException(string errorMessage = "You're not in a faction.") : base(errorMessage) { }
-
+        public PlayerNotInFactionCommandException() : base(Localization.ErrorMessage_NotInFaction) { }
     }
 
     public class PlayerIsInFactionCommandException : GenericCommandException
     {
-        public PlayerIsInFactionCommandException(string errorMessage = "You're in a faction.") : base(errorMessage) { }
-
+        public PlayerIsInFactionCommandException() : base(Localization.ErrorMessage_InFaction) { }
     }
 
 
     public class PlayerNotLeaderCommandException : GenericCommandException
     {
-        public PlayerNotLeaderCommandException(string errorMessage = "Only leaders can use this command.") : base(errorMessage) { }
-
+        public PlayerNotLeaderCommandException() : base(Localization.ErrorMessage_LeaderOnly) { }
     }
 
     public class MissingArgumentCommandException : GenericCommandException
     {
-        public MissingArgumentCommandException(string errorMessage = "Missing an argument.") : base(errorMessage) { }
+        public MissingArgumentCommandException() : base(Localization.ErrorMessage_MissingArgument) { }
     }
 
     public class FactionNotFoundCommandException : GenericCommandException
     {
-        public FactionNotFoundCommandException(string errorMessage = "Faction not found.") : base(errorMessage) { }
+        public FactionNotFoundCommandException() : base(Localization.ErrorMessage_FactionNotFound) { }
     }
 
     public class PlayerNotFoundCommandException : GenericCommandException
     {
-        public PlayerNotFoundCommandException(string errorMessage = "Player not found.") : base(errorMessage) { }
+        public PlayerNotFoundCommandException() : base(Localization.ErrorMessage_PlayerNotFound) { }
     }
 }
