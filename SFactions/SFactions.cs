@@ -18,7 +18,7 @@ namespace SFactions
         public override string Name => "SFactions";
         public override Version Version => new Version(1, 3, 2);
         public override string Author => "Soofa";
-        public override string Description => "Soofa's Factions";
+        public override string Description => Localization.PluginDescription;
 
         #endregion
 

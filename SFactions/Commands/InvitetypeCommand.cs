@@ -1,12 +1,13 @@
 using SFactions.Database;
+using SFactions.i18net;
 using TShockAPI;
 
 namespace SFactions.Commands
 {
     public class InvitetypeCommand : AbstractCommand
     {
-        public override string HelpText => "Shows or changes your faction's invite type.";
-        public override string SyntaxHelp => "/faction invitetype [open / inviteonly / closed]";
+        public override string HelpText => Localization.InviteTypeCommand_HelpText;
+        public override string SyntaxHelp => Localization.InviteTypeCommand_SyntaxHelp;
         protected override bool AllowServer => false;
 
 #pragma warning disable CS8618
@@ -31,14 +32,17 @@ namespace SFactions.Commands
 
         private void Get(CommandArgs args)
         {
-            _plr.SendInfoMessage($"Your faction is {Utils.ToTitleCase(_plrFaction.InviteType.ToString()).ToLower()}.");
+            _plr.SendInfoMessage(string.Format(
+                Localization.InviteTypeCommand_GetResult,
+                _plrFaction.InviteType.ToString().ToTitleCase()
+            ));
         }
 
         private void Set(CommandArgs args)
         {
             if (!_plr.Name.Equals(_plrFaction.Leader))
             {
-                _plr.SendErrorMessage("Only leader can change invite type of the faction.");
+                _plr.SendErrorMessage(Localization.ErrorMessage_LeaderOnly);
                 return;
             }
 
@@ -55,13 +59,18 @@ namespace SFactions.Commands
                     _plrFaction.InviteType = InviteType.Closed;
                     break;
                 default:
-                    _plr.SendErrorMessage("Invalid invite type were given. Valid types are open, inviteonly, closed.");
+                    _plr.SendErrorMessage(Localization.InviteTypeCommand_ErrorMessage_InvalidType);
                     return;
             }
 
             _ = SFactions.DbManager.SaveFactionAsync(_plrFaction);
-            _plr.SendSuccessMessage($"You've successfully changed you faction's invite type to "
-                                    + Utils.ToTitleCase(_plrFaction.InviteType.ToString()).ToLower() + ".");
+
+            _plr.SendSuccessMessage(
+                string.Format(
+                    Localization.InviteTypeCommand_SetResult,
+                    _plrFaction.InviteType.ToString().ToTitleCase().ToLower()
+                )
+            );
         }
     }
 }

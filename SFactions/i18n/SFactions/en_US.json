@@ -8,7 +8,7 @@
     "UpdateManager_NotUpToDate": "[SFactions] The plugin is not up to date.\nPlease visit https://github.com/Soof4/SFactions/releases/latest to download the latest version.",
     "War_StartAnnouncement": "{0} vs {1} war has started!",
     "War_EndTie": "The war between {0} and {1} ended as a TIE!",
-    "War_NoTie": "The war between {0} and {1} ended as {1} being victorious!",
+    "War_NoTie": "The war between {0} and {1} ended as {2} being victorious!",
     "ErrorMessage_SpecifySubCommand": "You need to specify a subcommand. Do '/faction help' to see all subcommands.",
     "ErrorMessage_NotInFaction": "You're not in a faction.",
     "ErrorMessage_InFaction": "You're in a faction.",

@@ -7,6 +7,7 @@ using TShockAPI;
 using TShockAPI.Hooks;
 using Abilities.Abilities;
 using Abilities.Enums;
+using SFactions.i18net;
 
 namespace SFactions
 {
@@ -81,7 +82,7 @@ namespace SFactions
         private static void OnReload(ReloadEventArgs e)
         {
             SFactions.Config = Configuration.Reload();
-            e.Player.SendSuccessMessage("SFactions has been reloaded.");
+            e.Player.SendSuccessMessage(Localization.ReloadSuccessMessage);
         }
 
         private static void OnPlayerUpdate(object? sender, GetDataHandlers.PlayerUpdateEventArgs args)

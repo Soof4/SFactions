@@ -1,5 +1,6 @@
 using SFactions.Commands;
 using SFactions.Database;
+using SFactions.i18net;
 using TerrariaApi.Server;
 using TShockAPI;
 
@@ -27,7 +28,13 @@ namespace SFactions
         {
             if (WarCommand.ActiveWar == null) return;
 
-            TSPlayer.All.SendInfoMessage($"{WarCommand.ActiveWar.Faction1.Name} vs {WarCommand.ActiveWar.Faction2.Name} war has started!");
+            TSPlayer.All.SendInfoMessage(
+                string.Format(
+                    Localization.War_StartAnnouncement,
+                    WarCommand.ActiveWar.Faction1.Name,
+                    WarCommand.ActiveWar.Faction2.Name
+                )
+            );
 
             foreach (TSPlayer p in TShock.Players)
             {
@@ -67,11 +74,24 @@ namespace SFactions
 
             if (WarCommand.ActiveWar.KillCount1 == WarCommand.ActiveWar.KillCount2)
             {
-                TSPlayer.All.SendSuccessMessage($"The war between {WarCommand.ActiveWar.Faction1.Name} and {WarCommand.ActiveWar.Faction2.Name} ended as a TIE!");
+                TSPlayer.All.SendInfoMessage(
+                    string.Format(
+                        Localization.War_EndTie,
+                        WarCommand.ActiveWar.Faction1.Name,
+                        WarCommand.ActiveWar.Faction2.Name
+                    )
+                );
             }
             else if (WarCommand.ActiveWar.KillCount1 > WarCommand.ActiveWar.KillCount2)
             {
-                TSPlayer.All.SendSuccessMessage($"The war between {WarCommand.ActiveWar.Faction1.Name} and {WarCommand.ActiveWar.Faction2.Name} ended as {WarCommand.ActiveWar.Faction1.Name} being victorious!");
+                TSPlayer.All.SendInfoMessage(
+                    string.Format(
+                        Localization.War_NoTie,
+                        WarCommand.ActiveWar.Faction1.Name,
+                        WarCommand.ActiveWar.Faction2.Name,
+                        WarCommand.ActiveWar.Faction1.Name
+                    )
+                );
 
                 List<TSPlayer> members = FactionService.GetAllMembers(WarCommand.ActiveWar.Faction1.Id);
                 foreach (TSPlayer p in members)
@@ -82,8 +102,14 @@ namespace SFactions
             }
             else
             {
-                TSPlayer.All.SendSuccessMessage($"The war between {WarCommand.ActiveWar.Faction1.Name} and {WarCommand.ActiveWar.Faction2.Name} ended as {WarCommand.ActiveWar.Faction2.Name} being victorious!");
-
+                TSPlayer.All.SendInfoMessage(
+                    string.Format(
+                        Localization.War_NoTie,
+                        WarCommand.ActiveWar.Faction1.Name,
+                        WarCommand.ActiveWar.Faction2.Name,
+                        WarCommand.ActiveWar.Faction2.Name
+                    )
+                );
                 List<TSPlayer> members = FactionService.GetAllMembers(WarCommand.ActiveWar.Faction2.Id);
                 foreach (TSPlayer p in members)
                 {

@@ -1,13 +1,14 @@
 using SFactions.Database;
 using SFactions.Exceptions;
+using SFactions.i18net;
 using TShockAPI;
 
 namespace SFactions.Commands
 {
     public class LeadCommand : AbstractCommand
     {
-        public override string HelpText => "Used for becoming the leader of your faction if leader quits the faction.";
-        public override string SyntaxHelp => "/faction lead";
+        public override string HelpText => Localization.LeadCommand_HelpText;
+        public override string SyntaxHelp => Localization.LeadCommand_SyntaxHelp;
         protected override bool AllowServer => false;
 
 #pragma warning disable CS8618
@@ -21,7 +22,7 @@ namespace SFactions.Commands
         {
             _plrFaction.Leader = _plr.Name;
             _ = SFactions.DbManager.SaveFactionAsync(_plrFaction);
-            _plr.SendSuccessMessage("You're the leader of your faction now.");
+            _plr.SendSuccessMessage(Localization.LeadCommand_SuccessMessage);
         }
 
         protected override void ParseParameters(CommandArgs args)
@@ -31,7 +32,12 @@ namespace SFactions.Commands
 
             if (_plrFaction.Leader != null)
             {
-                throw new GenericCommandException($"{_plrFaction.Leader} is your faction's leader already.");
+                throw new GenericCommandException(
+                    string.Format(
+                        Localization.LeadCommand_ErrorMessage_LeaderExists,
+                        _plrFaction.Leader
+                    )
+                );
             }
         }
     }

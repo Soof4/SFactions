@@ -1,13 +1,14 @@
 using SFactions.Database;
 using SFactions.Exceptions;
+using SFactions.i18net;
 using TShockAPI;
 
 namespace SFactions.Commands
 {
     public class WarCommand : AbstractCommand
     {
-        public override string HelpText => "Invites, accepts or declines war invitations.";
-        public override string SyntaxHelp => "/faction war <invite / accept / decline> [faction name]";
+        public override string HelpText => Localization.WarCommand_HelpText;
+        public override string SyntaxHelp => Localization.WarCommand_SyntaxHelp;
         protected override bool AllowServer => false;
 
 #pragma warning disable CS8618
@@ -31,7 +32,7 @@ namespace SFactions.Commands
             _plrFaction = CommandParser.GetPlayerFaction(args);
 
             CommandParser.IsPlayerTheLeader(_plrFaction, _plr);
-            CommandParser.IsMissingArgument(args, 1, "You need to specify \"invite\", \"accept\" or \"decline\".");
+            CommandParser.IsMissingArgument(args, 1, Localization.WarCommand_ErrorMessage_MissingSubCommand);
 
             switch (args.Parameters[1].ToLower())
             {
@@ -45,7 +46,7 @@ namespace SFactions.Commands
                     _subCommand = Decline;
                     break;
                 default:
-                    throw new GenericCommandException("Invalid war subcommand. (Please use one of \"invite\", \"accept\" or \"decline\"");
+                    throw new GenericCommandException(Localization.WarCommand_ErrorMessage_InvalidSubCommand);
             }
         }
 
@@ -57,7 +58,7 @@ namespace SFactions.Commands
 
             if (enemyFaction == null)
             {
-                _plr.SendErrorMessage("A faction with specified name couldn't be found online.");
+                _plr.SendErrorMessage(Localization.WarCommand_ErrorMessage_FactionNotOnline);
                 return;
             }
 
@@ -65,19 +66,19 @@ namespace SFactions.Commands
 
             if (enemyLeader == null)
             {
-                _plr.SendErrorMessage("Enemy faction's leader is not online.");
+                _plr.SendErrorMessage(Localization.WarCommand_ErrorMessage_EnemyLeaderNotOnline);
                 return;
             }
 
             if (enemyFaction == _plrFaction)
             {
-                _plr.SendErrorMessage("You can't start a war with yourself!");
+                _plr.SendErrorMessage(Localization.WarCommand_ErrorMessage_CantAttackYourself);
                 return;
             }
 
             if (ActiveWar != null)
             {
-                _plr.SendErrorMessage("There is another war ongoing right now. Please wait till it ends.");
+                _plr.SendErrorMessage(Localization.WarCommand_ErrorMessage_OngoingWar);
                 return;
             }
 
@@ -85,15 +86,19 @@ namespace SFactions.Commands
             {
                 if (inv.Item2.Id == enemyFaction.Id)
                 {
-                    _plr.SendErrorMessage("There is already a pending invitation to this faction.");
+                    _plr.SendErrorMessage(Localization.WarCommand_ErrorMessage_PendingInvite);
                     return;
                 }
             }
 
             _warInvitations.Add((_plrFaction, enemyFaction));
-            enemyLeader.SendInfoMessage($"{_plr.Name} has invited your faction to a war with {_plrFaction.Name}.\n" +
-                                        "Do [c/ffffff:/faction war accept] to accept, [c/ffffff:/faction war decline] to decline."
-                                        );
+            enemyLeader.SendInfoMessage(
+                string.Format(
+                    Localization.WarCommand_NotificationMessage_GotInvite,
+                    _plr.Name,
+                    _plrFaction.Name
+                )
+            );
         }
 
         private void Accept(CommandArgs args)
@@ -106,7 +111,7 @@ namespace SFactions.Commands
 
                     if (ActiveWar != null)
                     {
-                        _plr.SendErrorMessage("There is another war ongoing right now. Please wait till it ends.");
+                        _plr.SendErrorMessage(Localization.WarCommand_ErrorMessage_OngoingWar);
                         return;
                     }
 
@@ -118,7 +123,7 @@ namespace SFactions.Commands
                 }
             }
 
-            _plr.SendErrorMessage("You don't have a pending invitation.");
+            _plr.SendErrorMessage(Localization.ErrorMessage_NoInviteFound);
         }
 
         private void Decline(CommandArgs args)
@@ -130,16 +135,21 @@ namespace SFactions.Commands
                     List<TSPlayer> plrs = TSPlayer.FindByNameOrID(inv.Item1.Leader);
                     if (plrs.Count != 0)
                     {
-                        plrs[0].SendErrorMessage($"{_plr.Name} declined your war invitation.");
+                        plrs[0].SendErrorMessage(
+                            string.Format(
+                                Localization.WarCommand_NotificationMessage_Declined,
+                                _plr.Name
+                            )
+                        );
                     }
 
-                    _plr.SendSuccessMessage($"You've declined the war invitation.");
+                    _plr.SendSuccessMessage(Localization.WarCommand_SuccessMessage_Declined);
                     _warInvitations.Remove(inv);
                     return;
                 }
             }
 
-            _plr.SendErrorMessage("You don't have a pending invitation.");
+            _plr.SendErrorMessage(Localization.ErrorMessage_NoInviteFound);
         }
     }
 }

@@ -1,13 +1,14 @@
 using SFactions.Database;
 using SFactions.Exceptions;
+using SFactions.i18net;
 using TShockAPI;
 
 namespace SFactions.Commands
 {
     public class RenameCommand : AbstractCommand
     {
-        public override string HelpText => "Renames the faction.";
-        public override string SyntaxHelp => "/faction rename <new name>";
+        public override string HelpText => Localization.RenameCommand_HelpText;
+        public override string SyntaxHelp => Localization.RenameCommand_SyntaxHelp;
         protected override bool AllowServer => false;
 
 #pragma warning disable CS8618
@@ -24,22 +25,37 @@ namespace SFactions.Commands
             {
                 if (await SFactions.DbManager.DoesFactionExistAsync(_factionName))
                 {
-                    throw new GenericCommandException("A faction with this name already exists.");
+                    throw new GenericCommandException(Localization.ErrorMessage_NameTaken);
                 }
 
                 if (_factionName.Length < SFactions.Config.MinNameLength)
                 {
-                    throw new GenericCommandException($"Faction name needs to be at least {SFactions.Config.MinNameLength} characters long.");
+                    throw new GenericCommandException(
+                        string.Format(
+                            Localization.ErrorMessage_FactionNameTooShort,
+                            SFactions.Config.MinNameLength
+                        )
+                    );
                 }
 
                 if (_factionName.Length > SFactions.Config.MaxNameLength)
                 {
-                    throw new GenericCommandException($"Faction name needs to be at most {SFactions.Config.MaxNameLength} characters long.");
+                    throw new GenericCommandException(
+                        string.Format(
+                            Localization.ErrorMessage_FactionNameTooLong,
+                            SFactions.Config.MaxNameLength
+                        )
+                    );
                 }
 
                 _plrFaction.Name = _factionName;
                 await SFactions.DbManager.SaveFactionAsync(_plrFaction);
-                _plr.SendSuccessMessage($"Successfully changed faction name to \"{_factionName}\"");
+                _plr.SendSuccessMessage(
+                    string.Format(
+                        Localization.RenameCommand_SuccessMessage,
+                        _factionName
+                    )
+                );
             }
             catch (GenericCommandException e)
             {
@@ -47,7 +63,7 @@ namespace SFactions.Commands
             }
             catch (Exception e)
             {
-                _plr.SendErrorMessage("Command failed, check logs for more details.");
+                _plr.SendErrorMessage(Localization.ErrorMessage_GenericFail);
                 TShock.Log.Error(e.ToString());
             }
         }
@@ -57,7 +73,7 @@ namespace SFactions.Commands
             _plr = args.Player;
             _plrFaction = CommandParser.GetPlayerFaction(args);
             CommandParser.IsPlayerTheLeader(_plrFaction, _plr);
-            CommandParser.IsMissingArgument(args, 1, "You need to specify a faction name.");
+            CommandParser.IsMissingArgument(args, 1, Localization.ErrorMessage_MissingFactionName);
 
             _factionName = string.Join(' ', args.Parameters.GetRange(1, args.Parameters.Count - 1));
         }

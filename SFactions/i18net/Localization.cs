@@ -11,7 +11,7 @@ namespace SFactions.i18net
         public static string UpdateManager_NotUpToDate = "[SFactions] The plugin is not up to date.\nPlease visit https";
         public static string War_StartAnnouncement = "{0} vs {1} war has started!";
         public static string War_EndTie = "The war between {0} and {1} ended as a TIE!";
-        public static string War_NoTie = "The war between {0} and {1} ended as {1} being victorious!";
+        public static string War_NoTie = "The war between {0} and {1} ended as {2} being victorious!";
         public static string ErrorMessage_SpecifySubCommand = "You need to specify a subcommand. Do '/faction help' to see all subcommands.";
         public static string ErrorMessage_NotInFaction = "You're not in a faction.";
         public static string ErrorMessage_InFaction = "You're in a faction.";

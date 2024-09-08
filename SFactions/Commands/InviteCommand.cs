@@ -1,5 +1,6 @@
 using SFactions.Database;
 using SFactions.Exceptions;
+using SFactions.i18net;
 using TShockAPI;
 
 namespace SFactions.Commands
@@ -20,8 +21,8 @@ namespace SFactions.Commands
 
         protected override void Function(CommandArgs args)
         {
-            _targetPlr.SendInfoMessage($"{_plr.Name} has invited you to {_plrFaction.Name}. Type \"/faction accept\" to join. Do nothing if you don't want to join.");
-            _plr.SendSuccessMessage($"You've successfully invited {_targetPlr.Name} to your faction.");
+            _targetPlr.SendInfoMessage(Localization.InviteCommand_NotificationMessage, _plr.Name, _plrFaction.Name);
+            _plr.SendSuccessMessage(Localization.InviteCommand_SuccessMessage, _targetPlr.Name);
         }
 
         protected override void ParseParameters(CommandArgs args)
@@ -32,10 +33,10 @@ namespace SFactions.Commands
 
             if (_plrFaction.InviteType == InviteType.Closed && !_plr.Name.Equals(_plrFaction.Leader))
             {
-                throw new GenericCommandException("Only leader can invite new people.");
+                throw new GenericCommandException(Localization.ErrorMessage_LeaderOnly);
             }
 
-            CommandParser.IsMissingArgument(args, 1, "Please specify a player name.");
+            CommandParser.IsMissingArgument(args, 1, Localization.InviteCommand_ErrorMessage_MissingPlayerName);
 
             string targetPlrName = string.Join(" ", args.Parameters.GetRange(1, args.Parameters.Count - 1));
 
@@ -46,7 +47,7 @@ namespace SFactions.Commands
             {
                 if (SFactions.Invitations[_targetPlr.Name].Id == _plrFaction.Id)
                 {
-                    throw new GenericCommandException("This player already has a pending invitation from your faction.");
+                    throw new GenericCommandException(Localization.InviteCommand_ErrorMessage_AlreadyHasAnInvite);
                 }
                 else
                 {

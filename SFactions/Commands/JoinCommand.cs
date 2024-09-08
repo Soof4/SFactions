@@ -1,13 +1,14 @@
 using SFactions.Database;
 using SFactions.Exceptions;
+using SFactions.i18net;
 using TShockAPI;
 
 namespace SFactions.Commands
 {
     public class JoinCommand : AbstractCommand
     {
-        public override string HelpText => "Used for joining an open faction.";
-        public override string SyntaxHelp => "/faction join <faction name>";
+        public override string HelpText => Localization.JoinCommand_HelpText;
+        public override string SyntaxHelp => Localization.JoinCommand_SyntaxHelp;
         protected override bool AllowServer => false;
 
 #pragma warning disable CS8618
@@ -24,14 +25,24 @@ namespace SFactions.Commands
             {
                 if (!await SFactions.DbManager.DoesFactionExistAsync(_factionName))
                 {
-                    throw new GenericCommandException($"There is no faction called {_factionName}.");
+                    throw new GenericCommandException(
+                        string.Format(
+                            Localization.ErrorMessage_FactionNotFound,
+                            _factionName
+                        )
+                    );
                 }
 
                 _newFaction = await SFactions.DbManager.GetFactionAsync(_factionName);
 
                 if (_newFaction.InviteType != InviteType.Open)
                 {
-                    throw new GenericCommandException($"{_newFaction.Name} is an invite only faction.");
+                    throw new GenericCommandException(
+                        string.Format(
+                            Localization.JoinCommand_ErrorMessage_InviteOnly,
+                            _newFaction.Name
+                        )
+                    );
                 }
 
                 FactionService.AddMember(_plr, _newFaction);
@@ -43,7 +54,12 @@ namespace SFactions.Commands
                 }
 
                 RegionManager.AddMember(_plr);
-                _plr.SendSuccessMessage($"You've joined {_newFaction.Name}.");
+                _plr.SendSuccessMessage(
+                    string.Format(
+                        Localization.JoinCommand_SuccessMessage,
+                        _newFaction.Name
+                    )
+                );
             }
             catch (GenericCommandException e)
             {
@@ -51,7 +67,7 @@ namespace SFactions.Commands
             }
             catch (Exception e)
             {
-                _plr.SendErrorMessage("Command failed, check logs for more details.");
+                _plr.SendErrorMessage(Localization.ErrorMessage_GenericFail);
                 TShock.Log.Error(e.ToString());
             }
         }
@@ -61,12 +77,9 @@ namespace SFactions.Commands
             _plr = args.Player;
 
             CommandParser.IsPlayerNotInAnyFaction(args);
-            CommandParser.IsMissingArgument(args, 1, "You need to specfiy a faction name.");
+            CommandParser.IsMissingArgument(args, 1, Localization.ErrorMessage_MissingFactionName);
 
             _factionName = string.Join(' ', args.Parameters.GetRange(1, args.Parameters.Count - 1));
-
-
-
         }
     }
 }

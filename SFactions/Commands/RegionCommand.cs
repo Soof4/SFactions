@@ -1,13 +1,14 @@
 using SFactions.Database;
 using SFactions.Exceptions;
+using SFactions.i18net;
 using TShockAPI;
 
 namespace SFactions.Commands
 {
     public class RegionCommand : AbstractCommand
     {
-        public override string HelpText => "Sets or deletes faction's region. (You must be inside an already defined region before setting it.)";
-        public override string SyntaxHelp => "/faction <set / del>";
+        public override string HelpText => Localization.RegionCommand_HelpText;
+        public override string SyntaxHelp => Localization.RegionCommand_SyntaxHelp;
         protected override bool AllowServer => false;
 
 #pragma warning disable CS8618
@@ -32,7 +33,7 @@ namespace SFactions.Commands
             CommandParser.IsPlayerTheLeader(_plrFaction, _plr);
 
 
-            CommandParser.IsMissingArgument(args, 1, "You need to specify \"set\" or \"del\"");
+            CommandParser.IsMissingArgument(args, 1, Localization.RegionCommand_MissingSubCommand);
 
             switch (args.Parameters[1].ToLower())
             {
@@ -43,7 +44,7 @@ namespace SFactions.Commands
                     _subCommand = Delete;
                     break;
                 default:
-                    throw new GenericCommandException("Invalid region subcommand. (Please use either \"set\" or \"del\"");
+                    throw new GenericCommandException(Localization.RegionCommand_ErrorMessage_InvalidSubCommand);
             }
         }
 
@@ -51,38 +52,38 @@ namespace SFactions.Commands
         {
             if (_plrFaction.Region != null)
             {
-                _plr.SendErrorMessage("You need to delete the old region before setting new one. (Do \"/faction region del\" to delete old region.)");
+                _plr.SendErrorMessage(Localization.RegionCommand_ErrorMessage_MustDeleteOldOne);
                 return;
             }
 
             if (_plr.CurrentRegion == null)
             {
-                _plr.SendErrorMessage("You're not in a protected region.");
+                _plr.SendErrorMessage(Localization.RegionCommand_ErrorMessage_NotInARegion);
                 return;
             }
 
             if (_plr.CurrentRegion.Owner != _plr.Name)
             {
-                _plr.SendErrorMessage("You're not the owner of this region.");
+                _plr.SendErrorMessage(Localization.RegionCommand_ErrorMessage_NotOwner);
                 return;
             }
 
             RegionManager.SetRegion(_plr);
             RegionManager.AddAllMembers(_plrFaction);
-            _plr.SendSuccessMessage("Successfully set region.");
+            _plr.SendSuccessMessage(Localization.RegionCommand_SuccessMessage_Set);
         }
 
         private void Delete(CommandArgs args)
         {
             if (_plrFaction.Region == null)
             {
-                _plr.SendErrorMessage("Your faction doesn't have a region set.");
+                _plr.SendErrorMessage(Localization.RegionCommand_ErrorMessage_NoFactionRegion);
                 return;
             }
 
             RegionManager.DelAllMembers(_plrFaction);
             RegionManager.DelRegion(_plr);
-            _plr.SendSuccessMessage("Successfully deleted the region.");
+            _plr.SendSuccessMessage(Localization.RegionCommand_SuccessMessage_Del);
         }
     }
 }

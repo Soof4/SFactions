@@ -1,13 +1,14 @@
 using System.Reflection;
 using SFactions.Database;
+using SFactions.i18net;
 using TShockAPI;
 
 namespace SFactions.Commands
 {
     public class HelpCommand : AbstractCommand
     {
-        public override string HelpText => "Shows help texts for faction commands.";
-        public override string SyntaxHelp => "/faction help [page number / command name]";
+        public override string HelpText => Localization.HelpCommand_HelpText;
+        public override string SyntaxHelp => Localization.HelpCommand_SyntaxHelp;
         protected override bool AllowServer => true;
 
 #pragma warning disable CS8618
@@ -42,7 +43,7 @@ namespace SFactions.Commands
                 _pageNumber = maxPage;
             }
 
-            string msg = $"Sub-commands (Page: {_pageNumber + 1}/{maxPage + 1}):";
+            string msg = string.Format(Localization.HelpCommand_Header, _pageNumber + 1, maxPage + 1);
 
             int startIndex = _pageNumber * 4;
             int endIndex = Math.Min(startIndex + 4, namespaceTypes.Count);
@@ -61,7 +62,7 @@ namespace SFactions.Commands
                 var helpTextProperty = type.GetProperty("HelpText")!;
                 string helpText = (string)helpTextProperty.GetValue(instance)!;
 
-                msg += $"\n[c/ffffbb:{Utils.GetFirstWord(type.Name)}: {helpText}]";
+                msg += $"\n[c/ffffbb:{type.Name.GetFirstWord()}: {helpText}]";
             }
 
             _plr.SendInfoMessage(msg);

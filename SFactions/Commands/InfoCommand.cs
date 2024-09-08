@@ -1,13 +1,14 @@
 using SFactions.Database;
 using SFactions.Exceptions;
+using SFactions.i18net;
 using TShockAPI;
 
 namespace SFactions.Commands
 {
     public class InfoCommand : AbstractCommand
     {
-        public override string HelpText => "Shows the information about the faction.";
-        public override string SyntaxHelp => "/faction info <faction name>";
+        public override string HelpText => Localization.InfoCommand_HelpText;
+        public override string SyntaxHelp => Localization.InfoCommand_SyntaxHelp;
         protected override bool AllowServer => true;
 
 #pragma warning disable CS8618
@@ -29,13 +30,17 @@ namespace SFactions.Commands
 
                 _faction = await SFactions.DbManager.GetFactionAsync(_factionName);
 
-                _plr.SendInfoMessage($"Faction ID: {_faction.Id}\n" +
-                                     $"Faction Name: {_faction.Name}\n" +
-                                     $"Faction Leader: {_faction.Leader}\n" +
-                                     $"Faction Ability: {Utils.ToTitleCase(_faction.Ability.GetType().Name)}\n" +
-                                     $"Has a Region: {_faction.Region != null}\n" +
-                                     $"Invite Type: {Utils.ToTitleCase(_faction.InviteType.ToString())}"
-                                     );
+                _plr.SendInfoMessage(
+                    string.Format(
+                        Localization.InfoCommand_Result,
+                        _faction.Id,
+                        _faction.Name,
+                        _faction.Leader,
+                        _faction.Ability.GetType().Name.ToTitleCase(),
+                        _faction.Region != null,
+                        _faction.InviteType.ToString().ToTitleCase()
+                    )
+                );
             }
             catch (GenericCommandException e)
             {
@@ -43,7 +48,7 @@ namespace SFactions.Commands
             }
             catch (Exception e)
             {
-                _plr.SendErrorMessage("Command failed, check logs for more details.");
+                _plr.SendErrorMessage(Localization.ErrorMessage_GenericFail);
                 TShock.Log.Error(e.ToString());
             }
         }
@@ -52,7 +57,7 @@ namespace SFactions.Commands
         {
             _plr = args.Player;
 
-            CommandParser.IsMissingArgument(args, 1, "Please specify a faction name.");
+            CommandParser.IsMissingArgument(args, 1, Localization.ErrorMessage_MissingFactionName);
 
             _factionName = string.Join(' ', args.Parameters.GetRange(1, args.Parameters.Count - 1));
         }

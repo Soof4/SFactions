@@ -3,13 +3,14 @@ using SFactions.Database;
 using TShockAPI;
 using Abilities.Enums;
 using Abilities.Abilities;
+using SFactions.i18net;
 
 namespace SFactions.Commands
 {
     public class LeaveCommand : AbstractCommand
     {
-        public override string HelpText => "Used for leaving your current faction.";
-        public override string SyntaxHelp => "/faction leave";
+        public override string HelpText => Localization.LeaveCommand_HelpText;
+        public override string SyntaxHelp => Localization.LeaveCommand_SyntaxHelp;
         protected override bool AllowServer => false;
 
 #pragma warning disable CS8618
@@ -30,7 +31,7 @@ namespace SFactions.Commands
             FactionService.RemoveMember(_plr);
             _ = SFactions.DbManager.DeleteMemberAsync(args.Player.Name);
 
-            args.Player.SendSuccessMessage("You've left your faction.");
+            args.Player.SendSuccessMessage(Localization.LeaveCommand_SuccessMessage);
 
             if (args.Player.Name.Equals(_plrFaction.Leader))
             {
