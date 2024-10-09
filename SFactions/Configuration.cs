@@ -26,23 +26,24 @@ namespace SFactions
                                             "shockwave"};
         public string FactionWarWinCommand = "/g \"gold coin\" %playername% 75";
         public string Language = "en_US";
+        public int BaseAbilityCooldown = 100;
 
 #pragma warning restore CS0414
+
+        public void Write()
+        {
+            File.WriteAllText(ConfigPath, JsonConvert.SerializeObject(this, Formatting.Indented));
+        }
 
         public static Configuration Reload()
         {
             Configuration? c = null;
 
-            if (File.Exists(ConfigPath))
-            {
-                c = JsonConvert.DeserializeObject<Configuration>(File.ReadAllText(ConfigPath));
-            }
+            if (File.Exists(ConfigPath)) c = JsonConvert.DeserializeObject<Configuration>(File.ReadAllText(ConfigPath));
 
-            if (c == null)
-            {
-                c = new Configuration();
-                File.WriteAllText(ConfigPath, JsonConvert.SerializeObject(c, Formatting.Indented));
-            }
+            c ??= new Configuration();
+
+            File.WriteAllText(ConfigPath, JsonConvert.SerializeObject(c, Formatting.Indented));
 
             return c;
         }

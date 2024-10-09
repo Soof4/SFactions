@@ -43,6 +43,15 @@ namespace SFactions.Commands
                 {
                     FactionService.RemoveFaction(_plrFaction);
                 }
+
+                Task.Run(async () =>
+                {
+                    List<string> members = await SFactions.DbManager.GetAllMembersAsync(_plrFaction.Id);
+                    if (members.Count == 0)
+                    {
+                        await SFactions.DbManager.DeleteFactionAsync(_plrFaction.Id);
+                    }
+                });
             }
         }
 

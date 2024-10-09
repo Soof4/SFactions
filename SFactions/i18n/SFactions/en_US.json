@@ -25,7 +25,7 @@
     "ErrorMessage_NoInviteFound": "Couldn't find a pending invitation.",
     "AbilityCommand_HelpText": "Changes faction's ability.",
     "AbilityCommand_SyntaxHelp": "/faction ability <ability name>",
-    "AbilityCommand_SuccessMessage": "Your faction's ability is now \"{0}\".",
+    "AbilityCommand_SuccessMessage": "Your faction's ability is now {0}.",
     "AbilityCommand_ErrorMessage_MissingAbilityName": "Missing ability name. Valid ability types are: {0}",
     "AbilityCommand_ErrorMessage_InvalidAbilityName": "Invalid ability name. Valid ability types are: {0}",
     "AcceptCommand_HelpText": "Accepts a faction invite.",
@@ -91,5 +91,8 @@
     "WarCommand_ErrorMessage_PendingInvite": "There is already a pending invitation to this faction.",
     "WarCommand_NotificationMessage_GotInvite": "{0} has invited your faction to a war with {1}.\nDo [c/ffffff:/faction war accept] to accept, [c/ffffff:/faction war decline] to decline.",
     "WarCommand_NotificationMessage_Declined": "{0} declined your war invitation.",
-    "WarCommand_SuccessMessage_Declined": "You've declined the war invitation."
+    "WarCommand_SuccessMessage_Declined": "You've declined the war invitation.",
+    "DeleteCommand_HelpText": "Deletes the faction.",
+    "DeleteCommand_SyntaxtHelp": "/faction delete",
+    "DeleteCommand_SuccessMessage": "Successfully deleted the faction."
 }

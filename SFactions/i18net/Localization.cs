@@ -28,7 +28,7 @@ namespace SFactions.i18net
         public static string ErrorMessage_NoInviteFound = "Couldn't find a pending invitation.";
         public static string AbilityCommand_HelpText = "Changes faction's ability.";
         public static string AbilityCommand_SyntaxHelp = "/faction ability <ability name>";
-        public static string AbilityCommand_SuccessMessage = "Your faction's ability is now \"{0}\".";
+        public static string AbilityCommand_SuccessMessage = "Your faction's ability is now {0}.";
         public static string AbilityCommand_ErrorMessage_MissingAbilityName = "Missing ability name. Valid ability types are";
         public static string AbilityCommand_ErrorMessage_InvalidAbilityName = "Invalid ability name. Valid ability types are";
         public static string AcceptCommand_HelpText = "Accepts a faction invite.";
@@ -95,5 +95,8 @@ namespace SFactions.i18net
         public static string WarCommand_NotificationMessage_GotInvite = "{0} has invited your faction to a war with {1}.\nDo [c/ffffff";
         public static string WarCommand_NotificationMessage_Declined = "{0} declined your war invitation.";
         public static string WarCommand_SuccessMessage_Declined = "You've declined the war invitation.";
+        public static string DeleteCommand_HelpText = "Deletes the faction.";
+        public static string DeleteCommand_SyntaxtHelp = "/faction delete";
+        public static string DeleteCommand_SuccessMessage = "Successfully deleted the faction.";
     }
 }

@@ -130,6 +130,15 @@ namespace SFactions.Database
             }
             throw new FactionDoesNotExistDatabaseException();
         }
+
+        public async Task<bool> DeleteFactionAsync(int factionId)
+        {
+            string q = "DELETE FROM Factions WHERE Id = @0";
+            int num = await _db.AsyncQuery(q, factionId);
+
+            return num > 0;
+        }
+
         #endregion
 
 

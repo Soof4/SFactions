@@ -42,8 +42,6 @@ namespace SFactions.i18net
                 if (field == null) continue;
                 field.SetValue(null, value);
             }
-
-            _curLang = langCode;
         }
     }
 }

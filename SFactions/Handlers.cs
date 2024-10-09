@@ -93,7 +93,7 @@ namespace SFactions
                 {
                     Faction plrFaction = FactionService.GetFaction(args.Player);
                     int level = Utils.GetAbilityLevel(plrFaction);
-                    int cooldown = Utils.GetAbilityCooldownByAbilityLevel(level, 100);
+                    int cooldown = Utils.GetAbilityCooldownByAbilityLevel(level, SFactions.Config.BaseAbilityCooldown);
 
                     if (plrFaction.AbilityType == AbilityType.MagicDice)
                     {
