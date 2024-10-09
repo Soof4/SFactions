@@ -112,7 +112,7 @@ namespace SFactions.Database
             using var reader = await _db.AsyncQueryReader(q, playerName);
             while (reader.Read())
             {
-                using var reader2 = _db.QueryReader("SELECT * FROM Factions WHERE Id = @0", reader.Get<int>("FactionId"));
+                using var reader2 = await _db.AsyncQueryReader("SELECT * FROM Factions WHERE Id = @0", reader.Get<int>("FactionId"));
                 while (reader2.Read())
                 {
                     return new Faction(
@@ -138,6 +138,32 @@ namespace SFactions.Database
 
             return num > 0;
         }
+
+        public async Task<List<Faction>> GetAllFactionsAsync()
+        {
+            string q = "SELECT * FROM Factions";
+            List<Faction> result = new List<Faction>();
+
+            using var reader = await _db.AsyncQueryReader(q);
+            while (reader.Read())
+            {
+                result.Add(new Faction(
+                    reader.Get<int>("Id"),
+                    reader.Get<string>("Name"),
+                    reader.Get<string>("Leader"),
+                    (AbilityType)reader.Get<int>("AbilityType"),
+                    reader.Get<string>("Region"),
+                    DateTime.Parse(reader.Get<string>("LastAbilityChangeTime")),
+                    (InviteType)reader.Get<int>("InviteType"),
+                    reader.Get<int?>("BaseX"),
+                    reader.Get<int?>("BaseY")
+                    )
+                );
+            }
+
+            return result;
+        }
+
 
         #endregion
 

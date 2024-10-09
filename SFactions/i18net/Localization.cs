@@ -1,4 +1,4 @@
-namespace SFactions.i18net 
+namespace SFactions.i18net
 {
     public static class Localization
     {
@@ -44,7 +44,7 @@ namespace SFactions.i18net
         public static string CreateCommand_SuccessMessage = "You've created {0}.";
         public static string HelpCommand_HelpText = "Shows help texts for faction commands.";
         public static string HelpCommand_SyntaxHelp = "/faction help [page number / command name]";
-        public static string HelpCommand_Header = "Sub-commands (Page";
+        public static string HelpCommand_Header = "Sub-commands (Page: {0}/{1})";
         public static string InfoCommand_HelpText = "Shows information about the faction.";
         public static string InfoCommand_SyntaxHelp = "/faction info <faction name>";
         public static string InfoCommand_Result = "Faction ID";
@@ -98,5 +98,8 @@ namespace SFactions.i18net
         public static string DeleteCommand_HelpText = "Deletes the faction.";
         public static string DeleteCommand_SyntaxtHelp = "/faction delete";
         public static string DeleteCommand_SuccessMessage = "Successfully deleted the faction.";
+        public static string ListCommand_HelpText = "Lists all of the factions.";
+        public static string ListCommand_SyntaxHelp = "/faction list [page number]";
+        public static string ListCommand_Header = "Factions (Page: {0}/{1})";
     }
 }

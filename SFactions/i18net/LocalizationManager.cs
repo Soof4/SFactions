@@ -5,7 +5,7 @@ namespace SFactions.i18net
     public static class LocalizationManager
     {
         private static readonly Regex PairRegex = new Regex(@"\s*(\""[^\""]+\"")\s*:\s*(\""[^\""]+\"")\s*");
-        private static string _curLang = "en_US";
+        //private static string _curLang = "en_US";
         public static void LoadLanguage(string langCode)
         {
             FileStream rfs;

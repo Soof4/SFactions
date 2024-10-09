@@ -37,6 +37,8 @@ namespace SFactions
                 "info" => new InfoCommand(),
                 "base" => new BaseCommand(),
                 "war" => new WarCommand(),
+                "delete" => new DeleteCommand(),
+                "list" => new ListCommand(),
                 _ => new HelpCommand(),
             };
         }

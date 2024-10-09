@@ -94,5 +94,8 @@
     "WarCommand_SuccessMessage_Declined": "You've declined the war invitation.",
     "DeleteCommand_HelpText": "Deletes the faction.",
     "DeleteCommand_SyntaxtHelp": "/faction delete",
-    "DeleteCommand_SuccessMessage": "Successfully deleted the faction."
+    "DeleteCommand_SuccessMessage": "Successfully deleted the faction.",
+    "ListCommand_HelpText": "Lists all of the factions.",
+    "ListCommand_SyntaxHelp": "/faction list [page number]",
+    "ListCommand_Header": "Factions (Page: {0}/{1})"
 }
