@@ -38,10 +38,10 @@ namespace SFactions.Commands
                 for (int i = startIndex; i < endIndex; i++)
                 {
                     Faction f = factions[i];
-                    msg += $"\nID: {f.Id} - Name: {f.Name} - Leader: {f.Leader}";
+                    msg += string.Format(Localization.ListCommand_EntryFormat, f.Id, f.Name, f.Leader);
                 }
 
-                msg += "\nFor more information about a faction do /faction info <faction name>.";
+                msg += Localization.ListCommand_PageEnd;
                 _plr.SendInfoMessage(msg);
             });
         }
