@@ -4,6 +4,9 @@ A TShock factions plugin.
 
 If you want to read this in another language: [Spanish](https://github.com/Soof4/SFactions/blob/main/README_SPANISH.md)
 
+## Special Thanks:
+[FrankV22](https://github.com/itsFrankV22) for Spanish support.
+
 ## Setting Up
 Download **SFactions.dll** and place it in **ServerPlugins** folder. <br>
 Download **Abilities.dll** and place it in **bin** folder. <br>
