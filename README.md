@@ -4,7 +4,7 @@ A TShock factions plugin.
 
 If you want to read this in another language: [Spanish](https://github.com/Soof4/SFactions/blob/main/README_SPANISH.md)
 
-## Special Thanks:
+## Special Thanks
 [FrankV22](https://github.com/itsFrankV22) for Spanish support.
 
 ## Setting Up
