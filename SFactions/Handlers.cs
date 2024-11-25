@@ -99,6 +99,10 @@ namespace SFactions
                     {
                         cooldown = 70 - SFactions.RandomGen.Next(16);
                     }
+                    else if (plrFaction.AbilityType == AbilityType.Shockwave)
+                    {
+                        cooldown = 50;
+                    }
 
                     plrFaction.Ability.Cast(args.Player, cooldown, level);
                 }
