@@ -57,12 +57,20 @@ namespace SFactions.Commands
 
             _factionName = string.Join(' ', args.Parameters.GetRange(1, args.Parameters.Count - 1));
 
-            if (_factionName.Length < SFactions.Config.MinNameLength)
+
+            if (!SFactions.Config.AllowColorCodesInFactionNames && _factionName.ContainsTerrariaColorFormat())
+            {
+                throw new GenericCommandException(Localization.ErrorMessage_ColorCodesNotAllowed);
+            }
+
+            int factionNameLength = _factionName.CountCharsExculidingTerrariaColorFormat();
+
+            if (factionNameLength < SFactions.Config.MinNameLength)
             {
                 throw new GenericCommandException(string.Format(Localization.ErrorMessage_FactionNameTooShort, SFactions.Config.MinNameLength));
             }
 
-            if (_factionName.Length > SFactions.Config.MaxNameLength)
+            if (factionNameLength > SFactions.Config.MaxNameLength)
             {
                 throw new GenericCommandException(string.Format(Localization.ErrorMessage_FactionNameTooLong, SFactions.Config.MaxNameLength));
             }

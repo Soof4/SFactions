@@ -28,7 +28,14 @@ namespace SFactions.Commands
                     throw new GenericCommandException(Localization.ErrorMessage_NameTaken);
                 }
 
-                if (_factionName.Length < SFactions.Config.MinNameLength)
+                if (!SFactions.Config.AllowColorCodesInFactionNames && _factionName.ContainsTerrariaColorFormat())
+                {
+                    throw new GenericCommandException(Localization.ErrorMessage_ColorCodesNotAllowed);
+                }
+
+                int factionNameLength = _factionName.CountCharsExculidingTerrariaColorFormat();
+
+                if (factionNameLength < SFactions.Config.MinNameLength)
                 {
                     throw new GenericCommandException(
                         string.Format(
@@ -38,7 +45,7 @@ namespace SFactions.Commands
                     );
                 }
 
-                if (_factionName.Length > SFactions.Config.MaxNameLength)
+                if (factionNameLength > SFactions.Config.MaxNameLength)
                 {
                     throw new GenericCommandException(
                         string.Format(

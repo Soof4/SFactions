@@ -25,6 +25,7 @@ namespace SFactions.i18net
         public static string ErrorMessage_NameTaken = "A faction with this name already exists.";
         public static string ErrorMessage_FactionNameTooShort = "Faction name needs to be at least {0} characters long.";
         public static string ErrorMessage_FactionNameTooLong = "Faction name needs to be at most {0} characters long.";
+        public static string ErrorMessage_ColorCodesNotAllowed = "Color codes are not allowed in faction names.";
         public static string ErrorMessage_NoInviteFound = "Couldn\u0027t find a pending invitation.";
         public static string AbilityCommand_HelpText = "Changes faction\u0027s ability.";
         public static string AbilityCommand_SyntaxHelp = "/faction ability \u003Cability name\u003E";

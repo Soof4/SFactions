@@ -22,6 +22,7 @@
     "ErrorMessage_NameTaken": "A faction with this name already exists.",
     "ErrorMessage_FactionNameTooShort": "Faction name needs to be at least {0} characters long.",
     "ErrorMessage_FactionNameTooLong": "Faction name needs to be at most {0} characters long.",
+    "ErrorMessage_ColorCodesNotAllowed": "Color codes are not allowed in faction names.",
     "ErrorMessage_NoInviteFound": "Couldn't find a pending invitation.",
     "AbilityCommand_HelpText": "Changes faction's ability.",
     "AbilityCommand_SyntaxHelp": "/faction ability <ability name>",

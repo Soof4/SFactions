@@ -27,6 +27,7 @@ namespace SFactions
         public string FactionWarWinCommand = "/g \"gold coin\" %playername% 75";
         public string Language = "en_US";
         public int BaseAbilityCooldown = 100;
+        public bool AllowColorCodesInFactionNames = true;
 
 #pragma warning restore CS0414
 

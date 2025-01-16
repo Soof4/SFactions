@@ -1,4 +1,6 @@
 using System.Text;
+using System.Text.RegularExpressions;
+using Microsoft.Xna.Framework;
 
 namespace SFactions;
 
@@ -67,5 +69,22 @@ public static class Extensions
         }
 
         return res;
+    }
+
+    public static string RemoveTerrariaColorFormat(this string input)
+    {
+        List<Terraria.UI.Chat.TextSnippet> snippets = Terraria.UI.Chat.ChatManager.ParseMessage(input, Color.White);
+        return string.Join("", snippets.Select(snippet => snippet.Text));
+    }
+
+    public static int CountCharsExculidingTerrariaColorFormat(this string input)
+    {
+        List<Terraria.UI.Chat.TextSnippet> snippets = Terraria.UI.Chat.ChatManager.ParseMessage(input, Color.White);
+        return snippets.Sum(snippet => snippet.Text.Length);
+    }
+
+    public static bool ContainsTerrariaColorFormat(this string input)
+    {
+        return input.Length != input.CountCharsExculidingTerrariaColorFormat();
     }
 }
